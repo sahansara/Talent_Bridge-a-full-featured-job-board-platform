@@ -4,7 +4,6 @@ import axios from 'axios';
 
 
 const View_appications = () => {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -114,7 +113,15 @@ const View_appications = () => {
     }
   ]);
 
-  
+  // Function to get token safely
+  const getAuthToken = () => {
+    try {
+      return localStorage.getItem('token');
+    } catch (error) {
+      console.warn('localStorage not available:', error);
+      return null;
+    }
+  };
 
   // Function to fetch applications from API
   const fetchApplications = async () => {
@@ -122,7 +129,7 @@ const View_appications = () => {
     setError(null);
     
     try {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -137,18 +144,44 @@ const View_appications = () => {
           }
         }
       );
-      ;
 
-      // Update state with fetched data
-      if (response.data && response.data.success) {
-        setJobPosts(response.data.data);
-        console.log('Fetched applications:', response.data)
-        
+      // Debug: Log the entire response to see what we're getting
+      console.log('Full response:', response);
+      console.log('Response data:', response.data);
+      console.log('Response status:', response.status);
+
+      // Handle different response formats
+      if (response.data) {
+        // Case 1: Response has success property
+        if (response.data.success && response.data.data) {
+          setJobPosts(response.data.data);
+          console.log('Fetched applications (format 1):', response.data.data);
+        }
+        // Case 2: Response data is directly the array
+        else if (Array.isArray(response.data)) {
+          setJobPosts(response.data);
+          console.log('Fetched applications (format 2):', response.data);
+        }
+        // Case 3: Response has data property but no success property
+        else if (response.data.data && Array.isArray(response.data.data)) {
+          setJobPosts(response.data.data);
+          console.log('Fetched applications (format 3):', response.data.data);
+        }
+        // Case 4: Unknown format - use mock data and log the structure
+        else {
+          console.log('Unknown response format. Using mock data.');
+          console.log('Response structure:', JSON.stringify(response.data, null, 2));
+          // Keep using mock data for now
+        }
+      } else {
+        throw new Error('No data received from server');
       }
       
     } catch (error) {
       console.error('Error fetching applications:', error);
-      setError(error.message || 'Failed to fetch applications');
+      console.error('Error response:', error.response);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch applications';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -158,6 +191,7 @@ const View_appications = () => {
   useEffect(() => {
     fetchApplications();
   }, []);
+
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
