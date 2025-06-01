@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Download, Eye, Calendar, User, MapPin, Clock, FileText, X, ChevronDown, Plus } from 'lucide-react';
 import axios from 'axios';
+import { Document, Page } from 'react-pdf';
+
+
+
+
 
 
 const View_appications = () => {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+  
   // Mock data - replace with actual API calls
   const [jobPosts, setJobPosts] = useState([
     {
@@ -26,7 +32,7 @@ const View_appications = () => {
           image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
           appliedDate: "2024-01-20",
           status: "Applied",
-          cvUrl: "/cv/john-smith-cv.pdf",
+          cvUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
           experience: "5 years",
           location: "New York",
           skills: ["React", "JavaScript", "TypeScript", "Node.js"],
@@ -114,50 +120,76 @@ const View_appications = () => {
     }
   ]);
 
-  
-
-  // Function to fetch applications from API
-  const fetchApplications = async () => {
-    setLoading(true);
-    setError(null);
-    
+  // Function to get token safely
+  const getAuthToken = () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
-      // Call your backend API - GET request to fetch data
-      const response = await axios.get(
-        '/api/Company/All-applications',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      ;
-
-      // Update state with fetched data
-      if (response.data && response.data.success) {
-        setJobPosts(response.data.data);
-        console.log('Fetched applications:', response.data)
-        
-      }
-      
+      return localStorage.getItem('token');
     } catch (error) {
-      console.error('Error fetching applications:', error);
-      setError(error.message || 'Failed to fetch applications');
-    } finally {
-      setLoading(false);
+      console.warn('localStorage not available:', error);
+      return null;
     }
   };
+
+// Function to fetch applications from API
+const fetchApplications = async () => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    // Updated API URL - change port to match your backend
+    const response = await axios.get(
+      'http://localhost:3000/api/Company/All-applications', // Changed to port 3000 based on your image URLs
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    
+
+    // Check if response is HTML (error case)
+    if (typeof response.data === 'string' && response.data.includes('<!doctype html>')) {
+      throw new Error('API endpoint not found - received HTML instead of JSON');
+    }
+
+    // Handle your specific API response format
+    if (response.data && response.data.jobPosts) {
+      setJobPosts(response.data.jobPosts);
+      
+    } else {
+      throw new Error('Invalid response format - jobPosts not found');
+    }
+    
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    console.error('Error response:', error.response);
+    
+    // Check if it's a network error or API not found
+    if (error.message.includes('API endpoint not found')) {
+      setError('API endpoint not found. Please check the backend URL and endpoint.');
+    } else if (error.code === 'ERR_NETWORK') {
+      setError('Cannot connect to backend server. Please check if backend is running.');
+    } else {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch applications';
+      setError(errorMessage);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Fetch data when component mounts
   useEffect(() => {
     fetchApplications();
   }, []);
+
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -168,6 +200,7 @@ const View_appications = () => {
   const [showCVModal, setShowCVModal] = useState(false);
   const [selectedCV, setSelectedCV] = useState(null);
   const [expandedJobs, setExpandedJobs] = useState(new Set([1, 2, 3])); // Default to all expanded
+  const [cvLoadError, setCvLoadError] = useState(false);
 
   const categories = ['All', 'IT', 'Marketing', 'Design', 'Healthcare', 'Finance'];
   const statuses = ['All', 'Applied', 'Under Review', 'Accepted', 'Rejected'];
@@ -203,64 +236,96 @@ const View_appications = () => {
     }));
   };
 
-  // Replace the existing updateApplicationStatus with API call
-  const updateApplicationStatus = async (jobId, applicationId, newStatus) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
-      // Call your backend API
-      await axios.put(
-        `/api/Company/applications/${applicationId}/status`,
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      // Update the local state as before
-      setJobPosts(prev => prev.map(job => 
-        job.id === jobId 
-          ? {
-              ...job,
-              applications: job.applications.map(app =>
-                app.id === applicationId ? { ...app, status: newStatus } : app
-              )
-            }
-          : job
-      ));
-    } catch (error) {
-      console.error('Error updating application status:', error);
-      // Optionally show an error to the user
+const debugCV = (cvUrl) => {
+  console.log('CV URL:', cvUrl);
+  const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:3000${cvUrl}`;
+  console.log('Full URL:', fullUrl);
+  
+  // Don't test fetch here as it will cause CORS errors
+  // Just log the URL for debugging
+};
+// const handleCVDownload = (cvUrl) => {
+//   const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:3000${cvUrl}`;
+  
+//   // Create a temporary link element for download
+//   const link = document.createElement('a');
+//   link.href = fullUrl;
+//   link.download = cvUrl.split('/').pop() || 'cv.pdf';
+//   link.target = '_blank';
+  
+//   // Append to body, click, and remove
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+// };
+ // Replace the existing updateApplicationStatus function with this fixed version
+const updateApplicationStatus = async (jobId, applicationId, newStatus) => {
+  try {
+    const token = getAuthToken(); // Use the existing getAuthToken function
+    if (!token) {
+      throw new Error('No authentication token found');
     }
-  };
 
-
-  const updateApplicationNotes = async (jobId, applicationId, notes) => {
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
-      // Call your backend API
-      await axios.put(
-        `/api/Company/applications/${applicationId}/status`,
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+    // Fixed: Added the complete base URL
+    await axios.put(
+      `http://localhost:3000/api/Company/applications/${applicationId}/status`,
+      { status: newStatus },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      );
+      }
+    );
 
+    // Update the local state as before
+    setJobPosts(prev => prev.map(job => 
+      job.id === jobId 
+        ? {
+            ...job,
+            applications: job.applications.map(app =>
+              app.id === applicationId ? { ...app, status: newStatus } : app
+            )
+          }
+        : job
+    ));
+    
+    console.log(`Successfully updated application ${applicationId} status to ${newStatus}`);
+  } catch (error) {
+    console.error('Error updating application status:', error);
+    
+    // Better error handling with user feedback
+    if (error.response?.status === 404) {
+      alert('API endpoint not found. Please check if the backend server is running and the endpoint exists.');
+    } else if (error.code === 'ERR_NETWORK') {
+      alert('Cannot connect to backend server. Please check if backend is running on port 3000.');
+    } else {
+      alert(`Failed to update application status: ${error.response?.data?.message || error.message}`);
+    }
+  }
+};
+
+
+ const updateApplicationNotes = async (jobId, applicationId, notes) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    // Call your backend API for updating notes (not status)
+    await axios.put(
+      `http://localhost:3000/api/Company/applications/${applicationId}/notes`, // Updated port
+      { notes: notes }, // Fixed payload
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    // Update local state
     setJobPosts(prev => prev.map(job => 
       job.id === jobId 
         ? {
@@ -272,10 +337,11 @@ const View_appications = () => {
         : job
     ));
   } catch (error) {
-      console.error('Error updating application notes:', error);
-      // Optionally show an error to the user
-    }
-}
+    console.error('Error updating application notes:', error);
+    // Optionally show an error to the user
+  }
+};
+
   const getStatusColor = (status) => {
     switch(status) {
       case 'Applied': return 'bg-blue-100 text-blue-800';
@@ -297,7 +363,90 @@ const View_appications = () => {
       return newSet;
     });
   };
+// Updated function to get CV URL for preview
+const getCVPreviewUrl = (cvUrl) => {
+  if (!cvUrl) return null;
+  
+  // Extract filename from the CV URL - handle both formats
+  let filename;
+  if (cvUrl.includes('uploads/cvs/')) {
+    // Format: "uploads\cvs\cv-67fe9eb3c58d1f5a2b2381e2-1746475839657.pdf"
+    filename = cvUrl.split(/[/\\]/).pop(); // Handle both / and \ separators
+  } else {
+    // Format: "/cv/filename.pdf" or just "filename.pdf"
+    filename = cvUrl.split('/').pop();
+  }
+  
+  // Use the employer API endpoint (not Company)
+  return `http://localhost:3000/api/Company/cv/${filename}`;
+};
 
+// 2. Fixed handleCVDownload function
+const handleCVDownload = async (cvUrl) => {
+  if (!cvUrl) {
+    alert('No CV available');
+    return;
+  }
+  
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      alert('Authentication required');
+      return;
+    }
+    
+    const previewUrl = getCVPreviewUrl(cvUrl);
+    
+    // Create a temporary link element for download
+    const link = document.createElement('a');
+    link.href = previewUrl;
+    link.download = cvUrl.split(/[/\\]/).pop() || 'cv.pdf'; // Handle both separators
+    link.target = '_blank';
+    
+    // Add authorization header by creating a fetch request
+    const response = await fetch(previewUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    // Create blob and download
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    
+    link.href = blobUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up
+    window.URL.revokeObjectURL(blobUrl);
+    
+  } catch (error) {
+    console.error('Error downloading CV:', error);
+    alert('Failed to download CV. Please try again.');
+  }
+};
+
+// 3. Fixed openCVPreview function
+const openCVPreview = (cvUrl) => {
+  if (!cvUrl) {
+    alert('No CV available');
+    return;
+  }
+  
+  const previewUrl = getCVPreviewUrl(cvUrl);
+  console.log('CV URL:', cvUrl);
+  console.log('Preview URL:', previewUrl);
+  
+  setSelectedCV(previewUrl);
+  setCvLoadError(false);
+  setShowCVModal(true);
+};
   const filteredJobPosts = getFilteredJobPosts();
   const totalApplications = filteredJobPosts.reduce((sum, job) => sum + job.applications.length, 0);
 
@@ -309,11 +458,16 @@ const View_appications = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Application Management</h1>
           <p className="text-gray-600">Review and manage job applications from candidates</p>
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
-            <span className="flex items-center gap-1">
+            <Calendar className="w-4 h-4 font-bold text-red-500 " />
+              <span className="font-normal">
+                {new Date().toLocaleDateString()}
+              </span>
+            <span className="flex items-center gap-1 font-bold text-gray-800">
               <FileText className="w-4 h-4" />
               {filteredJobPosts.length} Job Posts
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 font-bold text-gray-800">
+              
               <User className="w-4 h-4" />
               {totalApplications} Total Applications
             </span>
@@ -468,21 +622,25 @@ const View_appications = () => {
                           {/* Actions */}
                           <div className="flex gap-2 mb-3">
                             <button
-                              onClick={() => setSelectedApplication(application)}
-                              className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                            >
-                              <Eye className="w-4 h-4 inline mr-1" />
-                              View Details
-                            </button>
+                                onClick={() => openCVPreview(application.cvUrl)}
+                                className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
+                                title="Preview CV"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
                             <button
-                              onClick={() => {
-                                setSelectedCV(application.cvUrl);
-                                setShowCVModal(true);
-                              }}
-                              className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
-                            >
-                              <Download className="w-4 h-4" />
-                            </button>
+                                  onClick={() => {
+                                          const fullUrl = application.cvUrl.startsWith('http')
+                                            ? application.cvUrl
+                                            : `http://localhost:3000/api/Company/cv/${filename}`;
+                                          setSelectedCV(fullUrl);
+                                          setCvLoadError(false);
+                                          setShowCVModal(true);
+                                        }}
+                                  className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
                           </div>
 
                           {/* Status Actions */}
@@ -613,18 +771,25 @@ const View_appications = () => {
                 </div>
 
                 {/* CV Download */}
-                <div className="mb-6">
-                  <button
-                    onClick={() => {
-                      setSelectedCV(selectedApplication.cvUrl);
-                      setShowCVModal(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download / View CV
-                  </button>
-                </div>
+                                <div className="mb-6">
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">CV Document</label>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => openCVPreview(selectedApplication.cvUrl)}
+                        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        Preview CV
+                      </button>
+                      <button
+                        onClick={() => handleCVDownload(selectedApplication.cvUrl)}
+                        className="px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download CV
+                      </button>
+                    </div>
+                  </div>
 
                 {/* Status Actions */}
                 <div className="flex gap-3">
@@ -679,47 +844,108 @@ const View_appications = () => {
           </div>
         )}
 
-        {/* CV Viewer Modal */}
+         
+ {/* CV Viewer Modal */}
         {showCVModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full h-[80vh]">
-              <div className="p-4 border-b flex items-center justify-between">
-                <h3 className="text-lg font-semibold">CV Preview</h3>
-                <button
-                  onClick={() => setShowCVModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="p-4 h-full">
-                <div className="bg-gray-100 rounded-lg h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-4">CV Preview</p>
-                    <p className="text-sm text-gray-500 mb-4">File: {selectedCV}</p>
-                    <button
-                      onClick={() => {
-                        // Simulate download
-                        const link = document.createElement('a');
-                        link.href = selectedCV;
-                        link.download = 'candidate-cv.pdf';
-                        link.click();
-                      }}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <Download className="w-4 h-4 inline mr-2" />
-                      Download CV
-                    </button>
-                  </div>
-                </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg max-w-5xl w-full h-[90vh] flex flex-col">
+      <div className="p-4 border-b flex items-center justify-between flex-shrink-0">
+        <h3 className="text-lg font-semibold">CV Preview</h3>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => handleCVDownload(selectedApplication?.cvUrl || selectedCV)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Download CV
+          </button>
+          <button
+            onClick={() => {
+              setShowCVModal(false);
+              setSelectedCV(null);
+              setCvLoadError(false);
+            }}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+      <div className="flex-1 p-4 overflow-hidden">
+        <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden">
+          {selectedCV && !cvLoadError ? (
+            <div className="w-full h-full relative">
+              <iframe
+                src={`${selectedCV}#toolbar=1&navpanes=1&scrollbar=1`}
+                className="w-full h-full border-0"
+                title="CV Preview"
+                onLoad={() => {
+                  console.log('PDF loaded successfully');
+                  setCvLoadError(false);
+                }}
+                onError={(e) => {
+                  console.error('PDF load error:', e);
+                  setCvLoadError(true);
+                }}
+                style={{
+                  backgroundColor: 'white'
+                }}
+              />
+              {/* Loading overlay */}
+              <div className="absolute inset-0 bg-gray-100 flex items-center justify-center pointer-events-none opacity-0 transition-opacity">
+                <div className="text-gray-600">Loading PDF...</div>
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-full flex items-center justify-center flex-col">
+              <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600 mb-2">
+                {cvLoadError ? 'Cannot preview PDF in browser' : 'No CV selected'}
+              </p>
+              <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
+                {cvLoadError 
+                  ? 'Some browsers may block PDF preview. You can still download or open in a new tab.' 
+                  : 'Select a CV to preview'
+                }
+              </p>
+              {selectedCV && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      const token = getAuthToken();
+                      if (token) {
+                        // Open with auth header in new tab
+                        window.open(selectedCV, '_blank');
+                      } else {
+                        alert('Authentication required');
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    Open in New Tab
+                  </button>
+                  <button
+                    onClick={() => handleCVDownload(selectedApplication?.cvUrl || selectedCV)}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download CV
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  );
-};
+  </div>
+)}
+      </div>
+      </div>
+  )};
+
+
+
 
 export default View_appications;

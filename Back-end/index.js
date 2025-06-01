@@ -25,7 +25,12 @@ const port = 3000;
 const JWT_SECRET = 'VZJqCdrVHoo7vEOEm3l41HePGd1L1usf'; // Change this to a strong secret in production
 
 // Configure middleware before routes
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:3000'], // Add your frontend URLs
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Parse JSON in request body
 app.use(bodyParser.json());
 // Parse URL-encoded data
@@ -38,7 +43,18 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Serve static files from uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve static files from uploads directory
+app.use('/uploads', express.static(
+  path.join(__dirname, 'uploads'), 
+  {
+    setHeaders: (res, path) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    }
+  }
+));
+
 
 // Multer config
 const storage = multer.diskStorage({
