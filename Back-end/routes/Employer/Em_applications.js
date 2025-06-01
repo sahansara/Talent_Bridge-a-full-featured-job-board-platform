@@ -1,6 +1,8 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs');
 
 // 1. GET /api/employer/applications - Fetch all applications for logged-in employer
 router.get('/All-applications', async (req, res) => {
@@ -295,4 +297,134 @@ router.get('/applications/search', async (req, res) => {
   }
 });
 
+// 6. GET /api/employer/cv/:filename - Serve CV files with proper headers
+// Debug version of your CV serving route
+router.get('/cv/:filename', async (req, res) => {
+  try {
+    const { filename } = req.params;
+    const employerId = req.user.userId;
+    const db = req.app.locals.db;
+    const applicationsCollection = db.collection('job_applications');
+    
+    // EXTENSIVE DEBUG LOGGING
+    console.log('=== CV FILE DEBUG START ===');
+    console.log('1. Requested filename:', filename);
+    console.log('2. Employer ID:', employerId);
+    console.log('3. Current __dirname:', __dirname);
+    console.log('4. Process CWD:', process.cwd());
+    
+    // Security check: Verify the CV belongs to an application for this employer
+    const application = await applicationsCollection.findOne({
+      employerId: new ObjectId(employerId),
+      'jobSeekerProfile.cv': { $regex: filename }
+    });
+    
+    console.log('5. Application found:', !!application);
+    if (application) {
+      console.log('6. Application CV field:', application.jobSeekerProfile?.cv);
+    }
+    
+    if (!application) {
+      console.log('❌ No application found - unauthorized access');
+      return res.status(404).json({ error: 'CV not found or unauthorized' });
+    }
+    
+    // TEST MULTIPLE POSSIBLE PATHS
+    const possiblePaths = [
+      path.join(__dirname, '../../uploads/cvs', filename),
+      path.join(__dirname, '../uploads/cvs', filename),
+      path.join(__dirname, '../../uploads', filename),
+      path.join(__dirname, '../uploads', filename),
+      path.join(process.cwd(), 'uploads/cvs', filename),
+      path.join(process.cwd(), 'uploads', filename),
+      path.join(process.cwd(), 'backend/uploads/cvs', filename),
+      path.join(process.cwd(), 'backend/uploads', filename)
+    ];
+    
+    console.log('7. Testing these paths:');
+    let foundPath = null;
+    
+    possiblePaths.forEach((testPath, index) => {
+      const exists = fs.existsSync(testPath);
+      console.log(`   ${index + 1}. ${testPath} - ${exists ? '✅ EXISTS' : '❌ NOT FOUND'}`);
+      if (exists && !foundPath) {
+        foundPath = testPath;
+      }
+    });
+    
+    // If no file found, let's also check what's in the directories
+    if (!foundPath) {
+      console.log('8. Checking directory contents:');
+      
+      // Check uploads directory
+      const uploadsDir1 = path.join(process.cwd(), 'uploads');
+      const uploadsDir2 = path.join(__dirname, '../../uploads');
+      
+      [uploadsDir1, uploadsDir2].forEach((dir, index) => {
+        console.log(`   Uploads dir ${index + 1}: ${dir}`);
+        if (fs.existsSync(dir)) {
+          console.log('   ✅ Directory exists');
+          try {
+            const files = fs.readdirSync(dir);
+            console.log('   Files/folders:', files);
+            
+            // Check cvs subdirectory
+            const cvsDir = path.join(dir, 'cvs');
+            if (fs.existsSync(cvsDir)) {
+              console.log('   CVs subdirectory exists');
+              const cvFiles = fs.readdirSync(cvsDir);
+              console.log('   CV files:', cvFiles);
+            } else {
+              console.log('   ❌ CVs subdirectory does not exist');
+            }
+          } catch (err) {
+            console.log('   ❌ Error reading directory:', err.message);
+          }
+        } else {
+          console.log('   ❌ Directory does not exist');
+        }
+      });
+    }
+    
+    console.log('=== CV FILE DEBUG END ===');
+    
+    if (!foundPath) {
+      return res.status(404).json({ 
+        error: 'CV file not found on server',
+        debug: {
+          filename,
+          searchedPaths: possiblePaths,
+          cwd: process.cwd(),
+          dirname: __dirname
+        }
+      });
+    }
+    
+    // File found, serve it
+    console.log('✅ Serving file from:', foundPath);
+    
+    // Set proper headers for PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename=' + filename);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(foundPath);
+    
+    fileStream.on('error', (error) => {
+      console.error('Error streaming file:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error streaming file' });
+      }
+    });
+    
+    fileStream.pipe(res);
+    
+  } catch (error) {
+    console.error('Error serving CV:', error);
+    res.status(500).json({ error: 'Error serving CV file' });
+  }
+});
 module.exports = router;
