@@ -211,7 +211,7 @@ router.post('/applications', async (req, res) => {
       jobId: new ObjectId(jobId),
       employerId: new ObjectId(job.companyId),
       status: 'Applied',
-      jobSeekerProfile: {
+      jbSeekerProfiloe: {
         fullName: jobSeeker.fullName,
         email: jobSeeker.email,
         cv: jobSeeker.cv_Upload,

@@ -18,6 +18,8 @@ const register_dashboard = require('./routes/Admin/register_dashboard');
 const Manage_jobpost = require('./routes/Admin/Manage_jobpost');
 const Job_Post = require('./routes/Job_seeker/Job_post');
 const Em_applications = require('./routes/Employer/Em_applications');
+const Manage_jobSeeker = require('./routes/Admin/Manage_jobSeeker');
+const Manage_Employers = require('./routes/Admin/Manage_Employers');
 
 
 const app = express();
@@ -302,9 +304,13 @@ app.use('/api/Company', ensureDbConnected,authenticateToken, Em_dashboard);
 app.use('/api/Company/Employer', ensureDbConnected,authenticateToken, Em_profile);
 app.use('/api/job-seeker', ensureDbConnected, authenticateToken, Job_Post);
 app.use('/api/Company', ensureDbConnected, authenticateToken, Em_applications);
+
+
 // Admin routes
 app.use('/api/admin', ensureDbConnected,register_dashboard);
 app.use('/api/admin', ensureDbConnected, authenticateToken, Manage_jobpost);
+app.use('/api/admin', ensureDbConnected, authenticateToken, Manage_jobSeeker);
+app.use('/api/admin', ensureDbConnected, authenticateToken, Manage_Employers);
 
 
 

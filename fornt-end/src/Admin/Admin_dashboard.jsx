@@ -44,40 +44,60 @@ const Admin_dashboard = () => {
   const [jobSeekers, setJobSeekers] = useState([]);
   const [employers, setEmployers] = useState([]);
   const [jobPosts, setJobPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    jobSeekers: true,
+    employers: true,
+    jobPosts: true
+  });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Fetch counts data
   const fetchCountsData = useCallback(async () => {
     try {
-      const [jobSeekersResponse, employersResponse, jobPostsResponse] = 
-        await Promise.allSettled([
-          axios.get('http://localhost:3000/api/admin/job-seekers', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-          }),
-          axios.get('http://localhost:3000/api/admin/employers', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-          }),
-          axios.get('http://localhost:3000/api/admin/job-posts', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-          })
-        ]);
+      // Fetch job seekers
+      try {
+        const jobSeekersResponse = await axios.get('http://localhost:3000/api/admin/jobseekers', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setJobSeekers(jobSeekersResponse.data || []);
+        setLoading(prev => ({ ...prev, jobSeekers: false }));
+      } catch (error) {
+        console.error('Error fetching job seekers:', error);
+        setJobSeekers([]);
+        setLoading(prev => ({ ...prev, jobSeekers: false }));
+      }
 
-      if (jobSeekersResponse.status === 'fulfilled') 
-        setJobSeekers(jobSeekersResponse.value.data || []);
-      
-      if (employersResponse.status === 'fulfilled')
-        setEmployers(employersResponse.value.data || []);
-      
-      if (jobPostsResponse.status === 'fulfilled')
-        setJobPosts(jobPostsResponse.value.data || []);
-      
+      // Fetch employers
+      try {
+        const employersResponse = await axios.get('http://localhost:3000/api/admin/employers', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setEmployers(employersResponse.data || []);
+        setLoading(prev => ({ ...prev, employers: false }));
+      } catch (error) {
+        console.error('Error fetching employers:', error);
+        setEmployers([]);
+        setLoading(prev => ({ ...prev, employers: false }));
+      }
+
+      // Fetch job posts
+      try {
+        const jobPostsResponse = await axios.get('http://localhost:3000/api/admin/job-posts', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setJobPosts(jobPostsResponse.data || []);
+        setLoading(prev => ({ ...prev, jobPosts: false }));
+      } catch (error) {
+        console.error('Error fetching job posts:', error);
+        setJobPosts([]);
+        setLoading(prev => ({ ...prev, jobPosts: false }));
+      }
+
     } catch (error) {
       setError('Error fetching counts data');
       console.error('Error fetching counts data:', error);
-    } finally {
-      setLoading(false);
+      setLoading({ jobSeekers: false, employers: false, jobPosts: false });
     }
   }, []);
 
@@ -175,39 +195,53 @@ const Admin_dashboard = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M10 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM2 20a8 8 0 0 1 16 0v1H2v-1zm18.4-4.2l1.2-.7-1-1.7-1.4.3a5.2 5.2 0 0 0-1.1-.6l-.2-1.5h-2l-.2 1.5a5.2 5.2 0 0 0-1.1.6l-1.4-.3-1 1.7 1.2.7c-.1.3-.1.6-.1.9s0 .6.1.9l-1.2.7 1 1.7 1.4-.3c.3.3.7.5 1.1.6l.2 1.5h2l.2-1.5c.4-.1.8-.3 1.1-.6l1.4.3 1-1.7-1.2-.7c.1-.3.1-.6.1-.9s0-.6-.1-.9zM19 18a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
           </svg>
-          <span className="text-2xl font-bold">Admin Dashboard</span>
+          <span className="text-xl md:text-2xl font-bold">Admin Dashboard</span>
         </div>
 
         <nav className="mt-8 border-t border-white-700">
           <div className="px-6 py-5">
-            {loading ? (
-              <div className="flex justify-center items-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-blue-500"></div>
-              </div>
-            ) : error ? (
+            {error ? (
               <div className="text-center text-red-500 p-4">{error}</div>
             ) : (
               <>
-                <a href="#" className="flex items-center py-3 px-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 relative">
+                <a href="/admin/admin_dashboard/manage_jobseekers" className="flex items-center py-3 px-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 relative">
                   <JobSeeker />
-                  <span className="ml-4">Job Seekers</span>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs min-w-[30px] text-center">
-                    {jobSeekers.length}
-                  </span>
+                  <span className="ml-4 text-sm md:text-base">Job Seekers</span>
+                  {loading.jobSeekers ? (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+                    </div>
+                  ) : (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs font-medium min-w-[24px] h-6 flex items-center justify-center">
+                      {jobSeekers.length}
+                    </span>
+                  )}
                 </a>
-                <a href="#" className="flex items-center mt-4 py-3 px-4 rounded-lg hover:bg-[#21384D] transition-colors duration-200 relative">
+                <a href="/admin/admin_dashboard/manage_companies" className="flex items-center mt-4 py-3 px-4 rounded-lg hover:bg-[#21384D] transition-colors duration-200 relative">
                   <Employers />
-                  <span className="ml-4">Employers</span>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs min-w-[30px] text-center">
-                    {employers.length}
-                  </span>
+                  <span className="ml-4 text-sm md:text-base">Employers</span>
+                  {loading.employers ? (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+                    </div>
+                  ) : (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs font-medium min-w-[24px] h-6 flex items-center justify-center">
+                      {employers.length}
+                    </span>
+                  )}
                 </a>
                 <a href="/admin/admin_dashboard/manage_post" className="flex items-center mt-4 py-3 px-4 rounded-lg hover:bg-[#21384D] transition-colors duration-200 relative">
                   <JobPost />
-                  <span className="ml-4">Manage Job Post</span>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs min-w-[30px] text-center">
-                    {jobPosts.length}
-                  </span>
+                  <span className="ml-4 text-sm md:text-base">Manage Job Post</span>
+                  {loading.jobPosts ? (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+                    </div>
+                  ) : (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-white text-blue-700 rounded-full px-2 py-1 text-xs font-medium min-w-[24px] h-6 flex items-center justify-center">
+                      {jobPosts.length}
+                    </span>
+                  )}
                 </a>
               </>
             )}
@@ -216,7 +250,7 @@ const Admin_dashboard = () => {
 
         <div className="absolute bottom-0 w-full md:w-64 p-6 border-t border-white-700">
           <div className="flex items-center space-x-3 mb-6">
-            <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-300">
+            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden bg-gray-300 flex-shrink-0">
               {userData.adminImage ? (
                 <img 
                   src={userData.adminImage.startsWith('http') ? userData.adminImage : `http://localhost:3000/${userData.adminImage}`} 
@@ -224,20 +258,20 @@ const Admin_dashboard = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="h-full w-full flex items-center justify-center bg-gray-500 text-white text-xl">
+                <div className="h-full w-full flex items-center justify-center bg-gray-500 text-white text-lg md:text-xl">
                   {userData.Adminfullname.charAt(0)}
                 </div>
               )}
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-300">Admin</p>
-              <p className="text-base font-semibold truncate">{userData.Adminfullname}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs md:text-sm font-medium text-gray-300">Admin</p>
+              <p className="text-sm md:text-base font-semibold truncate">{userData.Adminfullname}</p>
             </div>
           </div>
 
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-lg hover:bg-red-700 bg-red-600 transition-colors duration-200"
+            className="w-full flex items-center justify-center space-x-2 py-2 px-4 rounded-lg hover:bg-red-700 bg-red-600 transition-colors duration-200 text-sm md:text-base"
           >
             <LogoutIcon />
             <span>Logout</span>
