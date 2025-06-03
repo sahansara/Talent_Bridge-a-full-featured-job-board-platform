@@ -15,6 +15,8 @@ import Admin_content from './Admin/Admin_content';
 import NotificationCenter from './company/NotificationCenter';
 import Applied_job from './Seeker_dashboard/Applied_job';
 import View_appications from './company/View_appications';
+import Manage_jobSeekers from './Admin/Manage_jobSeekers';
+import Manage_Companies from './Admin/Manage_Companies';
 import 'boxicons';
 import SK_profile from './Seeker_dashboard/Sk_profile';
 
@@ -47,6 +49,9 @@ function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Admin_content />} />
           <Route path="admin_dashboard/manage_post" element={<Manage_post />} />
+          <Route path='admin_dashboard/manage_jobseekers' element={<Manage_jobSeekers/>} />
+          <Route path='admin_dashboard/manage_companies' element={<Manage_Companies/>} />
+
           {/* You can add more nested admin routes here */}
         </Route>
 

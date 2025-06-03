@@ -369,16 +369,23 @@ const getCVPreviewUrl = (cvUrl) => {
   
   // Extract filename from the CV URL - handle both formats
   let filename;
-  if (cvUrl.includes('uploads/cvs/')) {
-    // Format: "uploads\cvs\cv-67fe9eb3c58d1f5a2b2381e2-1746475839657.pdf"
+  if (cvUrl.includes('uploads/cvs/') || cvUrl.includes('uploads\\cvs\\')) {
+    // Format: "http://localhost:3000/uploads/cvs/cv-67ff4ba8b99adc7d6606e267-1744909600417.pdf"
+    // or "uploads\cvs\cv-67fe9eb3c58d1f5a2b2381e2-1746475839657.pdf"
     filename = cvUrl.split(/[/\\]/).pop(); // Handle both / and \ separators
   } else {
     // Format: "/cv/filename.pdf" or just "filename.pdf"
     filename = cvUrl.split('/').pop();
   }
   
-  // Use the employer API endpoint (not Company)
-  return `http://localhost:3000/api/Company/cv/${filename}`;
+  console.log('Original CV URL:', cvUrl);
+  console.log('Extracted filename:', filename);
+  
+  // Use the Company API endpoint
+  const previewUrl = `http://localhost:3000/api/Company/cv/${filename}`;
+  console.log('Generated Preview URL:', previewUrl);
+  
+  return previewUrl;
 };
 
 // 2. Fixed handleCVDownload function
@@ -433,6 +440,7 @@ const handleCVDownload = async (cvUrl) => {
 };
 
 // 3. Fixed openCVPreview function
+// Fixed openCVPreview function
 const openCVPreview = (cvUrl) => {
   if (!cvUrl) {
     alert('No CV available');
@@ -440,7 +448,8 @@ const openCVPreview = (cvUrl) => {
   }
   
   const previewUrl = getCVPreviewUrl(cvUrl);
-  console.log('CV URL:', cvUrl);
+  console.log('Opening CV Preview:');
+  console.log('Original CV URL:', cvUrl);
   console.log('Preview URL:', previewUrl);
   
   setSelectedCV(previewUrl);
@@ -620,7 +629,17 @@ const openCVPreview = (cvUrl) => {
                           </div>
 
                           {/* Actions */}
+                          
                           <div className="flex gap-2 mb-3">
+                            <button
+                              onClick={() => setSelectedApplication(application)}
+                              className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                              <Eye className="w-4 h-4 inline mr-1" />
+                              View Details
+                            </button>
+
+
                             <button
                                 onClick={() => openCVPreview(application.cvUrl)}
                                 className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
@@ -628,20 +647,16 @@ const openCVPreview = (cvUrl) => {
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
-                            <button
-                                  onClick={() => {
-                                          const fullUrl = application.cvUrl.startsWith('http')
-                                            ? application.cvUrl
-                                            : `http://localhost:3000/api/Company/cv/${filename}`;
-                                          setSelectedCV(fullUrl);
-                                          setCvLoadError(false);
-                                          setShowCVModal(true);
-                                        }}
-                                  className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
-                                >
-                                  <Download className="w-4 h-4" />
-                                </button>
-                          </div>
+                                                    
+                          <button
+                            onClick={() => handleCVDownload(application.cvUrl)}
+                            className="px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors"
+                            title="Download CV"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+
+                        </div>
 
                           {/* Status Actions */}
                           <div className="flex gap-1">
@@ -845,10 +860,13 @@ const openCVPreview = (cvUrl) => {
         )}
 
          
- {/* CV Viewer Modal */}
-        {showCVModal && (
+
+
+{/* CV Viewer Modal */}
+{showCVModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div className="bg-white rounded-lg max-w-5xl w-full h-[90vh] flex flex-col">
+      {/* Header */}
       <div className="p-4 border-b flex items-center justify-between flex-shrink-0">
         <h3 className="text-lg font-semibold">CV Preview</h3>
         <div className="flex items-center gap-3">
@@ -871,30 +889,47 @@ const openCVPreview = (cvUrl) => {
           </button>
         </div>
       </div>
+
+      {/* Content */}
       <div className="flex-1 p-4 overflow-hidden">
         <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden">
           {selectedCV && !cvLoadError ? (
             <div className="w-full h-full relative">
+              {/* Try iframe first */}
               <iframe
                 src={`${selectedCV}#toolbar=1&navpanes=1&scrollbar=1`}
                 className="w-full h-full border-0"
                 title="CV Preview"
-                onLoad={() => {
-                  console.log('PDF loaded successfully');
-                  setCvLoadError(false);
-                }}
+                onLoad={() => setCvLoadError(false)}
                 onError={(e) => {
-                  console.error('PDF load error:', e);
+                  console.error('PDF iframe load error:', e);
                   setCvLoadError(true);
                 }}
-                style={{
-                  backgroundColor: 'white'
-                }}
+                style={{ backgroundColor: 'white' }}
               />
-              {/* Loading overlay */}
-              <div className="absolute inset-0 bg-gray-100 flex items-center justify-center pointer-events-none opacity-0 transition-opacity">
-                <div className="text-gray-600">Loading PDF...</div>
-              </div>
+
+              {/* Fallback: Try object embed */}
+              {cvLoadError && (
+                <object
+                  data={selectedCV}
+                  type="application/pdf"
+                  className="w-full h-full"
+                  onError={() => {
+                    console.error('PDF object embed failed');
+                    setCvLoadError(true);
+                  }}
+                >
+                  <embed
+                    src={selectedCV}
+                    type="application/pdf"
+                    className="w-full h-full"
+                    onError={() => {
+                      console.error('PDF embed failed');
+                      setCvLoadError(true);
+                    }}
+                  />
+                </object>
+              )}
             </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center flex-col">
@@ -903,19 +938,35 @@ const openCVPreview = (cvUrl) => {
                 {cvLoadError ? 'Cannot preview PDF in browser' : 'No CV selected'}
               </p>
               <p className="text-sm text-gray-500 mb-4 text-center max-w-md">
-                {cvLoadError 
-                  ? 'Some browsers may block PDF preview. You can still download or open in a new tab.' 
-                  : 'Select a CV to preview'
-                }
+                {cvLoadError
+                  ? 'Your browser may not support PDF preview. Try downloading or opening in a new tab.'
+                  : 'Select a CV to preview'}
               </p>
+
               {selectedCV && (
                 <div className="flex gap-3">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       const token = getAuthToken();
                       if (token) {
-                        // Open with auth header in new tab
-                        window.open(selectedCV, '_blank');
+                        try {
+                          const response = await fetch(selectedCV, {
+                            method: 'HEAD',
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                            },
+                          });
+
+                          if (response.ok) {
+                            window.open(selectedCV, '_blank');
+                          } else {
+                            console.error('URL not accessible:', response.status);
+                            alert(`Cannot access CV: ${response.status} ${response.statusText}`);
+                          }
+                        } catch (error) {
+                          console.error('Error testing URL:', error);
+                          alert('Cannot access CV. Please try downloading instead.');
+                        }
                       } else {
                         alert('Authentication required');
                       }
@@ -940,12 +991,12 @@ const openCVPreview = (cvUrl) => {
       </div>
     </div>
   </div>
-)}
+        )}
+
       </div>
-      </div>
+    </div>
   )};
-
-
+         
 
 
 export default View_appications;
