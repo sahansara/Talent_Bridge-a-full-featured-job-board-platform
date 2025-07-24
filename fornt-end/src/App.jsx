@@ -19,7 +19,7 @@ import Manage_jobSeekers from './Admin/Manage_jobSeekers';
 import Manage_Companies from './Admin/Manage_Companies';
 import 'boxicons';
 import SK_profile from './Seeker_dashboard/Sk_profile';
-
+import Notifications from './Seeker_dashboard/Notifications';
 
 function App() {
   return (
@@ -41,12 +41,13 @@ function App() {
               <Route path="job-posts" element={<SK_loadPost />} />
               <Route path="applied-jobs" element={<Applied_job />} />
               <Route path="profile" element={<SK_profile />} />
+              <Route path="notifications" element={<Notifications />} />
             </Route>
 
 
         {/* Admin Nested Routes */}
         <Route path="/admin" element={<Admin_dashboard />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route index element={<Navigate to="dashboard" replace/>} />
           <Route path="dashboard" element={<Admin_content />} />
           <Route path="admin_dashboard/manage_post" element={<Manage_post />} />
           <Route path='admin_dashboard/manage_jobseekers' element={<Manage_jobSeekers/>} />

@@ -57,7 +57,7 @@ const Seek_register = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
   
-      console.log('Registration successful:', response.data);
+     
       alert('Registered successfully!');
     } catch (error) {
       console.error('Registration failed:', error.response?.data || error.message);

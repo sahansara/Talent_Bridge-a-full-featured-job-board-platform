@@ -32,7 +32,7 @@ export default function Applied_job() {
 
       setApplications(data);
       setFilteredApplications(data);
-      console.log('Applications fetched successfully:', data);
+      
     } catch (err) {
       setError('Failed to load applications. Please try again later.');
       console.error('Error fetching applications:', err);
@@ -44,7 +44,17 @@ export default function Applied_job() {
   fetchApplications();
 }, []);
 
+useEffect(() => {
+  if (modalOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'unset';
+  }
 
+  return () => {
+    document.body.style.overflow = 'unset';
+  };
+}, [modalOpen]);
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setFilteredApplications(applications);
@@ -73,11 +83,11 @@ export default function Applied_job() {
 
   const getStatusIcon = (status) => {
     switch (status.toLowerCase()) {
-      case 'applied':
+      case 'under review':
         return <Clock className="text-yellow-500" size={18} />;
-      case 'read':
+      case 'applied':
         return <Calendar className="text-blue-500" size={18} />;
-      case 'offered':
+      case 'accepted':
         return <CheckCircle className="text-green-500" size={18} />;
       case 'rejected':
         return <X className="text-red-500" size={18} />;
@@ -89,18 +99,17 @@ export default function Applied_job() {
   const getStatusClass = (status) => {
     
     switch (status.toLowerCase()) {
+     
       case 'applied':
-        
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-        
-      case 'read':
         return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'offered':
+      case 'accepted':
         return 'bg-green-100 text-green-800 border-green-300';
       case 'rejected':
         return 'bg-red-100 text-red-800 border-red-300';
+      case 'under review':
+        return 'bg-orange-100 text-yellow-800 border-orange-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
     }
   };
 

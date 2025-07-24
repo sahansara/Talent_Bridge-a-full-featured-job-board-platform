@@ -17,7 +17,7 @@ router.get('/Employers', async (req, res) => {
 
     // Fetch all Employers but exclude sensitive fields
     const Company = await collection.find(
-      { role: 'Company' }, // Filter only Employers
+      { role: 'Company' }, 
       {
         projection: {
           _id: 1,
