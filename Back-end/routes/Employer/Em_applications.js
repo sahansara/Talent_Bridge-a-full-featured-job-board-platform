@@ -162,8 +162,8 @@ router.put('/applications/:applicationId/status', async (req, res) => {
       type: 'status_update',
       status: status,
       jobTitle: application.jobDetails.title,
-      companyName: company.companyName, // From Companies collection
-      companyImage: company.companyImage, // From Companies collection
+      companyName: company.companyName, 
+      companyImage: company.image, 
       
       isRead: false,
       createdAt: new Date()

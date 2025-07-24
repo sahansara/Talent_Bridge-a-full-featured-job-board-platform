@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 const LocationIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1113.314 0z" />
@@ -8,6 +9,22 @@ const LocationIcon = () => (
   </svg>
 );
 const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfile, userCV, onApply, isApplying }) => {
+  
+  
+  useEffect(() => {
+  if (isOpen) {
+    // Prevent scrolling
+    document.body.style.overflow = 'hidden';
+  } else {
+    // Restore scrolling
+    document.body.style.overflow = 'unset';
+  }
+
+  // Cleanup function to restore scrolling when component unmounts
+  return () => {
+    document.body.style.overflow = 'unset';
+  };
+}, [isOpen]);
   if (!isOpen || !selectedJob) return null;
   
   return (
@@ -217,16 +234,27 @@ const SK_loadPost = ({fullName}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
 
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
+  
   
 
-
   // application state open model
-const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-const [userCV, setUserCV] = useState(null);
-const [userProfile, setUserProfile] = useState(null);
-const [isApplying, setIsApplying] = useState(false);
-const [hasApplied, setHasApplied] = useState(false);
+    const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+    const [userCV, setUserCV] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
+    const [isApplying, setIsApplying] = useState(false);
+    const [hasApplied, setHasApplied] = useState(false);
 
 
   useEffect(() => {
@@ -252,7 +280,7 @@ const [hasApplied, setHasApplied] = useState(false);
         Authorization: `Bearer ${token}`
       }
     });
-    console.log("job response:", response.data); // Debug log
+    
     setJobs(response.data);
   } catch (error) {
     console.error('Error fetching jobs:', error);
@@ -320,7 +348,7 @@ const dummyCV = "/documents/john-doe-cv.pdf";
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
-    console.log("view job response:", response.data); // Debug log
+    
     setSelectedJob(response.data);
     setIsModalOpen(true);
   } catch (err) {
@@ -415,7 +443,7 @@ const submitApplication = async () => {
         profileImage: response.data.profileImage
       });
       setUserCV(response.data.cvFilename || dummyCV);
-      console.log("profile response:", response.data); // Debug log
+      
     } catch (error) {
       console.error('Error fetching user data:', error);
       // Use dummy data on error

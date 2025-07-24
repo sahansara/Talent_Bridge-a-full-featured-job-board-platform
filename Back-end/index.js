@@ -19,8 +19,8 @@ const Manage_jobpost = require('./routes/Admin/Manage_jobpost');
 const Job_Post = require('./routes/Job_seeker/Job_post');
 const Em_applications = require('./routes/Employer/Em_applications');
 const Manage_jobSeeker = require('./routes/Admin/Manage_jobSeeker');
-const Manage_Employers = require('./routes/Admin/Manage_Employers');
-
+const Manage_Employers = require('./routes/Admin/Manage_Employers.js');
+const notifications = require('./routes/Job_seeker/notifications');
 
 const app = express();
 const port = 3000;
@@ -79,7 +79,7 @@ const dbName = 'talent_Bridge';
 
 let collection;
 let Companycollection;
-let admincollection; // Add this line to create the collection variable
+let admincollection; // Add this line to create the collection variables
 let notificationsCollection;
 async function main() {
   await client.connect();
@@ -298,12 +298,19 @@ app.post('/jobseeker/logout', authenticateToken, (req, res) => {
 
 
 // API company routes
-app.use('/api/users', ensureDbConnected,authenticateToken, SK_profileRoutes);
+
 app.use('/api/Company', ensureDbConnected,Login_register);
 app.use('/api/Company', ensureDbConnected,authenticateToken, Em_dashboard);
 app.use('/api/Company/Employer', ensureDbConnected,authenticateToken, Em_profile);
-app.use('/api/job-seeker', ensureDbConnected, authenticateToken, Job_Post);
+
 app.use('/api/Company', ensureDbConnected, authenticateToken, Em_applications);
+
+//api job seeker routes
+app.use('/api/job-seeker', ensureDbConnected, authenticateToken, Job_Post);
+app.use('/api/users', ensureDbConnected,authenticateToken, SK_profileRoutes);
+app.use('/api/job-seeker', ensureDbConnected, authenticateToken, notifications);
+
+
 
 
 // Admin routes
