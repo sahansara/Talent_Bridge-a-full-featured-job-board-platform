@@ -81,7 +81,7 @@ router.post('/employer_register', upload.fields([
       comDescription,
       contactNumber,
       companyWebsite,
-      companyImage: imagePath,
+      image: imagePath,
       createdAt: new Date()
     };
 

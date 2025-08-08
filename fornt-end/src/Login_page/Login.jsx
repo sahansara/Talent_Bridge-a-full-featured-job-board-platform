@@ -1,199 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import 'boxicons/css/boxicons.min.css';
+import { useState, useEffect } from 'react';
+import {Briefcase, User, Building, Shield } from 'lucide-react';
+import { colorThemes } from '../colorThemes/colorThemes';
+import { LoginForm } from './loginForm/loginForm';
+import ThemeSwitcher from '../colorThemes/themeSwitcher';
+
 
 
 const images = [
-  'src/assets/9.jpg',
-  'src/assets/10.jpg',
-  'src/assets/11.jpg'
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop'
 ];
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    remember: false,
-  });
-
+  const [theme, setTheme] = useState('blue');
   const [currentImage, setCurrentImage] = useState(0);
+  
+  const currentTheme = colorThemes[theme];
 
+  // Image slideshow effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
+  
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-  // Add this useEffect right after your useState declarations to load saved email on component mount
-useEffect(() => {
-  const savedEmail = localStorage.getItem('savedEmail');
-  if (savedEmail) {
-    setFormData(prev => ({
-      ...prev,
-      email: savedEmail,
-      remember: true
-    }));
-  }
-}, []);
-
-// Update the handleSubmit function to save or remove the email based on remember checkbox
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const res = await axios.post('http://localhost:3000/login', {
-      email: formData.email,
-      password: formData.password,
-      remember: formData.remember
-    });
-
-    console.log(res.data);
-      
-    // Store the token if it exists in the response
-    if (res.data.token) {
-      localStorage.setItem('token', res.data.token);
-      
-      // If remember me is checked, save the email
-      if (formData.remember) {
-        localStorage.setItem('savedEmail', formData.email);
-      } else {
-        // If not checked, remove any saved email
-        localStorage.removeItem('savedEmail');
-      }
-    }
-    
-    // Check user role and redirect accordingly
-    const userRole = res.data.role;
-    
-    switch(userRole) {
-      case 'jobseeker':
-        navigate('/job-seeker/dashboard');
-        break;
-      case 'Company':
-        navigate('/Employer_dashboard');
-        break;
-      case 'Admin':
-        navigate('/admin/dashboard');
-        break;
-      default:
-        // Fallback if role is not recognized
-        alert('Unknown user role. Please contact support.');
-    }
-
-    alert('Login successful!');
-  } catch (err) {
-    console.error('Login failed:', err.response?.data || err.message);
-    alert('Login failed. Please check your credentials.');
-  }
-};
+  const userTypes = [
+    { icon: <User className="w-5 h-5" />, title: 'Job Seekers', desc: 'Find your dream job' },
+    { icon: <Building className="w-5 h-5" />, title: 'Employers', desc: 'Hire top talent' },
+    { icon: <Shield className="w-5 h-5" />, title: 'Admins', desc: 'Platform management' }
+  ];
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gray-100">
-      
-      {/* Left Image Section */}
-      <div className="bg-blue-600 flex flex-col items-center justify-center p-6">
-        <img
-          src={images[currentImage]}
-          alt="Slider"
-          className="w-full max-w-md object-cover rounded-xl shadow-xl"
-        />
-        <div className="text-center text-white mt-6 px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Welcome to JobBoard</h1>
-          <p className="text-base md:text-lg">Log in to find jobs, hire talent, or manage the platform.</p>
-        </div>
-        <a
-          href="/"
-          className="mt-6 bg-white text-blue-600 px-6 py-2 rounded-lg shadow hover:bg-gray-100 transition-all duration-300 font-semibold"
-        >
-          Sign Up
-        </a>
+    <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[
+          { size: 'w-96 h-96', pos: '-top-48 -right-48', color: 'bg-purple-500', delay: '' },
+          { size: 'w-80 h-80', pos: '-bottom-40 -left-40', color: 'bg-blue-500', delay: 'animation-delay-1000' },
+          { size: 'w-64 h-64', pos: 'top-1/3 left-1/4', color: 'bg-pink-500', delay: 'animation-delay-2000' }
+        ].map((circle, i) => (
+          <div key={i} className={`absolute ${circle.pos} ${circle.size} ${circle.color} rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse ${circle.delay}`}></div>
+        ))}
+      </div>
+                                  
+      {/* Theme Switcher */}
+      <div className="absolute top-6 right-6 z-50 flex space-x-2">
+        <ThemeSwitcher theme={theme} setTheme={setTheme} />
+       
       </div>
 
-      {/* Right Login Form */}
-      <div className="relative flex items-center justify-center p-8 bg-white">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-5"
-        >
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Login</h2>
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
+        
+        {/* Left Visual Section */}
+        <div className="flex flex-col items-center justify-center p-8 lg:p-12">
+          {/* Logo Header */}
+          <div className="flex items-center mb-8">
+            <div className={`bg-gradient-to-r ${currentTheme.primary} w-12 h-12 rounded-xl flex items-center justify-center mr-4`}>
+              <Briefcase className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-6xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-4 font-sans-serif">
+              Talent Bridge
+            </h1>
+          </div>
 
-          <div className="relative">
-            <label className="block mb-1 font-semibold">Email</label>
-            <div className="flex items-center border rounded-xl p-3">
-              <i className='bx bxs-user text-xl text-gray-400 mr-3'></i>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full p-3 border rounded-xl focus:outline-none focus:ring focus:ring-blue-300"
-              />
+         {/* Main Image with Overlay */}
+          <div className="relative w-full max-w-2xl mb-8">
+            <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl">
+              <img src={images[currentImage]} alt="JobBoard Platform" 
+                className="w-full h-full object-cover transition-all duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              
+              {/* Image Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {images.map((_, i) => (
+                  <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === currentImage ? `bg-white` : 'bg-white/40'
+                  }`}></div>
+                ))}
+              </div>
             </div>
           </div>
-
-          <div className="relative">
-            <label className="block mb-1 font-semibold">Password</label>
-            <div className="flex items-center border rounded-xl p-3">
-            <i
-              className={`bx ${passwordVisible ? 'bxs-lock-open' : 'bxs-lock'} text-gray-500 text-xl absolute right-3 cursor-pointer`}
-              onClick={togglePasswordVisibility}
-            ></i>
-               <input
-              type={passwordVisible ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter your password"
-              className="w-full p-3 focus:outline-none"
-            />
-            
-            </div>
+                     
+          {/* Welcome Text */}
+          <div className="text-center text-white mb-8">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Welcome Back
+              </span>
+            </h2>
+            <p className="text-lg text-gray-300 max-w-md">
+              Access your dashboard to find jobs, hire talent, or manage the platform
+            </p>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="remember"
-                checked={formData.remember}
-                onChange={handleChange}
-              />
-              Remember Me
-            </label>
-            <a href="/forgot-password" className="text-blue-600 hover:underline">
-              Forgot Password?
-            </a>
+          {/* User Type Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
+            {userTypes.map((type, i) => (
+              <div key={i} className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-center hover:bg-white/20 transition-all duration-300">
+                <div className={`w-10 h-10 bg-gradient-to-r ${currentTheme.secondary} rounded-xl flex items-center justify-center mx-auto mb-2`}>
+                  {type.icon}
+                </div>
+                <h3 className="text-white font-semibold text-sm">{type.title}</h3>
+                <p className="text-gray-400 text-xs">{type.desc}</p>
+              </div>
+            ))}
           </div>
+        </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 font-semibold"
-          >
-            Login <i className='bx bxs-lock-open ml-2'></i>
-          </button>
+        {/* Right Login Form */}
+        <div className="flex items-center justify-center p-8 lg:p-12 ">
+          <LoginForm  currentTheme={currentTheme}/>
 
-          <p className="text-sm text-center mt-4">
-            Don’t have an account? <a href="/register" className="text-blue-600 hover:underline">Sign up here</a>
-          </p>
-        </form>
+        </div>
       </div>
     </div>
   );
