@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb');
 const router = express.Router();
 
 // Get all Employers (admin only)
-router.get('/Employers', async (req, res) => {
+router.get('/Company', async (req, res) => {
   try {
     console.log('Admin fetching all Employers');
     

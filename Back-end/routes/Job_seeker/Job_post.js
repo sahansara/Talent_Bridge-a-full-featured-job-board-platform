@@ -298,47 +298,47 @@ router.get('/my-applications', async (req, res) => {
   }
 });
 
-// Update application status (when employer views it)
-router.patch('/applications/:applicationId/status', async (req, res) => {
-  try {
-    const { applicationId } = req.params;
-    const { status } = req.body;
+// // Update application status (when employer views it)
+// router.patch('/applications/:applicationId/status', async (req, res) => {
+//   try {
+//     const { applicationId } = req.params;
+//     const { status } = req.body;
 
-    if (!ObjectId.isValid(applicationId)) {
-      return res.status(400).json({ error: 'Invalid application ID' });
-    }
+//     if (!ObjectId.isValid(applicationId)) {
+//       return res.status(400).json({ error: 'Invalid application ID' });
+//     }
 
-    const validStatuses = ['Applied', 'Viewed', 'Interview', 'Rejected', 'Hired'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
+//     const validStatuses = ['Applied', 'Viewed', 'Interview', 'Rejected', 'Hired'];
+//     if (!validStatuses.includes(status)) {
+//       return res.status(400).json({ error: 'Invalid status' });
+//     }
 
-    const db = req.app.locals.db;
-    const jobApplicationsCollection = db.collection('job_applications');
+//     const db = req.app.locals.db;
+//     const jobApplicationsCollection = db.collection('job_applications');
 
-    const result = await jobApplicationsCollection.updateOne(
-      { _id: new ObjectId(applicationId) },
-      { 
-        $set: { 
-          status: status,
-          updatedAt: new Date()
-        }
-      }
-    );
+//     const result = await jobApplicationsCollection.updateOne(
+//       { _id: new ObjectId(applicationId) },
+//       { 
+//         $set: { 
+//           status: status,
+//           updatedAt: new Date()
+//         }
+//       }
+//     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ error: 'Application not found' });
-    }
+//     if (result.matchedCount === 0) {
+//       return res.status(404).json({ error: 'Application not found' });
+//     }
 
-    res.status(200).json({ 
-      message: 'Application status updated successfully',
-      status: status
-    });
+//     res.status(200).json({ 
+//       message: 'Application status updated successfully',
+//       status: status
+//     });
 
-  } catch (error) {
-    console.error('Error updating application status:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+//   } catch (error) {
+//     console.error('Error updating application status:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 module.exports = router;
