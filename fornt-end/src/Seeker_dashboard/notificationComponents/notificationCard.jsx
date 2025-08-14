@@ -54,7 +54,7 @@ const NotificationCard = ({
           />
         </div>
 
-        {/* Image - thumbnail for job posts, company image for applications */}
+        {/* Image - thumbnail for job posts, employer image for applications */}
         <div className="mr-3 sm:mr-4 flex-shrink-0">
           <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200">
             {activeTab === 'jobpost' && notification.thumbnail ? (
@@ -63,10 +63,10 @@ const NotificationCard = ({
                 alt="Job thumbnail"
                 className="h-full w-full object-cover"
               />
-            ) : activeTab === 'applications' && notification.companyImage ? (
+            ) : activeTab === 'applications' && notification.employerImage ? (
               <img 
-                src={notification.companyImage.startsWith('http') ? notification.companyImage : `http://localhost:3000/${notification.companyImage}`} 
-                alt={`${notification.companyName || 'company'} profile`}
+                src={notification.employerImage.startsWith('http') ? notification.employerImage : `http://localhost:3000/${notification.employerImage}`} 
+                alt={`${notification.employerName || 'employer'} profile`}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -82,7 +82,7 @@ const NotificationCard = ({
           </h3>
           
           <p className="text-gray-700 font-medium mb-1 text-sm sm:text-base">
-            Company: {notification.companyName}
+            employer: {notification.employerName}
           </p>
 
           {/* Show job type for job vacancy notifications */}

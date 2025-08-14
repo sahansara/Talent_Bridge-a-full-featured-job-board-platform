@@ -1,13 +1,22 @@
 import React from 'react';
 
-const WelcomeHeader = ({ fullName }) => {
+const WelcomeHeader = ({ username }) => {
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">Welcome, {fullName || 'User'}</h1>
+  <div className="mb-6 bg-white rounded-2xl p-8 shadow-xl border-l-8 ">
+  <div className="flex items-center mb-4">
+    <div className="text-center w-3 h-12 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full mr-4"></div>
+    <div>
+      <h1 className=" text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent mb-2 py-1">
+          
+      Welcome, 
+       {username || 'User'}</h1>
       </div>
       
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Search Jobs</h1>
+      
+      </div></div>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Search your Jobs</h1>
+      
     </>
   );
 };

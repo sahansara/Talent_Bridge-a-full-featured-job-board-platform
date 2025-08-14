@@ -16,7 +16,7 @@ const JobCard = ({ job, handleViewJob, handleApplyJob }) => {
             {job.logo ? (
               <img 
                 src={job.logo.startsWith('http') ? job.logo : `http://localhost:3000/${job.logo}`} 
-                alt={`${job.company} logo`}
+                alt={`${job.employer} logo`}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
               />
             ) : (
@@ -30,7 +30,7 @@ const JobCard = ({ job, handleViewJob, handleApplyJob }) => {
           
           <div>
             <h2 className="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors duration-200">{job.title}</h2>
-            <p className="text-gray-600 hover:text-gray-800 transition-colors duration-200">{job.company}</p>
+            <p className="text-gray-600 hover:text-gray-800 transition-colors duration-200">{job.employer}</p>
             <div className="flex items-center mt-1 text-gray-500">
               <LocationIcon />
               <span className="ml-1 text-sm">{job.location}</span>

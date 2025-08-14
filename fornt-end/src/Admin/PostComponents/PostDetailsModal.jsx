@@ -40,18 +40,18 @@ const PostDetailsModal = ({
         <div className="px-6 py-4">
           {/* Job Header */}
           <div className="flex items-center mb-6">
-            {postValidationUtils.hasCompanyLogo(job) ? (
+            {postValidationUtils.hasemployerLogo(job) ? (
               <div className="h-20 w-20 rounded-lg overflow-hidden mr-4 bg-gray-100">
                 <img 
-                  src={postValidationUtils.getCompanyLogoUrl(job)}
-                  alt="Company logo" 
+                  src={postValidationUtils.getemployerLogoUrl(job)}
+                  alt="employer logo" 
                   className="h-full w-full object-cover"
                 />
               </div>
             ) : (
               <div className="h-20 w-20 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
                 <span className="text-3xl font-bold text-blue-500">
-                  {postValidationUtils.getCompanyInitial(job)}
+                  {postValidationUtils.getemployerInitial(job)}
                 </span>
               </div>
             )}
@@ -59,7 +59,7 @@ const PostDetailsModal = ({
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{job.title}</h1>
               <p className="text-lg text-gray-600">
-                {postValidationUtils.getDisplayText(job.companyName, "Company not specified")}
+                {postValidationUtils.getDisplayText(job.employerName, "employer not specified")}
               </p>
             </div>
           </div>

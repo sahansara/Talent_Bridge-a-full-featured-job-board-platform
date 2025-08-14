@@ -13,7 +13,7 @@ class PostValidationUtils {
 
     return jobs.filter(job => 
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (job.companyName || job.company || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (job.employerName || job.employer || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (job.province || job.location || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
@@ -46,21 +46,21 @@ class PostValidationUtils {
     }
   }
 
-  // Get company logo URL
-  getCompanyLogoUrl(job) {
+  // Get employer logo URL
+  getemployerLogoUrl(job) {
     const API_BASE_URL = 'http://localhost:3000/';
     
-    if (job.companyLogo) {
-      return `${API_BASE_URL}${job.companyLogo}`;
+    if (job.employerLogo) {
+      return `${API_BASE_URL}${job.employerLogo}`;
     } else if (job.thumbnail) {
       return `${API_BASE_URL}${job.thumbnail}`;
     }
     return '/placeholder-logo.png';
   }
 
-  // Get company initial
-  getCompanyInitial(job) {
-    return (job.companyName || job.title || "J").charAt(0);
+  // Get employer initial
+  getemployerInitial(job) {
+    return (job.employerName || job.title || "J").charAt(0);
   }
 
   // Validate job post data
@@ -92,9 +92,9 @@ class PostValidationUtils {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   }
 
-  // Check if job has company logo
-  hasCompanyLogo(job) {
-    return !!(job.companyLogo || job.thumbnail);
+  // Check if job has employer logo
+  hasemployerLogo(job) {
+    return !!(job.employerLogo || job.thumbnail);
   }
 
   // Get status display text

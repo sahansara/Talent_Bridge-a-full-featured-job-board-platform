@@ -77,7 +77,7 @@ export const notificationUtils = {
     return notifications.filter(notification =>
       (notification.jobTitle && notification.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (notification.type && notification.type.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (notification.companyName && notification.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (notification.employerName && notification.employerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (notification.jobtype && notification.jobtype.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }

@@ -12,10 +12,12 @@ import PersonalInfoTab from './profileComponets/personalInfoTab';
 import SecurityTab from './profileComponets/securityTab';
 import DocumentsTab from './profileComponets/documentsTab';
 import NotificationAlert from './profileComponets/notificationAlert';
+import ProfileHeader from './profileComponets/profileHeader';
 
 // Service imports
-import { profileAPI } from '../services/jobSeeker/profile';
+import { profileAPI } from '../services/jobSeeker/mainprofile';
 import { validateProfileForm, validateFile } from "../utils/jobSeeker/profileValidations";
+
 
 const SK_profile = () => {
   const navigate = useNavigate();
@@ -272,17 +274,9 @@ const SK_profile = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-6 w-full">
       <div className="max-w-7xl mx-auto w-full">
-        {/* Back button */}
-        <div className="mb-6">
-          <button 
-            onClick={handleGoBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <i className="bx bx-arrow-back mr-2"></i> Back
-          </button>
-        </div>
         
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
+        
+        <ProfileHeader/>
 
         <NotificationAlert notification={notification} />
 

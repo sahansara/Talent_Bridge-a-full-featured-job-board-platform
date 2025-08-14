@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 
 // Import components
-import SearchAndSort from './appliedJobComponents.jsx/searchAndSort';
-import ApplicationCard from './appliedJobComponents.jsx/applicationCard';
-import EmptyApplicationsState from './appliedJobComponents.jsx/emptyApplicationsState';
-import ApplicationModal from './appliedJobComponents.jsx/applicationModal';
-import LoadingSpinner from './appliedJobComponents.jsx/loadingSpinner';
-import ErrorMessage from './appliedJobComponents.jsx/ErrorMessage';
-
+import SearchAndSort from './appliedJobComponents/searchAndSort';
+import ApplicationCard from './appliedJobComponents/applicationCard';
+import EmptyApplicationsState from './appliedJobComponents/emptyApplicationsState';
+import ApplicationModal from './appliedJobComponents/applicationModal';
+import LoadingSpinner from './appliedJobComponents/loadingSpinner';
+import ErrorMessage from './appliedJobComponents/ErrorMessage';
+import Header from './appliedJobComponents/Header';
 // Import services and utils
 import { appliedJobsAPI } from '../services/jobSeeker/appliedJobs';
 import { appliedJobsUtils } from '../utils/jobSeeker/appliedJobs';
@@ -117,10 +117,8 @@ const AppliedJobs = () => {
   return (
     <div className="flex-1 bg-white-100 p-6 md:p-10">
       {/* Header Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">My Job Applications</h1>
-        <p className="text-gray-600">Track and manage your job applications in one place</p>
-      </div>
+      
+       <Header/>
 
       {/* Search and Sort Section */}
       <SearchAndSort

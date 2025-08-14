@@ -48,8 +48,8 @@ export const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfi
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-600 mb-1">Company:</p>
-                <p className="font-medium text-gray-800">{selectedJob.company}</p>
+                <p className="text-gray-600 mb-1">employer:</p>
+                <p className="font-medium text-gray-800">{selectedJob.employer}</p>
               </div>
               {selectedJob.location && (
                 <div>
@@ -173,8 +173,8 @@ export const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfi
           <div className="mb-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
             <h4 className="text-lg font-semibold text-gray-800 mb-3">Privacy Notice</h4>
             <p className="text-gray-600">
-              By clicking "Yes, Apply", your CV and profile information will be sent to {selectedJob.company}. 
-              The company will use your information for the hiring process according to their privacy policy.
+              By clicking "Yes, Apply", your CV and profile information will be sent to {selectedJob.employer}. 
+              The employer will use your information for the hiring process according to their privacy policy.
             </p>
           </div>
         </div>

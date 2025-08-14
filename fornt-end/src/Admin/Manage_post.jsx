@@ -169,7 +169,7 @@ const Manage_post = () => {
 
 
   return (
-    <div className="w-full p-6 bg-gray-50 ">
+    <div className="w-full p-6 bg-gradient-to-br from-blue-50 via-red to-blue-50 ">
       {/* Page Header with filters and search */}
       <PostHeader
         filterStatus={filterStatus}
