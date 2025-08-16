@@ -29,7 +29,7 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
     e.preventDefault();
     
     try {
-      const res = await axios.post('http://localhost:3000/login', {
+      const res = await axios.post('http://localhost:3000/api/login', {
         email: formData.email,
         password: formData.password,
         remember: formData.remember
@@ -57,7 +57,7 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
         case 'jobseeker':
           navigate('/job-seeker/dashboard');
           break;
-        case 'Company':
+        case 'employer':
           navigate('/Employer_dashboard');
           break;
         case 'Admin':

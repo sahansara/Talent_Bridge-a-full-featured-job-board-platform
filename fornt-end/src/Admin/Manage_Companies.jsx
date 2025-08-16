@@ -1,13 +1,13 @@
 // src/Manage_Companies_Optimized.js
 import React, { useState, useEffect } from 'react';
-import CompanyHeader from './companyComponents/companyHeader';
+import EmployerHeader from './employerComponents/employerHeader';
 import SearchBar from './shared/searchBar';
-import CompanyGrid from './companyComponents/companyGrid';
+import EmployerGrid from './employerComponents/employerGrid';
 import DeleteConfirmationModal from './shared/DeleteConModal';
 import NotificationAlert from './shared/notificationAlert';
 import LoadingSpinner from './shared/loadingSpinner';
-import { companyApiService } from '../services/Admin/Company';
-import { notificationUtils } from '../utils/Admin/Company';
+import { employerApiService } from '../services/Admin/employer';
+import { notificationUtils } from '../utils/Admin/employer';
 
 const Manage_Companies= () => {
   const [companies, setCompanies] = useState([]);
@@ -23,27 +23,27 @@ const Manage_Companies= () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const data = await companyApiService.getAllCompanies();
+      const data = await employerApiService.getAllCompanies();
       setCompanies(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching companies:', error);
       showNotification('Error fetching companies', 'error');
       // Fallback to sample data in case of error
-      setCompanies(companyApiService.getSampleCompanies());
+      setCompanies(employerApiService.getSampleCompanies());
       setLoading(false);
     }
   };
 
   const handleDeleteUser = async (userId) => {
     try {
-      await companyApiService.deleteCompany(userId);
-      setCompanies(companies.filter(company => company._id !== userId));
+      await employerApiService.deleteemployer(userId);
+      setCompanies(companies.filter(employer => employer._id !== userId));
       setDeleteConfirm(null);
-      showNotification('Company deleted successfully', 'success');
+      showNotification('employer deleted successfully', 'success');
     } catch (error) {
-      console.error('Error deleting company:', error);
-      showNotification('Error deleting company', 'error');
+      console.error('Error deleting employer:', error);
+      showNotification('Error deleting employer', 'error');
     }
   };
 
@@ -59,8 +59,8 @@ const Manage_Companies= () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <CompanyHeader totalCompanies={filteredCompanies.length} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-red to-blue-50">
+      <EmployerHeader totalCompanies={filteredCompanies.length} />
       
       <NotificationAlert notification={notification} />
       
@@ -69,7 +69,7 @@ const Manage_Companies= () => {
         setSearchTerm={setSearchTerm}
       />
       
-      <CompanyGrid 
+      <EmployerGrid 
         companies={filteredCompanies}
         onDeleteClick={setDeleteConfirm}
       />
@@ -78,6 +78,8 @@ const Manage_Companies= () => {
         deleteConfirm={deleteConfirm}
         setDeleteConfirm={setDeleteConfirm}
         onConfirmDelete={handleDeleteUser}
+         itemType="employer"
+        deleteMessage="Are you sure you want to delete this employer All their data will be permanently removed."
       />
     </div>
   );

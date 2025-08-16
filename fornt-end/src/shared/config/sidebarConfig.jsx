@@ -8,38 +8,38 @@ export const jobSeekerConfig = {
   headerIcon: 'MoneyIcon',
   userLabel: USER_TYPES[ROLES.JOB_SEEKER],
   api: {
-    profile: 'http://localhost:3000/profile',
-    logout: 'http://localhost:3000/jobseeker/logout'
+    profile: 'http://localhost:3000/api/users/profile',
+    logout: 'http://localhost:3000/api/logout'
   },
   navigation: [
     { 
       path: '/job-seeker/dashboard/job-posts', 
       icon: 'SearchIcon', 
       label: 'Search Jobs',
-      href: '/job-seeker/dashboard/job-posts'
+      href: '/job-seeker/dashboard/job-posts?tab=searchjobs'
     },
     { 
       path: '/job-seeker/dashboard/applied-jobs', 
       icon: 'ApplicationsIcon', 
       label: 'Applications',
-      href: '/job-seeker/dashboard/applied-jobs'
+      href: '/job-seeker/dashboard/applied-jobs?tab=applications'
     },
     { 
       path: '/job-seeker/dashboard/notifications', 
       icon: 'NotificationIcon', 
       label: 'Notifications',
-      href: '/job-seeker/dashboard/notifications'
+      href: '/job-seeker/dashboard/notifications?tab=notifications'
     },
     { 
       path: '/job-seeker/dashboard/profile', 
       icon: 'ProfileIcon', 
       label: 'Profile',
-      href: '/job-seeker/dashboard/profile'
+      href: '/job-seeker/dashboard/profile?tab=profile'
     }
   ],
   userDataMapping: {
-    name: 'fullName',
-    image: 'image',
+    name: 'username',
+    image: 'profileImage',
     defaultName: 'User'
   },
   theme: {
@@ -52,42 +52,42 @@ export const jobSeekerConfig = {
 export const employerConfig = {
   role: ROLES.EMPLOYER,
   title: 'Employer',
-  headerIcon: 'CompanyIcon',
+  headerIcon: 'employerIcon',
   userLabel: USER_TYPES[ROLES.EMPLOYER],
   api: {
     profile: 'http://localhost:3000/api/Company/profile',
-    logout: 'http://localhost:3000/api/Company/Employer/logout'
+    logout: 'http://localhost:3000/api/logout'
   },
   navigation: [
     { 
       path: '/Employer_dashboard/Employer_jobpost', 
       icon: 'JobListings', 
       label: 'Job Listings',
-      href: '/Employer_dashboard/Employer_jobpost'
+      href: '/Employer_dashboard/Employer_jobpost?tab=joblistings'
     },
     { 
       path: '/Employer_dashboard/View_appications', 
       icon: 'ApplicationsIcon', 
       label: 'Applications',
-      href: '/Employer_dashboard/View_appications'
+      href: '/Employer_dashboard/View_appications?tab=applications',
     },
     { 
       path: '/Employer_dashboard/Notifications', 
       icon: 'NotificationIcon', 
       label: 'Notifications',
-      href: '/Employer_dashboard/Notifications'
+      href: '/Employer_dashboard/Notifications?tab=notifications'
     },
     { 
       path: '/Employer_dashboard/Employer_profile', 
       icon: 'ProfileIcon', 
       label: 'Profile',
-      href: '/Employer_dashboard/Employer_profile'
+      href: '/Employer_dashboard/Employer_profile?tab=profile'
     }
   ],
   userDataMapping: {
-    name: 'companyName',
-    image: 'companyImage',
-    defaultName: 'Company'
+    name: 'employerName',
+    image: 'employerImage',
+    defaultName: 'employer'
   },
   theme: {
     sidebarBg: `bg-gradient-to-b ${colorThemes.blue.bg}`, 
@@ -102,30 +102,30 @@ export const adminConfig = {
   headerIcon: 'ShieldIcon',
   userLabel: USER_TYPES[ROLES.ADMIN],
   api: {
-     profile: 'http://localhost:3000/api/admin/profile',
-    logout: 'http://localhost:3000/api/admin/logout',
+    profile: 'http://localhost:3000/api/admin/profile',
+    logout: 'http://localhost:3000/api/logout',
   },
 
   navigation: [
    { 
-      path: '/admin/admin_dashboard/manage_jobseekers', 
+      path: '/admin/dashboard/manageJobseekers', 
       icon: 'JobSeekerIcon', 
       label: 'Job Seekers',
-      href: '/admin/admin_dashboard/manage_jobseekers',
+      href: '/admin/dashboard/manageJobseekers?tab=jobseekers',
       
     },
     { 
-      path: '/admin/admin_dashboard/manage_companies', 
+      path: '/admin/dashboard/manageEmployer', 
       icon: 'EmployersIcon', 
       label: 'Employers',
-      href: '/admin/admin_dashboard/manage_companies',
+      href: '/admin/dashboard/manageEmployer?tab=employers',
       countKey: 'employers'
     },
     { 
-      path: '/admin/admin_dashboard/manage_post', 
+      path: '/admin/dashboard/managePost', 
       icon: 'JobPostIcon', 
       label: 'Manage Job Post',
-      href: '/admin/admin_dashboard/manage_post',
+      href: '/admin/dashboard/managePost?tab=jobposts',
       countKey: 'jobPosts'
     }
   ],

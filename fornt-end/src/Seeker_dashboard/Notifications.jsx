@@ -8,6 +8,7 @@ import NotificationCard from './notificationComponents/notificationCard';
 import EmptyState from './notificationComponents/emptyState';
 import ErrorAlert from './notificationComponents/errorAlert';
 import LoadingSpinner from './notificationComponents/loadingSpinner';
+import NotificationHeader from './notificationComponents/notificationHeader';
 
 // Import services and utils
 import { notificationApiService } from '../services/jobSeeker/notifications';
@@ -122,14 +123,7 @@ const Notifications = () => {
     <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 mb-2 sm:mb-4">
-            Notification Center
-          </h1>
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-            Stay updated with your latest job posts and applications
-          </p>
-        </div>
+       <NotificationHeader/>
 
         {/* Error Banner */}
         <ErrorAlert error={error} onRetry={handleRetry} />

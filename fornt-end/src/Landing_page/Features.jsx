@@ -5,7 +5,7 @@ import { Search, Users, TrendingUp, Star } from 'lucide-react';
 export const Features = ({ theme }) => {
   const features = [
     { icon: <Search className="w-6 h-6" />, title: 'AI-Powered Search', description: 'Intelligent matching algorithm' },
-    { icon: <Users className="w-6 h-6" />, title: 'Smart Matching', description: 'Perfect company-candidate fit' },
+    { icon: <Users className="w-6 h-6" />, title: 'Smart Matching', description: 'Perfect employer-candidate fit' },
     { icon: <TrendingUp className="w-6 h-6" />, title: 'Career Insights', description: 'Salary trends and analytics' },
     { icon: <Star className="w-6 h-6" />, title: 'Premium Support', description: '24/7 dedicated assistance' }
   ];

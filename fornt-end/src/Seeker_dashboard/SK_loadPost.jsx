@@ -12,7 +12,7 @@ import ApplyConfirmationModal from './loadPostComponents/ApplyConfirmationModal'
 import { jobAPI, userAPI } from '../services/jobSeeker/loadPost'
 import { showNotification, formatDate } from '../utils/jobSeeker/loadpostNotification';
 
-const SK_loadPost = ({ fullName }) => {
+const SK_loadPost = ({ username }) => {
   // State management
   const [searchTerm, setSearchTerm] = useState('');
   const [jobs, setJobs] = useState([]);
@@ -62,6 +62,7 @@ const SK_loadPost = ({ fullName }) => {
       const userData = await userAPI.fetchUserProfile();
       setUserProfile(userData);
       setUserCV(userData.cvFilename);
+      console.log(userData);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -147,10 +148,12 @@ const SK_loadPost = ({ fullName }) => {
     setIsModalOpen(false);
     setSelectedJob(null);
   };
+ 
+  const Username = userProfile?.username || username || 'User';
 
   return (
     <div className="flex-1 bg-white-100 p-6 md:p-10">
-      <WelcomeHeader fullName={fullName} />
+      <WelcomeHeader username={Username} />
       
       <SearchBar 
         searchTerm={searchTerm}

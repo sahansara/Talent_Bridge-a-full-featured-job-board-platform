@@ -13,19 +13,19 @@ const PostCard = ({ job, onViewDetails, onApprove, onReject }) => {
       <div className="p-6">
         <div className="flex flex-col md:flex-row justify-between">
           <div className="flex-1">
-            {/* Job Title & Company */}
+            {/* Job Title & employer */}
             <div className="flex items-start space-x-4">
-              {/* Company Logo/Thumbnail */}
+              {/* employer Logo/Thumbnail */}
               <div className="h-16 w-16 flex-shrink-0 rounded-md bg-gray-200 flex items-center justify-center overflow-hidden">
-                {postValidationUtils.hasCompanyLogo(job) ? (
+                {postValidationUtils.hasemployerLogo(job) ? (
                   <img
-                    src={postValidationUtils.getCompanyLogoUrl(job)}
+                    src={postValidationUtils.getemployerLogoUrl(job)}
                     alt={`${job.title} thumbnail`}
                     className="h-full w-full object-cover"
                   />
                 ) : (
                   <div className="text-3xl font-bold text-gray-500">
-                    {postValidationUtils.getCompanyInitial(job)}
+                    {postValidationUtils.getemployerInitial(job)}
                   </div>
                 )}
               </div>
@@ -34,7 +34,7 @@ const PostCard = ({ job, onViewDetails, onApprove, onReject }) => {
               <div>
                 <h2 className="text-xl font-bold text-gray-800">{job.title}</h2>
                 <p className="text-gray-600">
-                  {postValidationUtils.getDisplayText(job.companyName, "Company info not available")}
+                  {postValidationUtils.getDisplayText(job.employerName, "employer info not available")}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-y-1">
                   <span className="mr-4 text-gray-700">

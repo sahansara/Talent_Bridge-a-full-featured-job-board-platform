@@ -36,7 +36,7 @@ export const appliedJobsUtils = {
     const lowercasedSearch = searchTerm.toLowerCase();
     return applications.filter(app => 
       app.jobTitle.toLowerCase().includes(lowercasedSearch) || 
-      app.company.toLowerCase().includes(lowercasedSearch)
+      app.employer.toLowerCase().includes(lowercasedSearch)
     );
   },
 

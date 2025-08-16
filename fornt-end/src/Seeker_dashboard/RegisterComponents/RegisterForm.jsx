@@ -45,7 +45,7 @@ const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } 
     });
 
     try {
-      const response = await axios.post('http://localhost:3000', data, {
+      const response = await axios.post('http://localhost:3000/api/job-seeker/register', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       alert('Registered successfully!');

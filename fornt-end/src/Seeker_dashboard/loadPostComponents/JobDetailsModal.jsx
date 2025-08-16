@@ -35,21 +35,21 @@ const JobDetailsModal = ({
                   src={
                     selectedJob.logo.startsWith('http') ? selectedJob.logo : `http://localhost:3000/${selectedJob.logo}`
                   } 
-                  alt="Company logo" 
+                  alt="employer logo" 
                   className="h-full w-full object-cover"
                 />
               </div>
             ) : (
               <div className="h-20 w-20 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
                 <span className="text-3xl font-bold text-blue-500">
-                  {(selectedJob.company || selectedJob.title || "J").charAt(0)}
+                  {(selectedJob.employer || selectedJob.title || "J").charAt(0)}
                 </span>
               </div>
             )}
             
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{selectedJob.title}</h1>
-              <p className="text-lg text-gray-600">{selectedJob.company || "Company not specified"}</p>
+              <p className="text-lg text-gray-600">{selectedJob.employer || "employer not specified"}</p>
             </div>
           </div>
           
