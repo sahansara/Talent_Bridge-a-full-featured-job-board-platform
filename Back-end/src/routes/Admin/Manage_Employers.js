@@ -1,19 +1,19 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
+const {COLLECTIONS , STATUS_CODES,MESSAGES} = require ( '../../config/constants');
+
+
 
 // Get all Employers (admin only)
 router.get('/Company', async (req, res) => {
   try {
     console.log('Admin fetching all Employers');
     
-    // Check if user is admin
-    if (req.user.role !== 'Admin') {
-      return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
-    }
+    
 
     const db = req.app.locals.db;
-    const collection = db.collection('Companies');
+    const collection = db.collection(COLLECTIONS.ROLE.EMPLOYER);
 
     // Fetch all Employers but exclude sensitive fields
     const employer = await collection.find(
@@ -34,11 +34,11 @@ router.get('/Company', async (req, res) => {
 
     console.log(`Found ${employer.length} Employers`);
     
-    res.status(200).json(employer);
+    res.status(STATUS_CODES.SUCCESS).json(employer);
     
   } catch (error) {
     console.error('Error fetching Employers:', error);
-    res.status(500).json({ error: 'Failed to fetch Employers' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'Failed to fetch Employers' });
   }
 });
 
@@ -48,10 +48,7 @@ router.delete('/Company/:id', async (req, res) => {
     const { id } = req.params;
     console.log(`Admin attempting to delete employer with ID: ${id}`);
     
-    // Check if user is admin
-    if (req.user.role !== 'Admin') {
-      return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
-    }
+   
 
     // Validate ObjectId
     if (!ObjectId.isValid(id)) {
@@ -59,9 +56,9 @@ router.delete('/Company/:id', async (req, res) => {
     }
 
     const db = req.app.locals.db;
-    const collection = db.collection('Companies');
+    const collection = db.collection(COLLECTIONS.ROLE.EMPLOYER);
 
-    // First check if the employer exists
+    // First check if the employer exists       
     const existingemployer = await collection.findOne({ 
       _id: new ObjectId(id),
       role: 'employer' 

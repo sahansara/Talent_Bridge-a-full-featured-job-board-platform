@@ -1,4 +1,3 @@
-// src/shared/hooks/useUserData.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -29,7 +28,7 @@ const useUserData = (config) => {
       setUserData(response.data);
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      
       setError('Failed to load user data');
       
       // Set default values based on config

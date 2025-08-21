@@ -41,18 +41,19 @@ function App() {
 
           {/* Job Seeker Protected Routes */}
           <Route 
-            path="/job-seeker/dashboard" 
+            path="/jobSeeker" 
             element={
               <ProtectedRoute requiredRole="jobseeker">
                 <Sk_dashboard />
               </ProtectedRoute>
             }
           >
-            <Route index element={<SeekerHomeWrapper />} />
-            <Route path="job-posts" element={<SK_loadPost />} />
-            <Route path="applied-jobs" element={<Applied_job />} />
-            <Route path="profile" element={<SK_profile />} />
-            <Route path="notifications" element={<Notifications />} />
+            <Route index element={<Navigate to = "dashboard" replace />} />
+            <Route path="dashboard" element={<SeekerHomeWrapper />} />
+            <Route path="dashboard/jobVacancies" element={<SK_loadPost />} />
+            <Route path="dashboard/applied" element={<Applied_job />} />
+            <Route path="dashboard/profile" element={<SK_profile />} />
+            <Route path="dashboard/notifications" element={<Notifications />} />
           </Route>
 
           {/* Admin Protected Routes */}
@@ -73,21 +74,21 @@ function App() {
 
           {/* Employer Protected Routes */}
           <Route 
-            path="/Employer_dashboard" 
+            path="/employer" 
             element={
               <ProtectedRoute requiredRole="employer">
                 <Em_dashboard />
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="Employer_jobpost" replace />} />
-            <Route path="Employer_jobpost" element={<Em_jobpost />} />
-            <Route path="View_appications" element={<View_appications />} />
-            <Route path="Employer_profile" element={<Em_profile />} />
-            <Route path="Notifications" element={<NotificationCenter />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Em_jobpost />} />
+            <Route path="dashboard/viewAppications" element={<View_appications />} />
+            <Route path="dashboard/profile" element={<Em_profile />} />
+            <Route path="dashboard/notifications" element={<NotificationCenter />} />
           </Route>
 
-          {/* Catch all route for 404)*/}
+          
            {<Route path="*" element={<Navigate to="/" replace />} />  }
         </Routes>
       </BrowserRouter>

@@ -39,7 +39,7 @@ const SK_profile = () => {
     newPassword: '',
     confirmPassword: '',
     currentCV: '',
-    profileImage: '/api/placeholder/400/400'
+    profileImage: null
   });
 
   // Effects
@@ -57,7 +57,6 @@ const SK_profile = () => {
         ...profileData
       });
     } catch (err) {
-      console.error('Failed to fetch profile:', err);
       setNotification({
         type: 'error',
         message: 'Failed to load profile data. Please try again.'
@@ -82,54 +81,59 @@ const SK_profile = () => {
     });
   };
 
-  const handleProfilePhotoUpdate = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleProfilePhotoUpdate = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const validation = validateFile.image(file);
-    if (!validation.isValid) {
-      setNotification({
-        type: 'error',
-        message: validation.error
-      });
-      return;
-    }
-    
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData({
-        ...formData,
-        profileImage: reader.result
-      });
-    };
-    reader.readAsDataURL(file);
-    
-    // Upload to server
-    try {
-      setIsSaving(true);
-      const updatedImageUrl = await profileAPI.uploadProfileImage(file);
-      
-      setFormData({
-        ...formData,
-        profileImage: updatedImageUrl || formData.profileImage
-      });
-
-      setNotification({
-        type: 'success',
-        message: 'Profile image updated successfully'
-      });
-    } catch (err) {
-      console.error('Failed to upload image:', err);
-      setNotification({
-        type: 'error',
-        message: 'Failed to upload image. Please try again.'
-      });
-    } finally {
-      setIsSaving(false);
-    }
+  const validation = validateFile.image(file);
+  if (!validation.isValid) {
+    setNotification({
+      type: 'error',
+      message: validation.error
+    });
+    return;
+  }
+  
+  // Create preview
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setFormData({
+      ...formData,
+      profileImage: reader.result
+    });
   };
+  reader.readAsDataURL(file);
+  
+  // Upload to server
+  try {
+    setIsSaving(true);
+    const updatedImageUrl = await profileAPI.uploadProfileImage(file);
+    
+    setFormData({
+      ...formData,
+      profileImage: updatedImageUrl || formData.profileImage
+    });
 
+    setNotification({
+      type: 'success',
+      message: 'Profile image updated successfully'
+    });
+
+    
+    setTimeout(() => {
+      window.location.reload();
+    }, 500); 
+
+  } catch (err) {
+  
+    setNotification({
+      type: 'error',
+      message: 'Failed to upload image. Please try again.'
+    });
+  } finally {
+    setIsSaving(false);
+  }
+};
   const handleCVUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -156,8 +160,13 @@ const SK_profile = () => {
         type: 'success',
         message: 'CV uploaded successfully'
       });
+      
+    setTimeout(() => {
+      window.location.reload();
+    }, 500); 
+
     } catch (err) {
-      console.error('Failed to upload CV:', err);
+     
       setNotification({
         type: 'error',
         message: 'Failed to upload CV. Please try again.'
@@ -204,8 +213,13 @@ const SK_profile = () => {
         type: 'success',
         message: 'Profile updated successfully'
       });
+      
+    setTimeout(() => {
+      window.location.reload();
+    }, 500); 
+
     } catch (err) {
-      console.error('Error updating profile:', err);
+      
       
       if (err.response && err.response.status === 401) {
         setNotification({
@@ -223,9 +237,7 @@ const SK_profile = () => {
     }
   };
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+  
 
   // Tab content renderer
   const renderTabContent = () => {

@@ -18,26 +18,32 @@ export const profileAPI = {
   // Fetch user profile
   fetchProfile: async () => {
     const response = await api.get('/users/profile');
-    
+   
     // Handle the profile image URL
     let imageUrl = '/api/placeholder/400/400';
+    
     if (response.data.profileImage && response.data.profileImage !== '') {
       if (response.data.profileImage.startsWith('http')) {
+       
         imageUrl = `${response.data.profileImage}?t=${new Date().getTime()}`;
       } else {
-        imageUrl = `${api.defaults.baseURL}/uploads/${response.data.profileImage}?t=${new Date().getTime()}`;
+        
+        const baseUrl = 'http://localhost:3000';
+        
+        const normalizedPath = response.data.profileImage.replace(/\\/g, '/');
+        imageUrl = `${baseUrl}/${normalizedPath}?t=${new Date().getTime()}`;
       }
     }
-    console.log("Image URL set to:", imageUrl);
     
+   
+   
     return {
       username: response.data.username || '',
       email: response.data.email || '',
       currentCV: response.data.cvFilename || '',
-      profileImage:  imageUrl,
+      profileImage: imageUrl,
     };
   },
-
   // Update profile information
   updateProfile: async (profileData) => {
     return await api.put('/users/profile', {

@@ -61,7 +61,7 @@ const JobSeekerCard = ({ jobSeeker, index, onDeleteClick }) => {
         {/* User ID */}
         <div className="bg-gray-50 p-3 rounded-lg">
           <p className="text-xs font-medium text-gray-900 mb-1">User ID</p>
-          <p className="text-xs text-gray-600 font-mono break-all">{jobSeeker._id}</p>
+          <p className="text-xs text-gray-600 font-mono break-all">{jobSeeker._i}</p>
         </div>
       </div>
     </div>

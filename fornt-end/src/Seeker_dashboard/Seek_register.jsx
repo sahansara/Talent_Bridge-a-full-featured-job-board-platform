@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import RegisterForm from './RegisterComponents/RegisterForm';
 import { colorThemes } from '../colorThemes/colorThemes';
 import ThemeSwitcher from '../colorThemes/themeSwitcher';
+import logo from '../assets/logo.png';
 
 const images = [
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
@@ -48,54 +49,36 @@ const SeekRegister = () => {
         ))}
       </div>
 
-      {/* Theme Switcher */}
-      <div className="absolute top-6 right-6 z-50 flex space-x-2">
-        <ThemeSwitcher theme={theme} setTheme={setTheme} />
-      </div>
 
-      {/* Login Button */}
-      <div className="absolute top-6 left-6 z-50">
-        <button 
-          onClick={() => navigate('/User_login')}
-          className={`bg-gradient-to-r ${currentTheme.primary} hover:scale-105 rounded-xl px-6 py-2.5 font-medium transition-all duration-300 text-white text-sm`}
-        >
-          Login
-        </button>
-      </div>
+     
 
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
         
         {/* Left Visual Section */}
-        <div className="flex flex-col items-center justify-center p-8 lg:p-12">
-          {/* Logo Header */}
-          <div className="flex items-center mb-8">
-            <div className={`bg-gradient-to-r ${currentTheme.primary} w-12 h-12 rounded-xl flex items-center justify-center mr-4`}>
-              <Briefcase className="w-7 h-7 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-              JobBoard
+        <div className="flex flex-col items-center justify-center p-4 lg:p-6">
+           {/* Logo Header */}
+          <div className="flex items-center mb-4">
+           < div className="flex items-center justify-center w-16 h-16 border-2 border-white rounded-full mr-2">
+                          <img src={logo} alt="Logo" className="w-15 h-15" />
+                        </div>
+            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2"> {/* Changed from text-4xl lg:text-5xl to text-3xl lg:text-4xl */}
+              Talent Bridge
             </h1>
           </div>
 
           {/* Main Image with Overlay */}
-          <div className="relative w-full max-w-lg mb-8">
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src={images[currentImage]} 
-                alt="Job Seeker" 
-                className="w-full h-full object-cover transition-all duration-1000" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="relative w-full max-w-xl mb-8">
+            <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl">
+              <img src={images[currentImage]} alt="JobBoard Platform" 
+                className="w-full h-full object-cover transition-all duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
               
               {/* Image Dots Indicator */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 {images.map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      i === currentImage ? 'bg-white' : 'bg-white/40'
-                    }`}
-                  />
+                  <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === currentImage ? `bg-white` : 'bg-white/40'
+                  }`}></div>
                 ))}
               </div>
             </div>

@@ -53,7 +53,7 @@ export const userAPI = {
       `${API_BASE_URL}/users/profile`,
       { headers: getAuthHeaders() }
     );
-    console.log("username",response.data.username)
+  
     return {
       username: response.data.username,
       email: response.data.email,

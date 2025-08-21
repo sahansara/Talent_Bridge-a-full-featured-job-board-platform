@@ -94,12 +94,11 @@ export const applicationApiService = {
       filename = cvUrl.split('/').pop();
     }
     
-    console.log('Original CV URL:', cvUrl);
-    console.log('Extracted filename:', filename);
+   
     
     // Use the employer API endpoint
     const previewUrl = `${API_BASE_URL}api/Company/cv/${filename}`;
-    console.log('Generated Preview URL:', previewUrl);
+   
     
     return previewUrl;
   },

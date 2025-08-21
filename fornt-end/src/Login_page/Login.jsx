@@ -3,7 +3,7 @@ import {Briefcase, User, Building, Shield } from 'lucide-react';
 import { colorThemes } from '../colorThemes/colorThemes';
 import { LoginForm } from './loginForm/loginForm';
 import ThemeSwitcher from '../colorThemes/themeSwitcher';
-
+import logo from '../assets/logo.png';
 
 
 const images = [
@@ -47,28 +47,23 @@ const Login = () => {
         ))}
       </div>
                                   
-      {/* Theme Switcher */}
-      <div className="absolute top-6 right-6 z-50 flex space-x-2">
-        <ThemeSwitcher theme={theme} setTheme={setTheme} />
-       
-      </div>
-
+    
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
         
         {/* Left Visual Section */}
-        <div className="flex flex-col items-center justify-center p-8 lg:p-12">
+        <div className="flex flex-col items-center justify-center p-4 lg:p-6">
           {/* Logo Header */}
-          <div className="flex items-center mb-8">
-            <div className={`bg-gradient-to-r ${currentTheme.primary} w-12 h-12 rounded-xl flex items-center justify-center mr-4`}>
-              <Briefcase className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-4 font-sans-serif">
+          <div className="flex items-center mb-4">
+            <div className="flex items-center justify-center w-16 h-16 border-2 border-white rounded-full mr-2">
+                          <img src={logo} alt="Logo" className="w-15 h-15" />
+                        </div>
+            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2"> {/* Changed from text-4xl lg:text-5xl to text-3xl lg:text-4xl */}
               Talent Bridge
             </h1>
           </div>
 
          {/* Main Image with Overlay */}
-          <div className="relative w-full max-w-2xl mb-8">
+          <div className="relative w-full max-w-xl mb-8">
             <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl">
               <img src={images[currentImage]} alt="JobBoard Platform" 
                 className="w-full h-full object-cover transition-all duration-1000" />

@@ -37,7 +37,7 @@ const USER_ROLES = {
   
   // Role hierarchy (for permission checking)
   HIERARCHY: {
-    admin: 30,
+    admin: 3,
    
     employer: 2, // Same level as employer
     jobseeker: 1
@@ -46,15 +46,26 @@ const USER_ROLES = {
 
 // Database collection names
 const COLLECTIONS = {
-  USERS: 'users',
-  SEEK_EMPLOYEES: 'seek_employees',
-  COMPANIES: 'Companies',
-  ADMINS: 'Admins',
-  NOTIFICATIONS: 'notifications',
-  JOB_POSTS: 'job_posts',
-  APPLICATIONS: 'applications',
-  CATEGORIES: 'categories',
-  SKILLS: 'skills'
+
+  ROLE : { 
+    ADMIN: 'Admins',
+    JOB_SEEKER: 'seek_employees',
+    EMPLOYER: 'Companies'
+
+  },
+
+  NOTIFICATIONS: {
+    EM_NOTIFICATIONS:'employer_notifications',
+    SEEKER_NOTIFICATIONS: 'job_seeker_notifications',
+    ADMIN_NOTIFICATIONS: 'notifications',
+    VACANCIES_NOTIFICATIONS: 'vacancy_notifications'
+  },
+
+  OTHER : {
+    JOB_POST: 'Job_Posts',
+    APPLICATIONS: 'job_applications',
+
+  }
 };
 
 // Application status codes
@@ -166,13 +177,7 @@ const VALIDATION = {
   }
 };
 
-// Pagination constants
-const PAGINATION = {
-  DEFAULT_PAGE: 1,
-  DEFAULT_LIMIT: 10,
-  MAX_LIMIT: 100,
-  MIN_LIMIT: 1
-};
+
 
 // Job posting constants
 const JOB_POSTING = {
@@ -215,47 +220,7 @@ const APPLICATION_STATUS = {
   WITHDRAWN: 'withdrawn'
 };
 
-// Notification types
-const NOTIFICATION_TYPES = {
-  JOB_APPLICATION: 'job_application',
-  APPLICATION_STATUS: 'application_status',
-  NEW_JOB: 'new_job',
-  PROFILE_UPDATE: 'profile_update',
-  SYSTEM_ALERT: 'system_alert',
-  MESSAGE: 'message'
-};
 
-// API endpoints
-const API_ENDPOINTS = {
-  AUTH: {
-    LOGIN: '/api/auth/login',
-    LOGOUT: '/api/auth/logout',
-    REGISTER: '/api/auth/register',
-    REFRESH: '/api/auth/refresh'
-  },
-  
-  JOB_SEEKER: {
-    BASE: '/api/job-seeker',
-    REGISTER: '/api/job-seeker/register',
-    PROFILE: '/api/job-seeker/profile',
-    APPLICATIONS: '/api/job-seeker/applications',
-    NOTIFICATIONS: '/api/job-seeker/notifications'
-  },
-  
-  EMPLOYER: {
-    BASE: '/api/Company',
-    PROFILE: '/api/Company/Employer',
-    DASHBOARD: '/api/Company/dashboard',
-    APPLICATIONS: '/api/Company/applications'
-  },
-  
-  ADMIN: {
-    BASE: '/api/admin',
-    DASHBOARD: '/api/admin/dashboard',
-    MANAGE_JOBS: '/api/admin/manage-jobs',
-    MANAGE_USERS: '/api/admin/manage-users'
-  }
-};
 
 // Time constants (in milliseconds)
 const TIME = {
@@ -268,15 +233,7 @@ const TIME = {
   YEAR: 365 * 24 * 60 * 60 * 1000
 };
 
-// Default values
-const DEFAULTS = {
-  USER_ROLE: USER_ROLES.JOB_SEEKER,
-  JOB_TYPE: JOB_POSTING.TYPES.FULL_TIME,
-  APPLICATION_STATUS: APPLICATION_STATUS.PENDING,
-  NOTIFICATION_READ: false,
-  PROFILE_VISIBILITY: true,
-  EMAIL_NOTIFICATIONS: true
-};
+
 
 // Regular expressions for validation
 const REGEX_PATTERNS = {
@@ -323,14 +280,10 @@ module.exports = {
   STATUS_CODES,
   MESSAGES,
   FILE_UPLOAD,
-  VALIDATION,
-  PAGINATION,
+  VALIDATION,  
   JOB_POSTING,
   APPLICATION_STATUS,
-  NOTIFICATION_TYPES,
-  API_ENDPOINTS,
   TIME,
-  DEFAULTS,
   REGEX_PATTERNS,
   ENV_CONFIG
 };

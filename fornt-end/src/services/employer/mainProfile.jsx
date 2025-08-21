@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000/';
-
-// Create an axios instance with base URL and token
 const api = axios.create({
-  baseURL: `${API_BASE_URL}api`, // API endpoint base URL
+  baseURL: 'http://localhost:3000/api',
 });
 
 // Add auth token to requests
@@ -25,14 +22,15 @@ export const profileApiService = {
     
     // Handle the profile image URL
     let imageUrl = '/api/placeholder/400/400';
-    if (response.data.image && response.data.image !== '') {
+    if (response.data.employerImage && response.data.employerImage !== '') {
       // Check if the URL already includes http or https
-      if (response.data.image.startsWith('http')) {
-        imageUrl = `${response.data.image}?t=${new Date().getTime()}`;
+      if (response.data.employerImage.startsWith('http')) {
+        imageUrl = `${response.data.employerImage}?t=${new Date().getTime()}`;
       } else {
+        const baseUrl = 'http://localhost:3000';
         // Add the base URL if needed
-        const cleanPath = response.data.image.replace(/\\/g, '/').replace(/^\/uploads/, '');
-        imageUrl = `${api.defaults.baseURL}/uploads/${image}?t=${new Date().getTime()}`;
+        const normalizedPath = response.data.employerImage.replace(/\\/g, '/');
+        imageUrl = `${baseUrl}/${normalizedPath}?t=${new Date().getTime()}`;
       }
     }
     
@@ -44,7 +42,7 @@ export const profileApiService = {
       comDescription: response.data.comDescription || '',
       contactNumber: response.data.contactNumber || '',
       employerWebsite: response.data.employerWebsite || '',
-      image: imageUrl,
+      employerImage: imageUrl,
     };
   },
 
@@ -60,8 +58,8 @@ export const profileApiService = {
     });
     
     // Update the profile image URL with a timestamp to prevent caching
-    const updatedImageUrl = response.data.image ? 
-      `${response.data.image}?t=${new Date().getTime()}` : 
+    const updatedImageUrl = response.data.employerImage ? 
+      `${response.data.employerImage}?t=${new Date().getTime()}` : 
       null;
     
     return updatedImageUrl;

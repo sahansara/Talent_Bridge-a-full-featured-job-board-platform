@@ -62,7 +62,7 @@ const SK_loadPost = ({ username }) => {
       const userData = await userAPI.fetchUserProfile();
       setUserProfile(userData);
       setUserCV(userData.cvFilename);
-      console.log(userData);
+      
     } catch (error) {
       console.error('Error fetching user data:', error);
     }

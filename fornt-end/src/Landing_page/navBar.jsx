@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Briefcase } from 'lucide-react';
+import logo from './../assets/logo.png'; 
 export const Navbar = ({ theme }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
-
+  
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -20,13 +21,13 @@ export const Navbar = ({ theme }) => {
     <nav className={`fixed w-full z-40 transition-all duration-500 ${
       isScrolled ? 'bg-black/20 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-7">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-1">
           <div className="flex items-center">
-            <div className={`bg-gradient-to-r ${theme.primary} w-10 h-12 rounded-xl flex items-center justify-center mr-3`}>
-              <Briefcase className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-center w-12 h-12 border-2 border-white rounded-full mr-2">
+              <img src={logo} alt="Logo" className="w-14 h-14" />
             </div>
-            <h1 className="text-xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-3 font-sans">
+            <h1 className="text-xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-3 font-sans">
                 Talent Bridge
             </h1>
           </div>
@@ -34,14 +35,14 @@ export const Navbar = ({ theme }) => {
           <div className="hidden md:flex space-x-9">
              <button
               onClick={() => navigate('/')}
-              className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group md:text-xl"
+              className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group "
             >
-    Home
-    <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r ${theme.secondary} transition-all duration-300 group-hover:w-full`}></span>
-  </button>
+              Home
+              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r ${theme.secondary} transition-all duration-300 group-hover:w-full`}></span>
+            </button>
             {[  'features','jobs', 'about'].map(item => (
               <button key={item} onClick={() => scrollToSection(item)}
-                className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group  md:text-xl "
+                className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group   "
               >
                 {item}
                 <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r ${theme.secondary} transition-all duration-300 group-hover:w-full`}></span>

@@ -13,28 +13,28 @@ export const jobSeekerConfig = {
   },
   navigation: [
     { 
-      path: '/job-seeker/dashboard/job-posts', 
+      path: '/jobSeeker/dashboard/jobVacancies', 
       icon: 'SearchIcon', 
       label: 'Search Jobs',
-      href: '/job-seeker/dashboard/job-posts?tab=searchjobs'
+      href: '/jobSeeker/dashboard/jobVacancies?tab=searchjobs'
     },
     { 
-      path: '/job-seeker/dashboard/applied-jobs', 
+      path: '/jobSeeker/dashboard/applied', 
       icon: 'ApplicationsIcon', 
       label: 'Applications',
-      href: '/job-seeker/dashboard/applied-jobs?tab=applications'
+      href: '/jobSeeker/dashboard/applied?tab=applications'
     },
     { 
-      path: '/job-seeker/dashboard/notifications', 
+      path: '/jobSeeker/dashboard/notifications', 
       icon: 'NotificationIcon', 
       label: 'Notifications',
-      href: '/job-seeker/dashboard/notifications?tab=notifications'
+      href: '/jobSeeker/dashboard/notifications?tab=notifications'
     },
     { 
-      path: '/job-seeker/dashboard/profile', 
+      path: '/jobSeeker/dashboard/profile', 
       icon: 'ProfileIcon', 
       label: 'Profile',
-      href: '/job-seeker/dashboard/profile?tab=profile'
+      href: '/jobSeeker/dashboard/profile?tab=profile'
     }
   ],
   userDataMapping: {
@@ -45,7 +45,7 @@ export const jobSeekerConfig = {
   theme: {
      sidebarBg: `bg-gradient-to-b ${colorThemes.blue.bg}`, 
     activeBg: 'bg-[#0c51ffcf]',
-    hoverBg: 'hover:bg-[#21384D]'
+    hoverBg: 'hover:bg-[#2b2b2b]'
   }
 };
 
@@ -60,28 +60,28 @@ export const employerConfig = {
   },
   navigation: [
     { 
-      path: '/Employer_dashboard/Employer_jobpost', 
+      path: '/employer/dashboard', 
       icon: 'JobListings', 
       label: 'Job Listings',
-      href: '/Employer_dashboard/Employer_jobpost?tab=joblistings'
+      href: '/employer/dashboard?tab=joblistings'
     },
     { 
-      path: '/Employer_dashboard/View_appications', 
+      path: '/employer/dashboard/viewAppications', 
       icon: 'ApplicationsIcon', 
       label: 'Applications',
-      href: '/Employer_dashboard/View_appications?tab=applications',
+      href: '/employer/dashboard/viewAppications?tab=applications',
     },
     { 
-      path: '/Employer_dashboard/Notifications', 
+      path: '/employer/dashboard/notifications', 
       icon: 'NotificationIcon', 
       label: 'Notifications',
-      href: '/Employer_dashboard/Notifications?tab=notifications'
+      href: '/employer/dashboard/notifications?tab=notifications'
     },
     { 
-      path: '/Employer_dashboard/Employer_profile', 
+      path: '/employer/dashboard/Profile', 
       icon: 'ProfileIcon', 
       label: 'Profile',
-      href: '/Employer_dashboard/Employer_profile?tab=profile'
+      href: '/employer/dashboard/Profile?tab=profile'
     }
   ],
   userDataMapping: {
@@ -92,7 +92,7 @@ export const employerConfig = {
   theme: {
     sidebarBg: `bg-gradient-to-b ${colorThemes.blue.bg}`, 
     activeBg: 'bg-[#0c51ffcf]',
-    hoverBg: 'hover:bg-[#21384D]'
+    hoverBg: 'hover:bg-[#2b2b2b]'
   }
 };
 
@@ -137,6 +137,6 @@ export const adminConfig = {
  theme: {
   sidebarBg: `bg-gradient-to-b ${colorThemes.blue.bg}`, 
   activeBg: 'bg-[#0c51ffcf]',
-   hoverBg: 'hover:bg-[#21384D]'
+   hoverBg: 'hover:bg-[#2b2b2b]'
   }
 };
