@@ -21,7 +21,7 @@ function getJobSeekerProjection() {
     email: 1,
     role: 1,
     createdAt: 1
-    // Exclude password, cv_Upload, and image fields
+   
   };
 }
 

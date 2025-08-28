@@ -14,8 +14,8 @@ const {
 const upload = createUploadMiddleware();
 
 // POST /employer_register - Register new employer
-router.post('/employer_register', upload.fields([
-  { name: 'companyImage', maxCount: 1 }
+router.post('/register', upload.fields([
+  { name: 'image', maxCount: 1 }
 ]), async (req, res) => {
   try {
     // Log registration request for debugging

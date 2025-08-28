@@ -9,6 +9,8 @@ import Jobs from './jobs';
 import Gallery from './Gallery';
 import About from './About';
 import ThemeSwitcher from '../colorThemes/themeSwitcher';
+import Footer from './footer';
+import Feedback from './feedback';
 
 function Landing() {
   const [theme, setTheme] = useState('blue');
@@ -22,7 +24,9 @@ function Landing() {
       <VideoSection theme={currentTheme} />
       <Jobs theme={currentTheme} />
       <Gallery theme={currentTheme} />
+      <Feedback theme={currentTheme} />
       <About theme={currentTheme} />
+      <Footer theme={currentTheme} />
     </div>
   );
 }

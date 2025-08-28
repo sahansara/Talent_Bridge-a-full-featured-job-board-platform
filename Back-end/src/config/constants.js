@@ -58,12 +58,14 @@ const COLLECTIONS = {
     EM_NOTIFICATIONS:'employer_notifications',
     SEEKER_NOTIFICATIONS: 'job_seeker_notifications',
     ADMIN_NOTIFICATIONS: 'notifications',
-    VACANCIES_NOTIFICATIONS: 'vacancy_notifications'
+    VACANCIES_NOTIFICATIONS: 'vacancy_notifications',
+    JOBPOST_NOTIFICATIONS:'jobpost_notifications'
   },
 
   OTHER : {
     JOB_POST: 'Job_Posts',
     APPLICATIONS: 'job_applications',
+    FeedBack: 'feedbacks',
 
   }
 };

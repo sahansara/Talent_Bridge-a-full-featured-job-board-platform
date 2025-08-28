@@ -25,6 +25,7 @@ import Manage_Companies from './Admin/Manage_Companies';
 import SK_profile from './Seeker_dashboard/Sk_profile';
 import Notifications from './Seeker_dashboard/Notifications';
 import LoginRedirect from './contexts/redirect';
+import ADNotificationCenter from './Admin/NotificationCenter';
 import 'boxicons';
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
             <Route path="dashboard/managePost" element={<Manage_post />} />
             <Route path="dashboard/manageJobseekers" element={<Manage_jobSeekers />} />
             <Route path="dashboard/manageEmployer" element={<Manage_Companies />} />
+            <Route path="dashboard/notifications" element={<ADNotificationCenter/>} />
           </Route>
 
           {/* Employer Protected Routes */}

@@ -4,12 +4,13 @@ import { colorThemes } from '../colorThemes/colorThemes';
 import { LoginForm } from './loginForm/loginForm';
 import ThemeSwitcher from '../colorThemes/themeSwitcher';
 import logo from '../assets/logo.png';
-
+import EM1 from '../assets/EM/EM3.jpeg';
+import EM2 from '../assets/EM/EM4.jpeg';
+import JS1 from '../assets/JS/JB3.jpeg';
+import JS2 from '../assets/JS/JB4.jpeg';
 
 const images = [
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop'
+  EM1, EM2, JS1, JS2
 ];
 
 const Login = () => {
@@ -26,8 +27,6 @@ const Login = () => {
     return () => clearInterval(interval);
   }, []);
 
-  
-
   const userTypes = [
     { icon: <User className="w-5 h-5" />, title: 'Job Seekers', desc: 'Find your dream job' },
     { icon: <Building className="w-5 h-5" />, title: 'Employers', desc: 'Hire top talent' },
@@ -36,8 +35,18 @@ const Login = () => {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Hero Image Background - Bottom Layer */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>
+        <img 
+          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop" 
+          alt="Modern office" 
+          className="w-full h-full object-cover opacity-20"
+        />
+      </div>
+
+      {/* Animated Background Elements - Middle Layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-5">
         {[
           { size: 'w-96 h-96', pos: '-top-48 -right-48', color: 'bg-purple-500', delay: '' },
           { size: 'w-80 h-80', pos: '-bottom-40 -left-40', color: 'bg-blue-500', delay: 'animation-delay-1000' },
@@ -47,17 +56,16 @@ const Login = () => {
         ))}
       </div>
                                   
-    
-      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
-        
+      {/* Main Content - Top Layer */}
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-20">
         {/* Left Visual Section */}
         <div className="flex flex-col items-center justify-center p-4 lg:p-6">
           {/* Logo Header */}
           <div className="flex items-center mb-4">
             <div className="flex items-center justify-center w-16 h-16 border-2 border-white rounded-full mr-2">
-                          <img src={logo} alt="Logo" className="w-15 h-15" />
-                        </div>
-            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2"> {/* Changed from text-4xl lg:text-5xl to text-3xl lg:text-4xl */}
+            <img src={logo} alt="Logo" className="w-15 h-15" />
+            </div>
+            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2">
               Talent Bridge
             </h1>
           </div>
@@ -66,7 +74,7 @@ const Login = () => {
           <div className="relative w-full max-w-xl mb-8">
             <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl">
               <img src={images[currentImage]} alt="JobBoard Platform" 
-                className="w-full h-full object-cover transition-all duration-1000" />
+                className="w-full h-full object-center transition-all duration-1000" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
               
               {/* Image Dots Indicator */}
@@ -109,7 +117,6 @@ const Login = () => {
         {/* Right Login Form */}
         <div className="flex items-center justify-center p-8 lg:p-12 ">
           <LoginForm  currentTheme={currentTheme}/>
-
         </div>
       </div>
     </div>

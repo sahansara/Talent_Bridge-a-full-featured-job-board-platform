@@ -30,7 +30,7 @@ function createCompanyImageStorage(uploadDir) {
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const ext = path.extname(file.originalname);
-      cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+      cb(null, "companyImage" + '-' + uniqueSuffix + ext);
     }
   });
 }
@@ -85,7 +85,7 @@ async function hashPassword(password, saltRounds = 10) {
 }
 
 function extractImagePath(files) {
-  return files?.['companyImage']?.[0]?.path || null;
+  return files?.['image']?.[0]?.path || null;
 }
 
 function buildEmployerUserData(body, hashedPassword, imagePath) {

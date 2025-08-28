@@ -8,7 +8,7 @@ const NotificationIcon = ({ type }) => {
         return <CheckCircle className="text-blue-500 w-6 h-6" />;
       case 'job_rejected':
         return <XCircle className="text-red-500 w-6 h-6" />;
-      case 'new_notification':
+      case 'new_application':
         return <Users className="text-blue-500 w-6 h-6" />;
       case 'notification_withdrawn':
         return <XCircle className="text-orange-500 w-6 h-6" />;

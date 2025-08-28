@@ -38,7 +38,7 @@ class NotificationApiService {
       }
 
       const data = await response.json();
-     
+      
       return data.notifications || data || [];
     } catch (error) {
       console.error('Application notification fetch error:', error);

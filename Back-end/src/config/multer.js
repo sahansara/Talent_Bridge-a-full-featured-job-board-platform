@@ -131,7 +131,7 @@ const uploadMiddlewares = {
   jobSeekerFiles: multer({
     storage,
     fileFilter,
-    limits: { fileSize: 10 * 1024 * 1024, files: 2 } // 10MB total, max 2 files
+    limits: { fileSize: 10 * 1024 * 1024, files: 2 } 
   }).fields([
     { name: 'cv_Upload', maxCount: 1 },
     { name: 'image', maxCount: 1 }

@@ -142,7 +142,7 @@ function createNotificationData(applicationId, job, jobSeeker, jobSeekerId, jobI
     jobSeekerId: new ObjectId(jobSeekerId),
     jobId: new ObjectId(jobId),
     type: 'new_application',
-    message: `${jobSeeker.fullName} applied for ${job.title}`,
+    message: `${jobSeeker.fullName} applied for "${job.title}"`,
     jobSeekerName: jobSeeker.fullName,
     jobSeekerImage: jobSeeker.image,
     jobTitle: job.title,

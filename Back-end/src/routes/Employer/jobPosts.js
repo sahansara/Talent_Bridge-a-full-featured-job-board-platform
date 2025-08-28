@@ -16,7 +16,9 @@ const {
   fetchUpdatedJob,
   deleteJobAndFiles,
   validateObjectId,
-  handleJobNotFound
+  handleJobNotFound,
+  createadminNotification,
+  getjobpostnotification
 } = require('./subFunctions/jobPost'); 
 
 // Configure multer upload middleware
@@ -47,16 +49,33 @@ router.post('/jobs', jobThumbnailUpload.single('thumbnail'), async (req, res) =>
     
     // Validate required fields
     if (!validateJobFields(jobData, res)) return;
-    
+   
     const db = req.app.locals.db;
     const jobsCollection = getJobsCollection(db);
     
+   
     // Create new job data object
     const newJobData = createNewJobData(employerId, jobData, req.file);
-    
+   
     // Insert job into database
     const newJob = await insertNewJob(jobsCollection, newJobData);
-    
+    const messages= `Job post "${jobData.title}" has been updated and may need review`;
+     try {
+      const notificationResult = await createadminNotification(
+        db,
+        employerId,
+        newJob._id,
+        messages
+      );
+      
+      if (!notificationResult.success) {
+        console.error('Failed to create admin notification:', notificationResult.error);
+      }
+    } catch (notificationError) {
+      console.error('Error creating admin notification:', notificationError);
+      
+    }
+   
     res.status(201).json(newJob);
   } catch (error) {
     handleError(res, error, 'creating job');

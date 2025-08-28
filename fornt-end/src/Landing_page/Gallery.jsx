@@ -1,10 +1,13 @@
-
+import CM1 from '../assets/community/CM1.jpeg';
+import CM2 from '../assets/community/CM2.jpeg';
+import CM3 from '../assets/community/CM3.jpeg';
+import CM4 from '../assets/community/CM4.jpeg';
 export const Gallery = ({ theme }) => {
   const images = [
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=400&h=300&fit=crop'
+    CM1,
+    CM2,
+    CM3,
+    CM4,
   ];
 
   return (
