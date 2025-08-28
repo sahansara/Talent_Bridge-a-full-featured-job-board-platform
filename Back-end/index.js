@@ -23,17 +23,17 @@ const {
 const authRoutes = require('./src/routes/auth/authRoutes');
 
 // Import existing routes
-const register = require('./src/routes/Job_seeker/register.js');
-const mainProfile = require('./src/routes/Job_seeker/mainProfile.js');
-const Login_register = require('./src/routes/Employer/Login_register');
-const Em_dashboard = require('./src/routes/Employer/Em_dashboard');
-const Em_profile = require('./src/routes/Employer/Em_profile');
+const register = require('./src/routes/Job_seeker/register');
+const mainProfile = require('./src/routes/Job_seeker/mainProfile');
+const Login_register = require('./src/routes/Employer/register');
+const jobPosts = require('./src/routes/Employer/jobPosts');
+const EM_mainProfile = require('./src/routes/Employer/mainProfile');
 const register_dashboard = require('./src/routes/Admin/register_dashboard');
 const Manage_jobpost = require('./src/routes/Admin/Manage_jobpost');
 const Job_Post = require('./src/routes/Job_seeker/Job_post');
-const Em_applications = require('./src/routes/Employer/Em_applications');
+const applications = require('./src/routes/Employer/applications.js');
 const Manage_jobSeeker = require('./src/routes/Admin/Manage_jobSeeker');
-const Manage_Employers = require('./src/routes/Admin/Manage_Employers.js');
+const Manage_Employers = require('./src/routes/Admin/Manage_Employers');
 const notifications = require('./src/routes/Job_seeker/notifications');
 
 const app = express();
@@ -111,9 +111,10 @@ function mountRoutes() {
   app.use('/api/job-seeker', ensureDbConnected, authenticateToken, notifications);
   
   // Company/Employer protected routes
-  app.use('/api/Company', ensureDbConnected, authenticateToken, Em_dashboard);
-  app.use('/api/Company', ensureDbConnected, authenticateToken, Em_profile);
-  app.use('/api/Company', ensureDbConnected, authenticateToken, Em_applications);
+  app.use('/api/Company', ensureDbConnected, authenticateToken, jobPosts);
+  app.use('/api/Company', ensureDbConnected, authenticateToken, EM_mainProfile);
+  app.use('/api/Company', ensureDbConnected, authenticateToken, applications);
+  app.use('/api/Company', ensureDbConnected, authenticateToken, notifications);
 
   // ADMIN PROTECTED ROUTES (Admin authentication + authorization required)
   // Apply rate limiting to all admin routes

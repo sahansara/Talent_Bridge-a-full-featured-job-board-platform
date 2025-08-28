@@ -18,10 +18,7 @@ const ProfilePhotoSection = ({
               src={profileImage}
               alt="Profile" 
               className="w-full h-full object-cover rounded-full border-4 border-white shadow-md"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/api/placeholder/400/400';
-              }}
+              
             />
           ) : (
             <div className="w-full h-full rounded-full bg-blue-100 flex items-center justify-center border-4 border-white shadow-md">

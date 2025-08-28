@@ -1,23 +1,12 @@
-/**
- * Validation utility functions
- * Contains reusable validation logic for the application
- */
 
-/**
- * Validates email format using regex
- * @param {string} email - Email address to validate
- * @returns {boolean} - True if email is valid, false otherwise
- */
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-
-/**
- * Validates password strength
- * @param {string} password - Password to validate
- * @returns {object} - Validation result with isValid and message
- */
+function isValidPhoneNumber(phoneNumber) {
+  const phoneRegex = /^\d{10}$/;
+  return phoneRegex.test(phoneNumber);
+}
 function isValidPassword(password) {
   const minLength = 6;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -52,12 +41,6 @@ function isValidPassword(password) {
   };
 }
 
-/**
- * Validates required fields in request body
- * @param {object} data - Data object to validate
- * @param {array} requiredFields - Array of required field names
- * @returns {object} - Validation result with isValid and missing fields
- */
 function validateRequiredFields(data, requiredFields) {
   const missingFields = requiredFields.filter(field => 
     !data || !data[field] || data[field].toString().trim() === ''
@@ -72,12 +55,6 @@ function validateRequiredFields(data, requiredFields) {
   };
 }
 
-/**
- * Validates file upload types
- * @param {object} file - Multer file object
- * @param {array} allowedTypes - Array of allowed MIME types
- * @returns {object} - Validation result
- */
 function isValidFileType(file, allowedTypes) {
   if (!file) {
     return { isValid: false, message: 'No file provided' };
@@ -96,12 +73,6 @@ function isValidFileType(file, allowedTypes) {
   };
 }
 
-/**
- * Validates file size
- * @param {object} file - Multer file object
- * @param {number} maxSizeInMB - Maximum file size in MB
- * @returns {object} - Validation result
- */
 function isValidFileSize(file, maxSizeInMB) {
   if (!file) {
     return { isValid: false, message: 'No file provided' };
@@ -122,21 +93,11 @@ function isValidFileSize(file, maxSizeInMB) {
   };
 }
 
-/**
- * Validates MongoDB ObjectId format
- * @param {string} id - ID string to validate
- * @returns {boolean} - True if valid ObjectId format
- */
 function isValidObjectId(id) {
   const objectIdRegex = /^[0-9a-fA-F]{24}$/;
   return objectIdRegex.test(id);
 }
 
-/**
- * Sanitizes input string by trimming whitespace and removing potentially harmful characters
- * @param {string} input - Input string to sanitize
- * @returns {string} - Sanitized string
- */
 function sanitizeInput(input) {
   if (typeof input !== 'string') {
     return input;
@@ -151,6 +112,7 @@ function sanitizeInput(input) {
 module.exports = {
   isValidEmail,
   isValidPassword,
+  isValidPhoneNumber,
   validateRequiredFields,
   isValidFileType,
   isValidFileSize,

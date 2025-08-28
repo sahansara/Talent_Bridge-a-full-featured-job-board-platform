@@ -118,6 +118,10 @@ const Em_profile = () => {
         message: 'Profile image updated successfully'
       });
       setIsSaving(false);
+       setTimeout(() => {
+      window.location.reload();
+    }, 500); 
+
     } catch (err) {
       console.error('Failed to upload image:', err);
       const errorMessage = profileValidationUtils.getErrorMessage(err);
@@ -172,7 +176,11 @@ const Em_profile = () => {
         type: 'success',
         message: 'Profile updated successfully'
       });
+      
       setIsSaving(false);
+       setTimeout(() => {
+      window.location.reload();
+    }, 500); 
     } catch (err) {
       console.error('Error updating profile:', err);
       

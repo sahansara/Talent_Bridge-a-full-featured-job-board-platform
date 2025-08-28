@@ -97,7 +97,7 @@ const statsData = [
                 
                 {dropdownOpen && (
                   <div className="absolute w-full bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl mt-2 shadow-2xl z-30 overflow-hidden">
-                    {['Job Seeker', 'Employer', 'Administrator'].map(type => (
+                    {['Job Seeker', 'Employer'].map(type => (
                       <div
                         key={type}
                         className="px-6 py-4 cursor-pointer hover:bg-white/10 transition-all duration-200 text-white"
@@ -125,9 +125,6 @@ const statsData = [
                         case 'employer':
                           navigate('/Employer_register');
                           break;
-                        case 'administrator':
-                          navigate('/admin');
-                          break;
                         default:
                           alert('Please select a user type first!');
                           break;
@@ -143,8 +140,8 @@ const statsData = [
             </div>
           </div>
 
-   <div className="px-4 py-6 md:px-12 max-w-[800px] w-full mx-auto">
-  <div className="relative w-full md:w-[700px] h-[200px] sm:h-[250px] md:h-[400px] mx-auto">
+   <div className="px-4 py-6 md:px-12 max-w-[800px] w-full mx-auto merge-x-2">
+  <div className="relative w-full md:w-[650px] h-[200px] sm:h-[250px] md:h-[400px] mx-auto">
     <img
       src={images[currentImageIndex]}
       alt="Team"
@@ -155,7 +152,7 @@ const statsData = [
 </div>
 </div>
 
-       {/* Stats Section */}
+      
       <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16">
         {statsData.map((stat, index) => (
           <div key={index} className="text-center">

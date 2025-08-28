@@ -16,7 +16,6 @@ function Landing() {
   const navigate = useNavigate();
   return (
     <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} text-white overflow-hidden`}>
-      <ThemeSwitcher theme={theme} setTheme={setTheme} />
       <Navbar theme={currentTheme} />
       <Hero theme={currentTheme} />
       <Features theme={currentTheme} />

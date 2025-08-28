@@ -35,7 +35,7 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
         remember: formData.remember
       });
 
-      console.log(res.data);
+      
         
       // Store the token if it exists in the response
       if (res.data.token) {
@@ -55,10 +55,10 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
       
       switch(userRole) {
         case 'jobseeker':
-          navigate('/job-seeker/dashboard');
+          navigate('/jobSeeker/dashboard');
           break;
         case 'employer':
-          navigate('/Employer_dashboard');
+          navigate('/employer/dashboard');
           break;
         case 'Admin':
           navigate('/admin/dashboard');
@@ -76,12 +76,12 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
   };
 
   return (
-    <div className="w-full max-w-xl">
+    <div className="w-full max-w-md">
       
 
       {/* Form Container */}
       <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2 py-1">
             Sign In
           </h2>

@@ -57,7 +57,7 @@ const AdminJobSeekerManagement_Optimized = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-red to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-white via-red to-white">
       <JobSeekerHeader totalUsers={filteredJobSeekers.length} />
       
       <NotificationAlert notification={notification} />

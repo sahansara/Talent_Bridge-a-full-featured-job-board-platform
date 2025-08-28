@@ -2,25 +2,20 @@ const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
 
-// Authentication middleware for admins
-const authenticateAdmin = (req, res, next) => {
-  // Check if user is authenticated and has admin role
-  if (req.user && req.user.role === 'Admin') {
-    next();
-  } else {
-    res.status(403).json({ error: 'Access denied. Admin privileges required.' });
-  }
-};
-
+const {
+  getCollections,
+  attachEmployerDetails,
+  createEmployerNotification,
+  updateJobPostStatus,
+  handleError
+} = require('./subFunctions/jobPost');
 
 // Get all job posts with optional filtering by status
-router.get('/job-posts', authenticateAdmin, async (req, res) => {
+router.get('/job-posts', async (req, res) => {
   try {
     const { status = 'pending' } = req.query;
     const db = req.app.locals.db;
-    const jobPostsCollection = db.collection('Job_Posts');
-    const employercollection = db.collection('Companies');
-
+    const { jobPosts: jobPostsCollection, employer: employerCollection } = getCollections(db);
 
     let query = {};
     
@@ -34,44 +29,22 @@ router.get('/job-posts', authenticateAdmin, async (req, res) => {
       .toArray();
       
     // Enhance job posts with employer details
-for (let job of jobPosts) {
-  if (job.employerId) {
-    // Convert string ID to ObjectId if needed
-    const employerObjectId = typeof job.employerId === 'string' 
-      ? new ObjectId(job.employerId) 
-      : job.employerId;
-      
-    const employer = await employercollection.findOne({ _id: employerObjectId });
-    if (employer) {
-      // Add employer name directly to the job object for easier frontend access
-      job.employerName = employer.employerName || employer.name || "Unknown employer";
-      
-      // If there's a employer logo, add it as well
-      if (employer.logo || employer.thumbnail) {
-        job.employerLogo = employer.logo || employer.thumbnail;
-      }
-    } else {
-      job.employerName = "Unknown employer";
+    for (let job of jobPosts) {
+      await attachEmployerDetails(job, employerCollection);
     }
-  }
-}
 
     res.status(200).json({ jobPosts });
   } catch (err) {
-    console.error('Error fetching job posts:', err);
-    res.status(500).json({ error: 'Failed to retrieve job posts' });
+    handleError(res, err, 'Failed to retrieve job posts');
   }
 });
 
-
-
 // Approve a job post
-router.put('/job-posts/:id/approve', authenticateAdmin, async (req, res) => {
+router.put('/job-posts/:id/approve', async (req, res) => {
   try {
     const jobId = req.params.id;
     const db = req.app.locals.db;
-    const jobPostsCollection = db.collection('Job_Posts');
-    const notificationsCollection = db.collection('notifications');
+    const { jobPosts: jobPostsCollection, notifications: notificationsCollection } = getCollections(db);
     
     // Verify job post exists
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
@@ -80,47 +53,31 @@ router.put('/job-posts/:id/approve', authenticateAdmin, async (req, res) => {
     }
 
     // Update job post status to approved
-    const result = await jobPostsCollection.updateOne(
-      { _id: new ObjectId(jobId) },
-      { $set: { 
-          status: 'approved',
-          approvedAt: new Date(),
-          approvedBy: req.user.userId
-        } 
-      }
-    );
+    const result = await updateJobPostStatus(jobPostsCollection, jobId, 'approved', req.user.userId);
 
     if (result.modifiedCount === 0) {
       return res.status(400).json({ error: 'Failed to approve job post' });
     }
 
     // Create notification for employer
-    await notificationsCollection.insertOne({
-      employerId: jobPost.employerId.toString(), // Using employerId as employerId
-      jobId: jobId,
-      message: `Your job post "${jobPost.title}" has been approved and is now live.`,
-      status: 'unread',
-      type: 'job_approved',
-      createdAt: new Date()
-    });
+    const notificationMessage = `Your job post "${jobPost.title}" has been approved and is now live.`;
+    await createEmployerNotification(notificationsCollection, jobPost.employerId, jobId, notificationMessage, 'job_approved');
 
     res.status(200).json({ 
       message: 'Job post approved successfully',
       jobId: jobId
     });
   } catch (err) {
-    console.error('Error approving job post:', err);
-    res.status(500).json({ error: 'Failed to approve job post' });
+    handleError(res, err, 'Failed to approve job post');
   }
 });
 
 // Reject a job post
-router.put('/job-posts/:id/reject', authenticateAdmin, async (req, res) => {
+router.put('/job-posts/:id/reject', async (req, res) => {
   try {
     const jobId = req.params.id;
     const db = req.app.locals.db;
-    const jobPostsCollection = db.collection('Job_Posts');
-    const notificationsCollection = db.collection('notifications');
+    const { jobPosts: jobPostsCollection, notifications: notificationsCollection } = getCollections(db);
     
     // Verify job post exists
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
@@ -129,47 +86,31 @@ router.put('/job-posts/:id/reject', authenticateAdmin, async (req, res) => {
     }
 
     // Update job post status to rejected
-    const result = await jobPostsCollection.updateOne(
-      { _id: new ObjectId(jobId) },
-      { $set: { 
-          status: 'rejected',
-          rejectedAt: new Date(),
-          rejectedBy: req.user.userId
-        } 
-      }
-    );
+    const result = await updateJobPostStatus(jobPostsCollection, jobId, 'rejected', req.user.userId);
 
     if (result.modifiedCount === 0) {
       return res.status(400).json({ error: 'Failed to reject job post' });
     }
 
     // Create notification for employer
-    await notificationsCollection.insertOne({
-      employerId: jobPost.employerId.toString(), // Using employerId as employerId
-      jobId: jobId,
-      message: `Your job post "${jobPost.title}" has been rejected. Please review our guidelines and consider resubmitting.`,
-      status: 'unread',
-      type: 'job_rejected',
-      createdAt: new Date()
-    });
+    const notificationMessage = `Your job post "${jobPost.title}" has been rejected. Please review our guidelines and consider resubmitting.`;
+    await createEmployerNotification(notificationsCollection, jobPost.employerId, jobId, notificationMessage, 'job_rejected');
 
     res.status(200).json({ 
       message: 'Job post rejected successfully',
       jobId: jobId
     });
   } catch (err) {
-    console.error('Error rejecting job post:', err);
-    res.status(500).json({ error: 'Failed to reject job post' });
+    handleError(res, err, 'Failed to reject job post');
   }
 });
 
-// Get job post details by ID for viwes in open model fontend 
-router.get('/job-posts/:id', authenticateAdmin, async (req, res) => {
+// Get job post details by ID for views in open model frontend 
+router.get('/job-posts/:id', async (req, res) => {
   try {
     const jobId = req.params.id;
     const db = req.app.locals.db;
-    const jobPostsCollection = db.collection('Job_Posts');
-    const employercollection = db.collection('Companies'); // ✅ make sure collection name is correct
+    const { jobPosts: jobPostsCollection, employer: employerCollection } = getCollections(db);
 
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
 
@@ -177,39 +118,21 @@ router.get('/job-posts/:id', authenticateAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Job post not found' });
     }
 
-    // ✅ Attach employerName and logo if employerId exists
-    if (jobPost.employerId) {
-      const employerObjectId = typeof jobPost.employerId === 'string'
-        ? new ObjectId(jobPost.employerId)
-        : jobPost.employerId;
-
-      const employer = await employercollection.findOne({ _id: employerObjectId });
-
-      if (employer) {
-        jobPost.employerName = employer.employerName || employer.name || 'Unknown employer';
-        if (employer.logo || employer.thumbnail) {
-          jobPost.employerLogo = employer.logo || employer.thumbnail;
-        }
-      } else {
-        jobPost.employerName = 'Unknown employer';
-      }
-    }
+    // Attach employer details
+    await attachEmployerDetails(jobPost, employerCollection);
 
     res.status(200).json({ jobPost });
   } catch (err) {
-    console.error('Error fetching job post details:', err);
-    res.status(500).json({ error: 'Failed to retrieve job post details' });
+    handleError(res, err, 'Failed to retrieve job post details');
   }
 });
 
-
 // Create a notification endpoint (this might typically be handled in the approval/rejection routes)
-router.post('/notifications/employer', authenticateAdmin, async (req, res) => {
+router.post('/notifications/employer', async (req, res) => {
   try {
     const { jobId, status, message } = req.body;
     const db = req.app.locals.db;
-    const notificationsCollection = db.collection('notifications');
-    const jobPostsCollection = db.collection('Job_Posts');
+    const { jobPosts: jobPostsCollection, notifications: notificationsCollection } = getCollections(db);
     
     // Get job post to get employerId
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
@@ -219,24 +142,24 @@ router.post('/notifications/employer', authenticateAdmin, async (req, res) => {
     }
     
     // Create notification
-    const notification = {
-      employerId: jobPost.employerId.toString(), // Using employerId as employerId
-      jobId: jobId,
-      message: message || `Your job post has been ${status}.`,
-      status: 'unread',
-      type: `job_${status}`,
-      createdAt: new Date()
-    };
+    const notificationMessage = message || `Your job post has been ${status}.`;
+    const notificationType = `job_${status}`;
     
-    await notificationsCollection.insertOne(notification);
+    await createEmployerNotification(notificationsCollection, jobPost.employerId, jobId, notificationMessage, notificationType);
     
     res.status(201).json({ 
       message: 'Notification sent successfully',
-      notification
+      notification: {
+        employerId: jobPost.employerId.toString(),
+        jobId: jobId,
+        message: notificationMessage,
+        status: 'unread',
+        type: notificationType,
+        createdAt: new Date()
+      }
     });
   } catch (err) {
-    console.error('Error sending notification:', err);
-    res.status(500).json({ error: 'Failed to send notification' });
+    handleError(res, err, 'Failed to send notification');
   }
 });
 

@@ -157,7 +157,7 @@ export const INITIAL_FORM_STATE = {
   comDescription: '',
   contactNumber: '',
   employerWebsite: '',
-  employerImage: '/api/placeholder/400/400'
+  employerImage: null
 };
 
 // Password visibility initial state

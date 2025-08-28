@@ -37,7 +37,7 @@ const ProtectedRoute = ({ children, requiredRole = null, allowedRoles = [] }) =>
   // Check for multiple allowed roles
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
     console.log(`User role ${user?.role} is not in allowed roles: ${allowedRoles.join(', ')}`);
-    // Force page refresh and redirect to unauthorized
+    
     window.location.href = `/unauthorized?t=${Date.now()}`;
     return null;
   }

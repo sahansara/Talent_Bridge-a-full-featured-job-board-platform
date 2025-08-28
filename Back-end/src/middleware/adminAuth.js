@@ -69,7 +69,7 @@ const authenticateToken = async (req, res, next) => {
   } catch (error) {
     console.error('Admin token verification error:', error);
     
-    if (error.name === 'TokenExpiredError') {
+    if (error.name === 'TokenExpiredError') {aaa
       return res.status(STATUS_CODES.UNAUTHORIZED).json({
         success: false,
         message: 'Token has expired',

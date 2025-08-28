@@ -11,9 +11,9 @@ const Unauthorized = () => {
     if (user?.role === 'admin') {
       navigate('/admin/dashboard');
     } else if (user?.role === 'employer') {
-      navigate('/Employer_dashboard');
+      navigate('/employer/dashboard');
     } else if (user?.role === 'jobseeker') {
-      navigate('/job-seeker/dashboard');
+      navigate('/jobSeeker/dashboard');
     } else {
       navigate('/');
     }
