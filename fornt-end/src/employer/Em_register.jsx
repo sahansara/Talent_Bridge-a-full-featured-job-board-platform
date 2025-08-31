@@ -5,11 +5,14 @@ import RegisterForm from './registerComponents/registerForn';
 import { colorThemes } from '../colorThemes/colorThemes';
 import ThemeSwitcher from '../colorThemes/themeSwitcher';
 import logo from '../assets/logo.png';
+import EM1 from '../assets/EM/EM1.jpeg';
+import EM2 from '../assets/EM/EM2.jpeg';
+import EM3 from '../assets/EM/EM3.jpeg';
+import EM4 from '../assets/EM/EM4.jpeg';
+import registerApi from "../services/employer/register"
 
 const images = [
-  'https://images.unsplash.com/photo-1591696205602-2f950c417cb9?w=800&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=600&fit=crop'
+  EM1, EM2, EM3, EM4
 ];
 
 const benefits = [
@@ -22,9 +25,24 @@ const EmpRegister = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState('blue');
   const [currentImage, setCurrentImage] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentTheme = colorThemes[theme];
-
+  const handleRegistration = async (formData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await registerApi.submitForm(formData);
+      console.log('Registration successful:', response);
+      alert('Registration successful! Please check your email for verification.');
+      navigate('/user_login'); 
+    } catch (error) {
+      console.error('Registration failed:', error);
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
@@ -34,6 +52,15 @@ const EmpRegister = () => {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
+        {/* Hero Image Background - Bottom Layer */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>
+        <img 
+          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop" 
+          alt="Modern office" 
+          className="w-full h-full object-cover opacity-20"
+        />
+      </div>
       {/* Animated Background Circles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[
@@ -119,7 +146,10 @@ const EmpRegister = () => {
 
         {/* Employer Form Section */}
         <div className="flex items-center justify-center p-8 lg:p-12">
-          <RegisterForm currentTheme={currentTheme} />
+          <RegisterForm currentTheme={currentTheme} 
+          onSubmit={handleRegistration}
+          isSubmitting={isSubmitting}
+          />
         </div>
       </div>
     </div>

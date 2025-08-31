@@ -6,9 +6,15 @@ const { COLLECTIONS } = require('../../../config/constants');
 
 function getJobsCollection(db) {
   return db.collection(COLLECTIONS.OTHER.JOB_POST);
+
+}
+function getjobpostnotification(db) {
+  return db.collection(COLLECTIONS.NOTIFICATIONS.JOBPOST_NOTIFICATIONS);
 }
 
-
+function getCompaniesCollection(db) {
+  return db.collection(COLLECTIONS.ROLE.EMPLOYER);
+}
 
 function ensureUploadDirectory(uploadDir) {
   if (!fs.existsSync(uploadDir)) {
@@ -171,6 +177,82 @@ function handleJobNotFound(res, operation = 'access') {
   res.status(404).json({ message: `Job not found or not authorized to ${operation}` });
 }
 
+async function createadminNotification(db, employerId, jobId,messages) {
+  try {
+    const companiesCollection = getCompaniesCollection(db);
+    const jobPostsCollection = getJobsCollection(db);
+    const adminNotificationsCollection = getjobpostnotification(db);
+
+    
+    const employerDetails = await companiesCollection.findOne(
+      { _id: new ObjectId(employerId) },
+      { 
+        projection: { 
+          employerName: 1, 
+          image: 1, 
+          _id: 1 
+        } 
+      }
+    );
+
+   
+    const jobDetails = await jobPostsCollection.findOne(
+      { _id: new ObjectId(jobId) },
+      { 
+        projection: { 
+          title: 1, 
+          thumbnail: 1, 
+          _id: 1 
+        } 
+      }
+    );
+   
+    
+    const Notification = {
+      messages: messages,
+      employerId: employerId.toString(),
+      jobId: jobId.toString(),
+      
+      
+      employerInfo: {
+        id: employerDetails?._id?.toString(),
+        companyName: employerDetails?.employerName || 'Unknown Company',
+        companyImage: employerDetails?.image || null,
+        
+      },
+      
+    
+      jobInfo: {
+        id: jobDetails?._id?.toString(),
+        title: jobDetails?.title || 'Unknown Job',
+        thumbnail: jobDetails?.thumbnail || null,
+      },
+      
+      
+      isRead: false,
+    
+     
+      createdAt: new Date(),
+      readAt: null
+    };
+
+    
+    const result = await adminNotificationsCollection.insertOne(Notification);
+    
+    return {
+      success: true,
+      notificationId: result.insertedId,
+      notification: Notification
+    };
+
+  } catch (error) {
+    console.error('Error creating rich admin notification:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
 module.exports = {
   getJobsCollection,
   ensureUploadDirectory,
@@ -189,5 +271,7 @@ module.exports = {
   fetchUpdatedJob,
   deleteJobAndFiles,
   validateObjectId,
-  handleJobNotFound
+  handleJobNotFound,
+  createadminNotification,
+  getjobpostnotification
 };

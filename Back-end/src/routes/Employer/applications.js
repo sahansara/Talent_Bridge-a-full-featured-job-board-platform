@@ -59,7 +59,7 @@ router.get('/All-applications', async (req, res) => {
   }
 });
 
-// PUT /api/employer/applications/:applicationId/status - Update application status
+// PUT /api/employer/applications/:applicationId/status
 router.put('/applications/:applicationId/status', async (req, res) => {
   try {
     const { applicationId } = req.params;
@@ -149,28 +149,6 @@ router.put('/applications/:applicationId/notes', async (req, res) => {
 
   } catch (error) {
     handleError(res, error, 'updating application notes');
-  }
-});
-
-// GET /api/employer/notifications - Get notifications created by employer actions
-router.get('/notifications', async (req, res) => {
-  try {
-    const employerId = req.user.userId;
-    const db = req.app.locals.db;
-    const { notifications } = getEmployerCollections(db);
-
-    logOperation('Fetching notifications created by employer', employerId);
-
-    // Fetch employer notifications
-    const employerNotifications = await fetchEmployerNotifications(notifications, employerId);
-
-    res.status(200).json({
-      message: 'Notifications fetched successfully',
-      notifications: employerNotifications
-    });
-
-  } catch (error) {
-    handleError(res, error, 'fetching notifications');
   }
 });
 

@@ -228,7 +228,6 @@ function createEmptyNotificationsResponse(debugInfo) {
 module.exports = {
   getEmployerNotificationCollections,
   validateObjectId,
-
   convertEmployerIdToString,
   convertEmployerIdToObjectId,
   fetchEmployerNotifications,

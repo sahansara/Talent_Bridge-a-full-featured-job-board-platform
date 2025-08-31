@@ -127,6 +127,12 @@ export const adminConfig = {
       label: 'Manage Job Post',
       href: '/admin/dashboard/managePost?tab=jobposts',
       countKey: 'jobPosts'
+    },
+    {
+      path: '/admin/dashboard/notifications', 
+      icon: 'NotificationIcon', 
+      label: 'Notifications',
+      href: '/admin/dashboard/notifications?tab=notifications'
     }
   ],
   userDataMapping: {

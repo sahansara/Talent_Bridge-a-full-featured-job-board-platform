@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 const JobSeekerAvatar = ({ jobSeekerImage, jobSeekerName }) => {
   return (
@@ -12,7 +12,7 @@ const JobSeekerAvatar = ({ jobSeekerImage, jobSeekerName }) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <Briefcase className="text-gray-400" size={20} />
+          <UserPlus className="text-blue-400" size={20} />
         )}
       </div>
     </div>

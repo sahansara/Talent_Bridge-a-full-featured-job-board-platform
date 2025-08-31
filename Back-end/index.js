@@ -35,6 +35,9 @@ const applications = require('./src/routes/Employer/applications.js');
 const Manage_jobSeeker = require('./src/routes/Admin/Manage_jobSeeker');
 const Manage_Employers = require('./src/routes/Admin/Manage_Employers');
 const notifications = require('./src/routes/Job_seeker/notifications');
+const feedback = require('./src/routes/feedback/feedback');
+const EM_NOTIFICATIONS =require('./src/routes/Employer/notifications')
+const ADNOTIFICATION  = require('./src/routes/Admin/notification.js')
 
 const app = express();
 const port = ENV.PORT;
@@ -61,30 +64,29 @@ app.use('/uploads', express.static(
   }
 ));
 
-// File upload error handling
+
 app.use(handleUploadError);
 
 // Database connection and server startup
 async function main() {
   try {
-    // Connect to database
+    
     const { db, collections } = await databaseConnection.connect();
     
-    // Make database connection available to routes
+    
     app.locals.db = db;
     app.locals.collections = collections;
 
-    // Mount routes after database connection
+    
     mountRoutes();
 
-    // Start server
+    
     app.listen(port, () => {
-      console.log(`🚀 Server running on http://localhost:${port}`);
-      console.log(`📊 Environment: ${ENV.NODE_ENV}`);
+      
     });
     
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 }
@@ -98,11 +100,12 @@ function mountRoutes() {
   app.use('/api/job-seeker', register);
   
   // Company/Employer registration - should be public
-  app.use('/api/Company', ensureDbConnected, Login_register);
+  app.use('/api/company', Login_register);
   
   // Admin registration - should be public
   app.use('/api/admin', ensureDbConnected, register_dashboard);
-  
+  // Feedback route - should be public
+  app.use('/api/feedback', ensureDbConnected, feedback);
   // PROTECTED ROUTES (Authentication required)
   
   // Job Seeker protected routes
@@ -114,53 +117,21 @@ function mountRoutes() {
   app.use('/api/Company', ensureDbConnected, authenticateToken, jobPosts);
   app.use('/api/Company', ensureDbConnected, authenticateToken, EM_mainProfile);
   app.use('/api/Company', ensureDbConnected, authenticateToken, applications);
-  app.use('/api/Company', ensureDbConnected, authenticateToken, notifications);
+  app.use('/api/Company', ensureDbConnected, authenticateToken, EM_NOTIFICATIONS);
 
   // ADMIN PROTECTED ROUTES (Admin authentication + authorization required)
-  // Apply rate limiting to all admin routes
+  
   app.use('/api/admin', adminRateLimit);
   
   // Admin protected routes with full admin authentication chain
-  app.use('/api/admin', 
-    ensureDbConnected, 
-    authenticateAdminToken, 
-    requireAdmin, 
-    logAdminActions, 
-    Manage_jobpost
-  );
+  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin, logAdminActions, Manage_jobpost);
   
-  app.use('/api/admin', 
-    ensureDbConnected, 
-    authenticateAdminToken, 
-    requireAdmin, 
-    logAdminActions, 
-    Manage_jobSeeker
-  );
+  app.use('/api/admin',ensureDbConnected,authenticateAdminToken,requireAdmin,logAdminActions, Manage_jobSeeker);
   
-  app.use('/api/admin', 
-    ensureDbConnected, 
-    authenticateAdminToken, 
-    requireAdmin, 
-    logAdminActions, 
-    Manage_Employers
-  );
+  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  logAdminActions,  Manage_Employers);
 
-  // Alternative approach using the combined adminAuth middleware
-  // You can replace the individual middleware chains above with:
-  /*
-  app.use('/api/admin', ensureDbConnected, adminAuth, logAdminActions, Manage_jobpost);
-  app.use('/api/admin', ensureDbConnected, adminAuth, logAdminActions, Manage_jobSeeker);
-  app.use('/api/admin', ensureDbConnected, adminAuth, logAdminActions, Manage_Employers);
-  */
+    app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin, logAdminActions, ADNOTIFICATION);
 
-  // Test route
-  app.post('/test', (req, res) => {
-    console.log('Test request body:', req.body);
-    res.status(200).json({ 
-      message: 'Test successful', 
-      receivedData: req.body 
-    });
-  });
 
   // Catch-all for undefined routes
   app.use((req, res) => {

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Lock, Upload, Camera, Briefcase, ArrowRight, FileText, Shield, CheckCircle } from 'lucide-react'; 
 import { colorThemes } from '../../colorThemes/colorThemes';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) => {
+const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' },onSubmit,isSubmitting }) => {
   const [passwordVisible, setPasswordVisible] = useState({ password: false, rePassword: false });
   const [passwordError, setPasswordError] = useState('');
   const [formData, setFormData] = useState({
@@ -28,29 +29,41 @@ const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } 
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.rePassword) {
-      setPasswordError('Passwords do not match');
-      return;
-    } else {
-      setPasswordError('');
+   const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Validation
+  if (formData.password !== formData.rePassword) {
+    setPasswordError('Passwords do not match');
+    return;
+  } else {
+    setPasswordError('');
+  }
+
+
+  if (!formData.fullName || !formData.email || !formData.password || !formData.cv_Upload) {
+    alert('Please fill in all required fields');
+    return;
+  }
+
+  // Create FormData
+  const data = new FormData();
+  data.append('fullName', formData.fullName);
+  data.append('email', formData.email);
+  data.append('password', formData.password);
+  if (formData.cv_Upload) data.append('cv_Upload', formData.cv_Upload);
+  if (formData.image) data.append('image', formData.image);
+
+  try {
+    // Call parent's onSubmit function
+    if (onSubmit) {
+      await onSubmit(data);
     }
-
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) data.append(key, value);
-    });
-
-    try {
-     
-    } catch (error) {
-      console.error('Registration failed:', error);
-      alert('Registration failed. Check console for details.');
-    }
-  };
-
+  } catch (error) {
+    console.error('Registration failed:', error);
+    // Error is already handled in parent component
+  }
+};
   const handleNavigation = useNavigate();
 
   const inputFields = [
@@ -176,14 +189,20 @@ const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } 
           <div className="mt-4 space-y-3">
             {/* Register Button */}
             <button 
-              onClick={handleSubmit}
-              className={`w-full bg-gradient-to-r ${currentTheme?.primary || 'from-blue-500 to-blue-700'} hover:scale-105 rounded-xl py-3 font-semibold text-white transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/25 group text-sm`}
-            >
-              <span className="flex items-center justify-center">
-                Create Account
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
-            </button>
+        onClick={handleSubmit}
+        disabled={isSubmitting} // Disable when submitting
+        className={`w-full bg-gradient-to-r ${currentTheme?.primary || 'from-blue-500 to-blue-700'} 
+                   ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} 
+                   rounded-xl py-3 font-semibold text-white transition-all duration-300 
+                   hover:shadow-2xl hover:shadow-blue-500/25 group text-sm`}
+      >
+        <span className="flex items-center justify-center">
+          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+          {!isSubmitting && (
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+          )}
+        </span>
+      </button>
 
             {/* Login Link */}
             <p className="text-center text-gray-400 text-sm">
@@ -211,15 +230,15 @@ const RegisterForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } 
       </div>
 
       {/* Custom CSS for hiding scrollbar */}
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+     <style>{`
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+`}</style>
     </div>
   );
 };

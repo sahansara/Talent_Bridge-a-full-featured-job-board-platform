@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Building2, Mail, Lock, Upload, Camera, Globe, Phone, FileText, ArrowRight, CheckCircle } from 'lucide-react';
 
-const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) => {
+const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onSubmit, isSubmitting }) => {
   const [formData, setFormData] = useState({
     employerName: '',
     email: '',
@@ -10,7 +10,7 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) =
     comDescription: '',
     contactNumber: '',
     employerWebsite: '',
-    employerImage: null,
+    image: null,
   });
 
   const [passwordError, setPasswordError] = useState('');
@@ -43,22 +43,31 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) =
     }  
     setPasswordError('');
 
+    // Fix validation - use correct field names
+    if (!formData.employerName || !formData.email || !formData.password || !formData.comDescription) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    // Fix FormData - use correct field names
     const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value && key !== 'rePassword') data.append(key, value);
-    });
+    data.append('employerName', formData.employerName);
+    data.append('email', formData.email);
+    data.append('password', formData.password);
+    data.append('comDescription', formData.comDescription);
+    data.append('contactNumber', formData.contactNumber);
+    data.append('employerWebsite', formData.employerWebsite);
+    
+    if (formData.image) data.append('image', formData.image);
 
     try {
-      // Simulate API call - remove axios dependency for artifact
-      console.log('Registration successful:', formData);
-      alert('Registered successfully!');
-      // window.location.href = '/User_login';
+      if (onSubmit) {
+        await onSubmit(data);
+      }
     } catch (error) {
       console.error('Registration failed:', error);
-      alert('Registration failed. Check console for details.');
     }
   };
-
   const basicFields = [
     { name: 'employerName', type: 'text', label: 'Employer Name', icon: <Building2 className="w-5 h-5" />, placeholder: 'Enter your employer name', required: true },
     { name: 'email', type: 'email', label: 'Email Address', icon: <Mail className="w-5 h-5" />, placeholder: 'Enter employer email', required: true },
@@ -173,7 +182,7 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) =
                   </div>
                   <input 
                     type="file" 
-                    name="employerImage" 
+                    name="image" 
                     accept="image/*" 
                     onChange={handleChange} 
                     className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-2.5 text-white file:bg-transparent file:border-0 file:text-gray-400 file:text-sm hover:bg-white/20 focus:bg-white/20 focus:border-white/40 focus:outline-none transition-all duration-300 text-sm" 
@@ -195,14 +204,20 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) =
           <div className="mt-4 space-y-3">
             {/* Register Button */}
             <button 
-              onClick={handleSubmit}
-              className={`w-full bg-gradient-to-r ${currentTheme?.primary || 'from-blue-500 to-blue-700'} hover:scale-105 rounded-xl py-3 font-semibold text-white transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/25 group text-sm`}
-            >
-              <span className="flex items-center justify-center">
-                Create Account
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
-            </button>
+      onClick={handleSubmit}
+      disabled={isSubmitting} // Add disabled state
+      className={`w-full bg-gradient-to-r ${currentTheme?.primary || 'from-blue-500 to-blue-700'} 
+                 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} 
+                 rounded-xl py-3 font-semibold text-white transition-all duration-300 
+                 hover:shadow-2xl hover:shadow-blue-500/25 group text-sm`}
+    >
+      <span className="flex items-center justify-center">
+        {isSubmitting ? 'Creating Account...' : 'Create Account'}
+        {!isSubmitting && (
+          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+        )}
+      </span>
+    </button>
 
             {/* Login Link */}
             <p className="text-center text-gray-400 text-sm">
@@ -229,15 +244,15 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) =
       </div>
 
       {/* Custom CSS for hiding scrollbar */}
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+      <style>{`
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+`}</style>
     </div>
   );
 };

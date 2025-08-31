@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown ,ArrowRight} from 'lucide-react';
 
-import fullStack from '../assets/11.jpg';
-import marketing from '../assets/12.jpg';
-import web from '../assets/4.jpg';
+import EM1 from '../assets/EM/EM3.jpeg';
+import EM2 from '../assets/EM/EM4.jpeg';
+import JS1 from '../assets/JS/JB1.jpeg';
+import JS2 from '../assets/JS/JB4.jpeg';
 
 
 export const Hero = ({ theme }) => {
@@ -13,7 +14,7 @@ export const Hero = ({ theme }) => {
   const navigate = useNavigate();
   
 
-const images = [web,fullStack,marketing];
+const images = [EM1, EM2, JS1, JS2];
 
 const statsData = [
   { number: 50000, label: 'Active Jobs', gradient: 'from-blue-500 to-purple-500' },
@@ -145,7 +146,7 @@ const statsData = [
     <img
       src={images[currentImageIndex]}
       alt="Team"
-      className="w-full h-full object-cover rounded-[20px] md:rounded-[40px] shadow-xl md:shadow-2xl transition-all duration-1000"
+      className="w-full h-full  rounded-[20px] md:rounded-[40px] shadow-2xl transition-opacity duration-1000"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-[20px] md:rounded-[40px]"></div>
   </div>

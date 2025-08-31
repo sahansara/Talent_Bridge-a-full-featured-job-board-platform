@@ -1,6 +1,4 @@
-// Hash password
 express = require('express');
-
 const bcrypt = require('bcryptjs');
 const { uploadMiddlewares } = require('../../config/multer');
 const { isValidEmail, validateRequiredFields } = require('../../utils/validation');
@@ -8,7 +6,7 @@ const { STATUS_CODES, MESSAGES, USER_ROLES, SECURITY } = require('../../config/c
 
 const router = express.Router();
 
-// ✅ Registration route - only for job seekers
+
 router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
   try {
     console.log('Job Seeker registration request body:', req.body);
@@ -33,7 +31,7 @@ router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
       });
     }
     
-    // Check if email already exists in job seekers collection
+    // Check if email already exists 
     const existingUser = await seekEmployees.findOne({ email });
     if (existingUser) {
       return res.status(STATUS_CODES.CONFLICT).json({ 
@@ -48,7 +46,7 @@ router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, SECURITY.BCRYPT_SALT_ROUNDS);
     
-    // Set default role to jobseeker if none provided
+    
     const userRole = role || USER_ROLES.JOB_SEEKER;
 
     // Create user data object
@@ -62,7 +60,7 @@ router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
       createdAt: new Date()
     };
 
-    // Insert user into database
+    // Insert user into 
     const result = await seekEmployees.insertOne(userData);
     
     console.log('Job Seeker registered successfully:', result.insertedId);

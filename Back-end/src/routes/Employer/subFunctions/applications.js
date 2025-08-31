@@ -238,11 +238,6 @@ async function verifyCvAccess(applicationsCollection, employerId, filename) {
   });
 }
 
-/**
- * Set CV response headers
- * @param {Object} res - Express response object
- * @param {string} filename - CV filename
- */
 function setCvResponseHeaders(res, filename) {
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', 'inline; filename=' + filename);
@@ -251,12 +246,6 @@ function setCvResponseHeaders(res, filename) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
-/**
- * Stream CV file to response
- * @param {Object} res - Express response object
- * @param {string} filePath - Path to CV file
- * @returns {void}
- */
 function streamCvFile(res, filePath) {
   const fileStream = fs.createReadStream(filePath);
   
