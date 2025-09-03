@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
-// Import helper functions
 const {
   fetchAllAdminNotifications,
   markNotificationAsRead,

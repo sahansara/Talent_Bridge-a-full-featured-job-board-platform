@@ -2,15 +2,21 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Alert from '../../notificationAlert/Alert';
 
 export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) => {
-  const [theme, setTheme] = useState('blue');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', remember: false });
+  const [notification, setNotification] = useState({ type: '', message: '' });
   const navigate = useNavigate();
-  
-  
+
+  // Utility function to show notifications with auto-redirect
+  const showNotification = (type, message, redirectPath = null, delay = 400) => {
+    setNotification({ type, message });
+    if (redirectPath) {
+      setTimeout(() => navigate(redirectPath), delay);
+    }
+  };
 
   // Load saved email on mount
   useEffect(() => {
@@ -35,49 +41,44 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
         remember: formData.remember
       });
 
-      
-        
-      // Store the token if it exists in the response
       if (res.data.token) {
         localStorage.setItem('token', res.data.token);
         
-        // If remember me is checked, save the email
         if (formData.remember) {
           localStorage.setItem('savedEmail', formData.email);
         } else {
-          // If not checked, remove any saved email
           localStorage.removeItem('savedEmail');
         }
       }
       
-      // Check user role and redirect accordingly
-      const userRole = res.data.role;
+      // Handle navigation based on role
+      const routes = {
+        jobseeker: '/jobSeeker/dashboard',
+        employer: '/employer/dashboard', 
+        Admin: '/admin/dashboard'
+      };
       
-      switch(userRole) {
-        case 'jobseeker':
-          navigate('/jobSeeker/dashboard');
-          break;
-        case 'employer':
-          navigate('/employer/dashboard');
-          break;
-        case 'Admin':
-          navigate('/admin/dashboard');
-          break;
-        default:
-          // Fallback if role is not recognized
-          alert('Unknown user role. Please contact support.');
+      const redirectPath = routes[res.data.role];
+      if (redirectPath) {
+        showNotification('success', 'Login successful! Redirecting...', redirectPath);
+      } else {
+        showNotification('error', 'Unknown user role. Please contact support.');
       }
-
-      alert('Login successful!');
+      
     } catch (err) {
-      console.error('Login failed:', err.response?.data || err.message);
-      alert('Login failed. Please check your credentials.');
+      showNotification('error', 'Login failed. Please check your credentials');
     }
+  };
+
+  const handleCloseAlert = () => {
+    setNotification({ type: '', message: '' });
   };
 
   return (
     <div className="w-full max-w-md">
-      
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <Alert notification={notification} onClose={handleCloseAlert} />
+      </div>
 
       {/* Form Container */}
       <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
@@ -88,7 +89,6 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
           <p className="text-gray-400">Enter your credentials to continue</p>
         </div>
 
-        {/* Form Wrapper */}
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
             {/* Email Field */}
@@ -132,7 +132,7 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Remember Me and Forgot Password */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center text-gray-300 cursor-pointer">
                 <input 
@@ -152,7 +152,6 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
               </button>
             </div>
 
-            {/* Login Button */}
             <button 
               type="submit"
               className={`w-full bg-gradient-to-r ${currentTheme?.primary || 'from-blue-500 to-blue-700'} hover:scale-105 rounded-2xl py-4 font-semibold text-white transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/25 group`}
@@ -163,7 +162,6 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
               </span>
             </button>
 
-            {/* Sign Up Link */}
             <p className="text-center text-gray-400">
               Don't have an account?{' '}
               <button 
@@ -178,7 +176,6 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
         </form>
       </div>
 
-      {/* Back to Home */}
       <div className="text-center mt-6">
         <button
           onClick={() => navigate('/')} 

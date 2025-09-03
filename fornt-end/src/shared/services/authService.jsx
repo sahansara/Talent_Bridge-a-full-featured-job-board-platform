@@ -1,19 +1,18 @@
-// src/shared/services/authService.js
 import axios from 'axios';
 
 export const logout = async (config, navigate) => {
   try {
-    // Call logout API
+  
     await axios.post(config.api.logout, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
     
-    // Clear all authentication and session data (preserve remember me data)
+    
     clearUserData();
     
-    // Force reload and redirect to login page
+  
     window.location.href = `/User_login?v=${Math.floor(Date.now() / 1000)}`;
    
   } catch (error) {
@@ -60,9 +59,9 @@ const clearUserData = () => {
   clearAuthCookies();
 };
 
-// Helper function to clear authentication cookies
+
 const clearAuthCookies = () => {
-  // Clear auth-related cookies (adjust cookie names as per your app)
+ 
   document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
   document.cookie = 'sessionId=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
   document.cookie = 'userSession=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';

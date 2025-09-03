@@ -1,4 +1,3 @@
-// src/shared/config/sidebarConfig.js
 import { ROLES, USER_TYPES } from './roleConstants';
 import {colorThemes} from  '../../colorThemes/colorThemes';
 

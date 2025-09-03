@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
   try {
-    console.log('Job Seeker registration request body:', req.body);
+   
     
     // Validate required fields
     const requiredFields = ['fullName', 'email', 'password'];
@@ -63,7 +63,7 @@ router.post('/register', uploadMiddlewares.jobSeekerFiles, async (req, res) => {
     // Insert user into 
     const result = await seekEmployees.insertOne(userData);
     
-    console.log('Job Seeker registered successfully:', result.insertedId);
+   
     
     res.status(STATUS_CODES.CREATED).json({ 
       message: MESSAGES.SUCCESS.USER_REGISTERED, 

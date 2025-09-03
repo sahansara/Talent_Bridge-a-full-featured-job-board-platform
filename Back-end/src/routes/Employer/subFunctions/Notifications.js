@@ -25,7 +25,7 @@ function convertEmployerIdToObjectId(employerId) {
   try {
     return new ObjectId(employerId);
   } catch (error) {
-    console.log("ObjectId conversion failed:", error);
+   
     return null;
   }
 }
@@ -41,7 +41,7 @@ function extractJobIdsFromNotifications(notifications) {
     try {
       return new ObjectId(notification.jobId);
     } catch (err) {
-      console.log("Invalid jobId format:", notification.jobId);
+      
       return null;
     }
   }).filter(id => id !== null);
@@ -88,7 +88,7 @@ async function verifyNotificationOwnership(notificationsCollection, notification
       employerId: convertEmployerIdToString(employerId)
     });
   } catch (error) {
-    console.log("Error verifying notification ownership:", error);
+    
     return null;
   }
 }
@@ -108,20 +108,20 @@ async function deleteEmployerNotification(notificationsCollection, notificationI
 }
 
 async function fetchJobApplicationNotifications(notificationsCollection, employerId) {
-  console.log("Job Seeker ID (raw):", employerId);
+ 
 
-  // Get total count for debugging
+  
   const totalCount = await notificationsCollection.countDocuments();
-  console.log("Total notifications in collection:", totalCount);
+ 
 
   let notifications = [];
   
-  // Strategy 1: Try as string first
+  
   notifications = await notificationsCollection.find({  
     employerId: convertEmployerIdToString(employerId)
   }).sort({ createdAt: -1 }).toArray();
   
-  // Strategy 2: Try as ObjectId if no results
+
   if (notifications.length === 0) {
     const employerObjectId = convertEmployerIdToObjectId(employerId);
     if (employerObjectId) {
@@ -130,17 +130,17 @@ async function fetchJobApplicationNotifications(notificationsCollection, employe
           employerId: employerObjectId
         }).sort({ createdAt: -1 }).toArray();
       } catch (objectIdError) {
-        console.log("ObjectId conversion failed, trying alternative methods...");
+        
       }
     }
   }
   
-  // Strategy 3: Try alternative field names
+
   if (notifications.length === 0) {
     notifications = await tryAlternativeFieldNames(notificationsCollection, employerId);
   }
 
-  console.log("Found Notifications:", notifications.length);
+  
   
   return {
     notifications,
@@ -162,7 +162,6 @@ async function tryAlternativeFieldNames(notificationsCollection, employerId) {
     }).sort({ createdAt: -1 }).toArray();
     
     if (notifications.length > 0) {
-      console.log(`Found notifications using field: ${field}`);
       return notifications;
     }
     
@@ -175,12 +174,11 @@ async function tryAlternativeFieldNames(notificationsCollection, employerId) {
         }).sort({ createdAt: -1 }).toArray();
         
         if (notifications.length > 0) {
-          console.log(`Found notifications using ObjectId field: ${field}`);
+          
           return notifications;
         }
       } catch (err) {
-        // Continue to next field
-        console.log(`Failed to query with ObjectId for field ${field}:`, err);
+        return null
       }
     }
   }
@@ -200,7 +198,7 @@ async function verifyJobApplicationNotificationOwnership(notificationsCollection
       employerId: employerObjectId
     });
   } catch (error) {
-    console.log("Error verifying job application notification ownership:", error);
+
     return null;
   }
 }

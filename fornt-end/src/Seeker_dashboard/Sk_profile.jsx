@@ -1,11 +1,11 @@
-// React imports
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// External libraries
+
 import 'boxicons/css/boxicons.min.css';
 
-// Component imports
+
 import ProfilePhotoSection from './profileComponets/ProfilePhotoSection';
 import NavigationTabs from './profileComponets/navigationTabs';
 import PersonalInfoTab from './profileComponets/personalInfoTab';
@@ -14,7 +14,7 @@ import DocumentsTab from './profileComponets/documentsTab';
 import NotificationAlert from './profileComponets/notificationAlert';
 import ProfileHeader from './profileComponets/profileHeader';
 
-// Service imports
+
 import { profileAPI } from '../services/jobSeeker/mainprofile';
 import { validateProfileForm, validateFile } from "../utils/jobSeeker/profileValidations";
 

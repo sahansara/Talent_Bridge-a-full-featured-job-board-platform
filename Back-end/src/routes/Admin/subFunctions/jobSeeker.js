@@ -20,6 +20,7 @@ function getJobSeekerProjection() {
     fullName: 1,
     email: 1,
     role: 1,
+    image:1,
     createdAt: 1
    
   };
@@ -35,7 +36,7 @@ function handleError(res, error, operation, statusCode = 500) {
 }
 
 function logOperation(operation, details) {
-  console.log(`Admin ${operation}: ${details}`);
+
 }
 
 function validateBulkDeleteRequest(userIds, res) {

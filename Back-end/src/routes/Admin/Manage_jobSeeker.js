@@ -7,7 +7,7 @@ const { getJobSeekersCollection,
   handleError,
   logOperation, 
   validateBulkDeleteRequest } = require('./subFunctions/jobSeeker');
-// Get all job seekers (admin only)
+// Get all job seekers 
 router.get('/jobseekers', async (req, res) => {
   try {
     logOperation('fetching all job seekers', '');
@@ -27,7 +27,7 @@ router.get('/jobseekers', async (req, res) => {
   }
 });
 
-// Get single job seeker by ID (admin only)
+// Get single job seeker 
 router.get('/jobseekers/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,7 +55,7 @@ router.get('/jobseekers/:id', async (req, res) => {
   }
 });
 
-// Bulk delete job seekers (admin only)
+// Bulk delete job seekers
 router.post('/jobseekers/bulk-delete', async (req, res) => {
   try {
     const { userIds } = req.body;

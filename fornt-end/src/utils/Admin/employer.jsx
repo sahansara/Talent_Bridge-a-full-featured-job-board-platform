@@ -1,4 +1,3 @@
-// src/utils/notificationUtils.js
 
 export const notificationUtils = {
   // Format date function

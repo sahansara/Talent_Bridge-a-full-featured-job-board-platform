@@ -1,9 +1,6 @@
-// employerRoutes.js - Employer Application Management API routes
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-
-// Import helper functions
 const {
   getEmployerCollections,
   handleError,
@@ -17,17 +14,16 @@ const {
   createStatusNotificationData,
   insertNotification,
   updateApplicationNotes,
-  fetchEmployerNotifications,
   generateCvFilePaths,
   findExistingCvFile,
   logCvDebugInfo,
   verifyCvAccess,
   setCvResponseHeaders,
   streamCvFile
-} = require('./subFunctions/applications'); // Adjust path as needed
+} = require('./subFunctions/applications'); 
 
 
-// GET /api/employer/All-applications - Fetch all applications for logged-in employer
+//  Fetch all applications
 router.get('/All-applications', async (req, res) => {
   try {
     const employerId = req.user.userId;
@@ -59,7 +55,7 @@ router.get('/All-applications', async (req, res) => {
   }
 });
 
-// PUT /api/employer/applications/:applicationId/status
+// application status
 router.put('/applications/:applicationId/status', async (req, res) => {
   try {
     const { applicationId } = req.params;
@@ -73,20 +69,20 @@ router.put('/applications/:applicationId/status', async (req, res) => {
 
     logOperation(`Updating application ${applicationId} status to`, status);
 
-    // Find and verify application ownership
+    // Find and verify application owner
     const application = await findAndVerifyApplication(applications, applicationId, employerId);
 
     if (!application) {
       return res.status(404).json({ error: 'Application not found or unauthorized' });
     }
 
-    // Get employer ID from application
+    // Get employer ID from applications
     const employersId = application.employerId;
     if (!employersId) {
       return res.status(400).json({ error: 'employer ID not found in application' });
     }
 
-    // Fetch employer details for notification
+    // Fetch employer details for notifications
     const employer = await fetchEmployerDetails(companies, employersId);
     if (!employer) {
       return res.status(404).json({ error: 'employer not found' });
@@ -108,7 +104,6 @@ router.put('/applications/:applicationId/status', async (req, res) => {
       employer
     );
 
-    // Insert notification
     await insertNotification(notifications, notificationData);
 
     logOperation('Notification created for job seeker', application.jobSeekerId);
@@ -124,7 +119,7 @@ router.put('/applications/:applicationId/status', async (req, res) => {
   }
 });
 
-// PUT /api/employer/applications/:applicationId/notes - Add/Update notes
+// Add/Update notes
 router.put('/applications/:applicationId/notes', async (req, res) => {
   try {
     const { applicationId } = req.params;
@@ -152,7 +147,7 @@ router.put('/applications/:applicationId/notes', async (req, res) => {
   }
 });
 
-// GET /api/employer/cv/:filename - Serve CV files with proper headers
+// Serve CV files with proper headers
 router.get('/cv/:filename', async (req, res) => {
   try {
     const { filename } = req.params;
@@ -160,7 +155,7 @@ router.get('/cv/:filename', async (req, res) => {
     const db = req.app.locals.db;
     const { applications } = getEmployerCollections(db);
     
-    // Security check: Verify the CV belongs to an application for this employer
+    //  Verify the CV belongs to an application for this employer
     const application = await verifyCvAccess(applications, employerId, filename);
     
     // Generate possible file paths
@@ -170,7 +165,7 @@ router.get('/cv/:filename', async (req, res) => {
     logCvDebugInfo(filename, employerId, __dirname, possiblePaths, application);
     
     if (!application) {
-      console.log('❌ No application found - unauthorized access');
+      
       return res.status(404).json({ error: 'CV not found or unauthorized' });
     }
     
@@ -189,8 +184,8 @@ router.get('/cv/:filename', async (req, res) => {
       });
     }
     
-    // File found, set headers and serve
-    console.log('✅ Serving file from:', foundPath);
+    
+   
     
     setCvResponseHeaders(res, filename);
     streamCvFile(res, foundPath);

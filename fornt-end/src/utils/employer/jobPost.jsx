@@ -1,4 +1,4 @@
-// Location options for dropdown
+// Location  dropdown
 export const locationOptions = [
   "Western Province",
   "Central Province",
@@ -11,7 +11,7 @@ export const locationOptions = [
   "Sabaragamuwa Province"
 ];
 
-// Job type options for dropdown
+// Job type dropdown
 export const jobTypeOptions = [
   'Full-time',
   'Part-time',

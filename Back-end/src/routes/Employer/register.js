@@ -5,7 +5,6 @@ const {
   getEmployerCollection,
   handleError,
   createUploadMiddleware,
-  logRegistrationRequest,
   validateEmployerRegistration,
   processEmployerRegistration
 } = require('./subFunctions/EMregister'); 
@@ -13,18 +12,17 @@ const {
 
 const upload = createUploadMiddleware();
 
-// POST /employer_register - Register new employer
+//  Register new employer
 router.post('/register', upload.fields([
   { name: 'image', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Log registration request for debugging
-    logRegistrationRequest(req.body);
+   
 
     // Validate all required fields and formats
     if (!validateEmployerRegistration(req.body, res)) return;
 
-    // Get database collection
+    // Get database collection  
     const db = req.app.locals.db;
     const employerCollection = getEmployerCollection(db);
 

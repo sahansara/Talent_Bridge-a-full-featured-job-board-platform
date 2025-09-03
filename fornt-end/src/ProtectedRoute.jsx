@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children, requiredRole = null, allowedRoles = [] }) =>
 
   // Redirect to login if not authenticated - with refresh
   if (!isAuthenticated) {
-    console.log('User is not authenticated, redirecting to login');
+    
     // Force page refresh and redirect to login
     window.location.href = `/User_login?redirect=${encodeURIComponent(location.pathname)}&t=${Date.now()}`;
     return null;
@@ -28,15 +28,13 @@ const ProtectedRoute = ({ children, requiredRole = null, allowedRoles = [] }) =>
 
   // Check for specific role requirement
   if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
-    console.log(`User role ${user?.role} does not match required role ${requiredRole}`);
-    console.log(user.role);
-    
+   
     return <AccessDenied requiredRole={requiredRole} />;
   }
 
   // Check for multiple allowed roles
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
-    console.log(`User role ${user?.role} is not in allowed roles: ${allowedRoles.join(', ')}`);
+   
     
     window.location.href = `/unauthorized?t=${Date.now()}`;
     return null;

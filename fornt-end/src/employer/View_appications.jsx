@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
-// Components
 import HeaderSection from './appicationComponets/headerSection';
 import FilterSection from './appicationComponets/filterSection';
 import JobPostCard from './appicationComponets/jobPostCard';
@@ -8,10 +6,10 @@ import ApplicationDetailsModal from './appicationComponets/appicationDetailsMode
 import CVViewerModal from './appicationComponets/cvviewerModal';
 import { LoadingErrorDisplay, EmptyState } from './appicationComponets/loadingErrorDisplay';
 
-// Services
 import { applicationApiService } from '../services/employer/viewAppication';
-// Utils
+import Alert from '../notificationAlert/Alert'
 import { applicationUtils, MOCK_JOB_POSTS } from '../utils/employer/viewAppication';
+
 
 const View_applications = () => {
   // State management
@@ -32,8 +30,11 @@ const View_applications = () => {
   const [selectedCV, setSelectedCV] = useState(null);
   const [expandedJobs, setExpandedJobs] = useState(new Set([1, 2, 3]));
   const [cvLoadError, setCvLoadError] = useState(false);
+ 
+  //notification alert
+  const[notification,setNotification]=useState({type:'',message:''});
 
-  // Fetch applications on component mount
+  // Fetch applications on component 
   useEffect(() => {
     fetchApplications();
   }, []);
@@ -81,23 +82,16 @@ const View_applications = () => {
           : job
       ));
 
-      // Update selected application if it's currently selected
+      // Update selected application if  currently select
       if (selectedApplication && selectedApplication.id === applicationId) {
         setSelectedApplication({...selectedApplication, status: newStatus});
       }
       
-      console.log(`Successfully updated application ${applicationId} status to ${newStatus}`);
+     
     } catch (error) {
       console.error('Error updating application status:', error);
       
-      // Better error handling with user feedback
-      if (error.response?.status === 404) {
-        alert('API endpoint not found. Please check if the backend server is running and the endpoint exists.');
-      } else if (error.code === 'ERR_NETWORK') {
-        alert('Cannot connect to backend server. Please check if backend is running on port 3000.');
-      } else {
-        alert(`Failed to update application status: ${error.response?.data?.message || error.message}`);
-      }
+      
     }
   };
 
@@ -118,13 +112,15 @@ const View_applications = () => {
           : job
       ));
 
-      // Update selected application if it's currently selected
+      
       if (selectedApplication && selectedApplication.id === applicationId) {
         setSelectedApplication({...selectedApplication, notes});
       }
     } catch (error) {
-      console.error('Error updating application notes:', error);
-      alert('Failed to update notes. Please try again.');
+      setNotification({
+        type:'error',
+        message:error.response?.data?.message || 'Failed to update notes. Please try again'
+      })
     }
   };
 
@@ -133,7 +129,7 @@ const View_applications = () => {
     try {
       await applicationUtils.handleCVDownload(cvUrl, applicationApiService.downloadCV);
     } catch (error) {
-      alert('Failed to download CV. Please try again.');
+      
     }
   };
 
@@ -191,6 +187,8 @@ const View_applications = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:p-8">
       <div className="max-w-7xl mx-auto">
+        
+        <Alert notification={notification}/>
         {/* Header */}
         <HeaderSection 
           filteredJobPosts={filteredJobPosts}

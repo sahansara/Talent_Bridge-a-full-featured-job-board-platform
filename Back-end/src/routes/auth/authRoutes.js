@@ -8,10 +8,10 @@ const { STATUS_CODES, MESSAGES, USER_ROLES, SECURITY } = require('../../config/c
 const router = express.Router();
 
 
-// Verify token endpoint
+// Verify token 
 router.get('/auth/verify', authenticateToken, async (req, res) => {
   try {
-    // If we reach here, the token is valid (authenticateToken middleware passed)
+    // If we reach here, the token is valid 
     const { db,collections } = req.app.locals;
     const { ObjectId } = require('mongodb');
     
@@ -19,7 +19,7 @@ router.get('/auth/verify', authenticateToken, async (req, res) => {
     let user = null;
     let userCollection = null;
 
-    // Check which collection the user belongs to based on role
+    // Check which collection the user belongs to based on userrole
     switch (req.user.role) {
       case 'jobseeker':
         userCollection = collections.seek_employees || db.collection('seek_employees'); 
@@ -38,7 +38,7 @@ router.get('/auth/verify', authenticateToken, async (req, res) => {
     }
 
     
-    // Convert userId to ObjectId if it's a string
+    // Convert userId to ObjectId if  string
     let userId;
     try {
       userId = typeof req.user.userId === 'string' 
@@ -52,7 +52,7 @@ router.get('/auth/verify', authenticateToken, async (req, res) => {
       });
     }
 
-    // Find user in appropriate collection
+    // Find user in appropre collection
      user = await userCollection.findOne({ _id: userId });
 
     if (!user) {
@@ -62,7 +62,7 @@ router.get('/auth/verify', authenticateToken, async (req, res) => {
       });
     }
 
-    // Remove sensitive information
+    // Remove passoword  
     const { password, ...userWithoutPassword } = user;
 
     res.status(STATUS_CODES.SUCCESS).json({
@@ -85,11 +85,10 @@ router.get('/auth/verify', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ Login route - for all roles (admin, jobseeker, employers)
+// Login route - for all roles
 router.post('/login', async (req, res) => {
   try {
     const { email, password, remember } = req.body;
-    console.log(`Login attempt for: ${email}`);
 
     if (!email || !password) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({ 
@@ -97,7 +96,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Validate email format
+    // email format
     if (!isValidEmail(email)) {
       return res.status(STATUS_CODES.BAD_REQUEST).json({ 
         error: MESSAGES.ERROR.INVALID_EMAIL 
@@ -108,43 +107,43 @@ router.post('/login', async (req, res) => {
     let user = null;
     let role = null;
 
-    // 1. Check in Job Seekers
+    //  Check in Job Seekers
     user = await seekEmployees.findOne({ email });
     if (user) {
-      console.log(`User found in job seekers collection: ${user._id}`);
+      
       role = user.role || USER_ROLES.JOB_SEEKER;
     }
 
-    // 2. Check in Employers
+    // Check in Employers
     if (!user) {
       user = await companies.findOne({ email });
       if (user) {
-        console.log(`User found in employers collection: ${user._id}`);
+      
         role = user.role || USER_ROLES.employer;
       }
     }
 
-    // 3. Check in Admins
+    // Check in Admins
     if (!user) {
       user = await admins.findOne({ email });
       if (user) {
-        console.log(`Admin user found in admins collection: ${user._id}`);
+        
         role = user.role || USER_ROLES.ADMIN;
       }
     }
 
     // User not found in any collection
     if (!user) {
-      console.log(`No user found with email: ${email}`);
+    
       return res.status(STATUS_CODES.UNAUTHORIZED).json({ 
         error: MESSAGES.ERROR.INVALID_CREDENTIALS 
       });
     }
 
     // Password check
-    console.log(`Comparing password for user: ${user._id}`);
+   
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log(`Password valid: ${isPasswordValid}`);
+    
     
     if (!isPasswordValid) {
       return res.status(STATUS_CODES.UNAUTHORIZED).json({ 
@@ -185,14 +184,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ✅ Logout route - for all roles (admin, jobseeker, employers)
+//  Logout route - for all roles 
 router.post('/logout', authenticateToken, (req, res) => {
   try {
-    // In a stateless JWT system, logout is handled client-side by removing the token
-    // Here we just confirm the logout action
-    console.log(`User ${req.user.email} with role ${req.user.role} logged out`);
-    
-    res.status(STATUS_CODES.SUCCESS).json({ 
+      res.status(STATUS_CODES.SUCCESS).json({ 
       message: MESSAGES.SUCCESS.USER_LOGGED_OUT,
       timestamp: new Date().toISOString()
     });

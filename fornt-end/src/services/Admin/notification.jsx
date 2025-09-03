@@ -21,7 +21,7 @@ class AdminNotificationApiService {
       }
       
       const data = await response.json();
-      console.log(data.notifications);
+      
       return data.notifications || data || [];
     } catch (error) {
       console.error('Admin notification fetch error:', error);

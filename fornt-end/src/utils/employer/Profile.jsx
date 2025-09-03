@@ -1,5 +1,3 @@
-// Profile validation utilities
-
 export const profileValidationUtils = {
   // Validate form data
   validateForm: (formData) => {
@@ -50,7 +48,7 @@ export const profileValidationUtils = {
     return emailRegex.test(email);
   },
 
-  // Contact number validation (10 digits)
+  // Contact number validation 10 degites
   isValidContactNumber: (contactNumber) => {
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(contactNumber);

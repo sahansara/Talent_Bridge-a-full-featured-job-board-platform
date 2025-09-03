@@ -1,9 +1,6 @@
-// profileRoutes.js - User Profile API routes
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-
-
 const {
     validateDatabaseConnection,
     handleError,
@@ -37,7 +34,7 @@ router.get('/profile', async (req, res) => {
     const userId = req.user.userId;
     const db = req.app.locals.db;
     
-    // Validate database connection
+    // Validate database connections
     if (!validateDatabaseConnection(db, res)) return;
     
     const collection = getUserCollection(db);
@@ -58,7 +55,7 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-// PUT /api/users/profile - Update user profile data
+//  Update user profile data
 router.put('/profile', async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -66,7 +63,7 @@ router.put('/profile', async (req, res) => {
     const db = req.app.locals.db;
     const collection = getUserCollection(db);
     
-    // Check if email is already in use by another user
+    // Check if email is already in use by another user in use collection
     const emailInUse = await isEmailAlreadyInUse(collection, email, userId);
     if (emailInUse) {
       return res.status(409).json({ error: 'Email already in use by another  account' });
@@ -89,7 +86,7 @@ router.put('/profile', async (req, res) => {
 });
   
 
-// PUT /api/employer/employer/profile/change-password - Change user password
+//  Change user password
 router.put('/profile/change-password', async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -100,7 +97,7 @@ router.put('/profile/change-password', async (req, res) => {
     // Validate input
     if (!validatePasswordChangeInput(currentPassword, newPassword, res)) return;
 
-    // Check if new password meets strength requirements
+    // Check if new password meets strength requirement
     if (! isValidPasswordFormat(currentPassword, newPassword, res)) return;
     
     // Find user
@@ -127,7 +124,7 @@ router.put('/profile/change-password', async (req, res) => {
   }
 });
 
-// POST /api/users/profile/upload-image - Upload profile image
+//Upload profile image
 router.post('/profile/upload-image', upload.single('companyImage'), async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -137,7 +134,7 @@ router.post('/profile/upload-image', upload.single('companyImage'), async (req, 
     // Validate file upload
     if (!validateFileUpload(req.file, res, 'image')) return;
     
-    // Handle file upload and update user record
+    // Handle file upload and update user details
     const result = await handleFileUploadAndUpdate(
       collection, 
       userId, 

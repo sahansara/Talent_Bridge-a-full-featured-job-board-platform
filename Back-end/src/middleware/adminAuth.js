@@ -1,8 +1,7 @@
-// middleware/adminAuth.js
 const jwt = require('jsonwebtoken');
 const { MongoClient, ObjectId } = require('mongodb');
 const { SECURITY , STATUS_CODES, MESSAGES,} = require('../config/constants');
-// Database connection (adjust according to your DB setup)
+// Database connection 
 const connectDB = async () => {
   const client = new MongoClient(process.env.MONGODB_URI);
   await client.connect();
@@ -36,7 +35,7 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    // Check in Admins collection specifically
+    // Check in Admins collection 
     const adminsCollection = db.collection('Admins');
     
     const user = await adminsCollection.findOne(
@@ -131,8 +130,8 @@ const adminAuth = [authenticateToken, requireAdmin];
 const rateLimit = require('express-rate-limit');
 
 const adminRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.',
@@ -142,44 +141,7 @@ const adminRateLimit = rateLimit({
   legacyHeaders: false,
 });
 
-// Logging middleware for admin actions
-const logAdminActions = (req, res, next) => {
-  const originalSend = res.send;
-  
-  res.send = function(data) {
-    // Log admin actions for audit trail
-    console.log({
-      timestamp: new Date().toISOString(),
-      admin: {
-        id: req.user?._id,
-        email: req.user?.email,
-        role: req.user?.role
-      },
-      action: {
-        method: req.method,
-        path: req.originalUrl,
-        ip: req.ip || req.connection?.remoteAddress,
-        userAgent: req.get('User-Agent')
-      },
-      response: {
-        statusCode: res.statusCode,
-        success: (() => {
-          try {
-            return JSON.parse(data)?.success || false;
-          } catch {
-            return res.statusCode < 400;
-          }
-        })()
-      }
-    });
-    
-    originalSend.call(this, data);
-  };
-  
-  next();
-};
-
-// Permission-based middleware (for granular permissions)
+// Permission-based middleware 
 const requirePermission = (permission) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -208,6 +170,5 @@ module.exports = {
   requireAdmin,
   adminAuth,
   adminRateLimit,
-  logAdminActions,
   requirePermission
 };

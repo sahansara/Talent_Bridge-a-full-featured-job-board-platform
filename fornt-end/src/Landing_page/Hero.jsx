@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown ,ArrowRight} from 'lucide-react';
-
+import Alert from '../notificationAlert/Alert';
 import EM1 from '../assets/EM/EM3.jpeg';
 import EM2 from '../assets/EM/EM4.jpeg';
 import JS1 from '../assets/JS/JB1.jpeg';
 import JS2 from '../assets/JS/JB4.jpeg';
+import Message from 'react-pdf/src/Message.js';
 
 
 export const Hero = ({ theme }) => {
   const [userType, setUserType] = useState('Select user type');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notification, setNotification] = useState({ message: '', type: '' });
+
+ 
+
   const navigate = useNavigate();
   
 
@@ -29,7 +34,7 @@ const statsData = [
   useEffect(() => {
     const imageTimer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 4000); // 4 seconds
+    }, 4000); 
     return () => clearInterval(imageTimer);
   }, []);
 
@@ -47,7 +52,7 @@ const statsData = [
           return target;
         })
       );
-    }, 30); // speed of counting
+    }, 30); 
 
     return () => clearInterval(interval);
   }, []);
@@ -55,6 +60,7 @@ const statsData = [
 
   return (
     <div className="relative pt-24 md:pt-32 pb-16 md:pb-24">
+      <Alert notification={notification}   />
       {/* Hero Image Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>
@@ -127,7 +133,11 @@ const statsData = [
                           navigate('/Employer_register');
                           break;
                         default:
-                          alert('Please select a user type first!');
+                          setNotification({
+                            type:"error",
+                            message:"Please select a user type first!"
+                          })
+                        
                           break;
                       }
                     }}
@@ -141,17 +151,17 @@ const statsData = [
             </div>
           </div>
 
-   <div className="px-4 py-6 md:px-12 max-w-[800px] w-full mx-auto merge-x-2">
-  <div className="relative w-full md:w-[650px] h-[200px] sm:h-[250px] md:h-[400px] mx-auto">
-    <img
-      src={images[currentImageIndex]}
-      alt="Team"
-      className="w-full h-full  rounded-[20px] md:rounded-[40px] shadow-2xl transition-opacity duration-1000"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-[20px] md:rounded-[40px]"></div>
-  </div>
-</div>
-</div>
+        <div className="px-4 py-6 md:px-12 max-w-[800px] w-full mx-auto merge-x-2">
+        <div className="relative w-full md:w-[650px] h-[200px] sm:h-[250px] md:h-[400px] mx-auto">
+          <img
+            src={images[currentImageIndex]}
+            alt="Team"
+            className="w-full h-full  rounded-[20px] md:rounded-[40px] shadow-2xl transition-opacity duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-[20px] md:rounded-[40px]"></div>
+        </div>
+      </div>
+      </div>
 
       
       <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16">

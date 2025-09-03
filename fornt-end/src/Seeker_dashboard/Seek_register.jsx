@@ -3,10 +3,9 @@ import { User, Briefcase, FileText, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import RegisterForm from './RegisterComponents/RegisterForm';
 import { colorThemes } from '../colorThemes/colorThemes';
-import ThemeSwitcher from '../colorThemes/themeSwitcher';
 import logo from '../assets/logo.png';
 import registerApi from "../services/jobSeeker/register"
-
+import Alert from '../notificationAlert/Alert';
 import JS1 from '../assets/JS/JB1.jpeg';
 import JS2 from '../assets/JS/JB2.jpeg';
 import JS3 from '../assets/JS/JB3.jpeg';
@@ -28,31 +27,26 @@ const SeekRegister = () => {
   const [theme, setTheme] = useState('blue');
   const [currentImage, setCurrentImage] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const[notification,setNotification]=useState({type:'',message:''});
+
   const currentTheme = colorThemes[theme];
   
   const handleRegistration = async (formData) => {
     setIsSubmitting(true);
     try {
       const response = await registerApi.submitForm(formData);
-      
-      // Handle successful registration
-      console.log('Registration successful:', response);
-      
-      // Show success message or redirect
-      // You can add a success notification here
-      alert('Registration successful! Please check your email for verification.');
-      
-      // Optional: redirect to login or dashboard
-       navigate('/login');
-      
+       setNotification({
+        type:'success',
+        message:'Registration successful! Please check your email for verification.'
+      })
+          setTimeout(() => {
+        navigate('/user_login'); 
+      }, 1500);
     } catch (error) {
-      // Handle registration error
-      console.error('Registration failed:', error);
-      
-      // Show error message to user
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-      alert(errorMessage);
-      
+      setNotification({
+        type:'error',
+        message:error.response?.data?.message || 'Registration failed. Please try again.'
+      })
     } finally {
       setIsSubmitting(false);
     }
@@ -67,6 +61,9 @@ const SeekRegister = () => {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <Alert notification={notification} />
+      </div>
         {/* Hero Image Background - Bottom Layer */}
       <div className="absolute inset-0 overflow-hidden z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>

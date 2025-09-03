@@ -1,4 +1,3 @@
-// src/utils/appliedJobsUtils.js
 export const appliedJobsUtils = {
   // Format date
   formatDate: (dateString) => {

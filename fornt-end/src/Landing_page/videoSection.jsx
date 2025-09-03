@@ -1,8 +1,10 @@
 import { Play } from 'lucide-react';
 import React from 'react';  
+import thumbanail from '../assets/14.jpg';
 
 
 export const VideoSection = ({ theme }) => {
+  
   return (
     <section className="py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +19,7 @@ export const VideoSection = ({ theme }) => {
         <div className="relative max-w-4xl mx-auto">
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
             <img 
-              src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=450&fit=crop" 
+              src={thumbanail}
               alt="Video thumbnail" 
               className="w-full h-full object-cover"
             />

@@ -1,4 +1,3 @@
-// notificationHelpers.js - Helper functions for notification-related operations
 const { ObjectId } = require('mongodb');
 const { COLLECTIONS } = require('../../../config/constants');
 function getNotificationCollections(db) {
@@ -29,7 +28,7 @@ function convertToObjectId(userId) {
   try {
     return new ObjectId(userId);
   } catch (error) {
-    console.log("ObjectId conversion failed:", error);
+    
     return null;
   }
 }
@@ -46,7 +45,7 @@ async function fetchJobSeekerNotifications(notificationCollection, jobSeekerId) 
       }).sort({ createdAt: -1 }).toArray();
     }
   } catch (objectIdError) {
-    console.log("ObjectId conversion failed, trying alternative methods...");
+   
     
     // Try with string ID as fallback
     try {
@@ -54,7 +53,7 @@ async function fetchJobSeekerNotifications(notificationCollection, jobSeekerId) 
         jobSeekerId: jobSeekerId
       }).sort({ createdAt: -1 }).toArray();
     } catch (fallbackError) {
-      console.log("String ID search also failed:", fallbackError);
+      
     }
   }
 
@@ -66,7 +65,7 @@ function extractJobIds(notifications) {
     try {
       return new ObjectId(notification.jobId);
     } catch (err) {
-      console.log("Invalid jobId format:", notification.jobId);
+     
       return null;
     }
   }).filter(id => id !== null);
@@ -114,7 +113,7 @@ async function verifyNotificationOwnership(notificationCollection, notificationI
       jobSeekerId: userObjectId
     });
   } catch (error) {
-    console.log("Error verifying notification ownership:", error);
+   
     return null;
   }
 }

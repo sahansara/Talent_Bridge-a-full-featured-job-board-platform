@@ -18,7 +18,7 @@ function handleError(res, error, operation, statusCode = 500) {
 }
 
 function logOperation(operation, details) {
-  console.log(`${operation}: ${details}`);
+ 
 }
 
 async function fetchEmployerApplications(applicationsCollection, employerId) {
@@ -190,16 +190,72 @@ async function fetchEmployerNotifications(notificationsCollection, employerId, l
 }
 
 function generateCvFilePaths(filename, currentDir) {
-  return [
-    path.join(currentDir, '../../uploads/cvs', filename),
-    path.join(currentDir, '../uploads/cvs', filename),
-    path.join(currentDir, '../../uploads', filename),
-    path.join(currentDir, '../uploads', filename),
-    path.join(process.cwd(), 'uploads/cvs', filename),
-    path.join(process.cwd(), 'uploads', filename),
-    path.join(process.cwd(), 'backend/uploads/cvs', filename),
-    path.join(process.cwd(), 'backend/uploads', filename)
+  const baseFilename = filename.replace(/^cv-/, ''); 
+  const filenameWithoutExt = filename.replace('.pdf', '');
+  
+  const possibleFilenames = [
+    filename,                    // Original filename
+    `cv-${filename}`,           // With cv- prefix
+    `cv-${baseFilename}`,       // cv- + base filename
+    filenameWithoutExt,         // Without extension
+    `cv-${filenameWithoutExt}`  // cv- prefix without extension
   ];
+  
+  const basePaths = [
+    path.join(currentDir, '../../uploads/cvs'),
+    path.join(currentDir, '../uploads/cvs'),
+    path.join(currentDir, '../../uploads'),
+    path.join(currentDir, '../uploads'),
+    path.join(process.cwd(), 'uploads/cvs'),
+    path.join(process.cwd(), 'uploads'),
+    path.join(process.cwd(), 'backend/uploads/cvs'),
+    path.join(process.cwd(), 'backend/uploads')
+  ];
+  
+  // Generate all combinations
+  const allPaths = [];
+  basePaths.forEach(basePath => {
+    possibleFilenames.forEach(fname => {
+      allPaths.push(path.join(basePath, fname));
+      // Also try with .pdf extension if not already present
+      if (!fname.includes('.pdf')) {
+        allPaths.push(path.join(basePath, `${fname}.pdf`));
+      }
+    });
+  });
+  
+  return allPaths;
+}
+
+// Enhanced debug logging
+function logCvDebugInfo(filename, employerId, currentDir, possiblePaths, application) {
+
+  console.log('1. Requested filename:', filename);
+  console.log('2. Employer ID:', employerId);
+  console.log('3. Current __dirname:', currentDir);
+  console.log('4. Process CWD:', process.cwd());
+  console.log('5. Application found:', !!application);
+  
+  if (application) {
+    console.log('6. Application CV field:', application.jobSeekerProfile?.cv);
+    console.log('7. Application ID:', application._id);
+    console.log('8. Job Seeker ID:', application.jobSeekerId);
+  }
+  
+  console.log('9. Testing these paths:');
+  possiblePaths.forEach((testPath, index) => {
+    const exists = fs.existsSync(testPath);
+    console.log(`   ${index + 1}. ${testPath} - ${exists ? '✅ EXISTS' : '❌ NOT FOUND'}`);
+  });
+  
+  // Also check if the actual file from database exists
+  if (application?.jobSeekerProfile?.cv) {
+    const dbCvPath = path.join(process.cwd(), application.jobSeekerProfile.cv);
+    const dbFileExists = fs.existsSync(dbCvPath);
+    console.log('10. Database CV path:', dbCvPath, '-', dbFileExists ? '✅ EXISTS' : '❌ NOT FOUND');
+  }
+  
+  console.log('CV FILE DEBUG END ');
 }
 
 function findExistingCvFile(possiblePaths) {
@@ -232,11 +288,39 @@ function logCvDebugInfo(filename, employerId, currentDir, possiblePaths, applica
   console.log('=== CV FILE DEBUG END ===');
 }
 async function verifyCvAccess(applicationsCollection, employerId, filename) {
-  return await applicationsCollection.findOne({
-    employerId: new ObjectId(employerId),
-    'jobSeekerProfile.cv': { $regex: filename }
-  });
+  console.log('Verifying CV access for:', { employerId, filename });
+  
+  // Try multiple query patterns
+  const queries = [
+    // Exact match
+    {
+      employerId: new ObjectId(employerId),
+      'jobSeekerProfile.cv': filename
+    },
+    // Regex match for partial filename
+    {
+      employerId: new ObjectId(employerId),
+      'jobSeekerProfile.cv': { $regex: filename.replace('.pdf', ''), $options: 'i' }
+    },
+    // Check if filename contains the pattern
+    {
+      employerId: new ObjectId(employerId),
+      'jobSeekerProfile.cv': { $regex: filename.split('.')[0], $options: 'i' }
+    }
+  ];
+  
+  for (const query of queries) {
+    const result = await applicationsCollection.findOne(query);
+    if (result) {
+      console.log('Found application with query:', query);
+      return result;
+    }
+  }
+  
+  console.log('No application found with any query pattern');
+  return null;
 }
+
 
 function setCvResponseHeaders(res, filename) {
   res.setHeader('Content-Type', 'application/pdf');
@@ -258,7 +342,24 @@ function streamCvFile(res, filePath) {
   
   fileStream.pipe(res);
 }
-
+async function getCvPathFromDatabase(applicationsCollection, employerId, filename) {
+  const application = await applicationsCollection.findOne({
+    employerId: new ObjectId(employerId),
+    $or: [
+      { 'jobSeekerProfile.cv': { $regex: filename, $options: 'i' } },
+      { 'jobSeekerProfile.cv': { $regex: filename.replace('.pdf', ''), $options: 'i' } }
+    ]
+  });
+  
+  if (application?.jobSeekerProfile?.cv) {
+    return {
+      application,
+      cvPath: path.join(process.cwd(), application.jobSeekerProfile.cv)
+    };
+  }
+  
+  return null;
+}
 module.exports = {
   getEmployerCollections,
   handleError,
