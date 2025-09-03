@@ -1,4 +1,3 @@
-// src/services/notificationApiService.js
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:3000/api/job-seeker';
@@ -8,22 +7,21 @@ const getAuthHeaders = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// Custom error handler for consistent error messages
+
 const handleApiError = (error, defaultMessage) => {
   if (error.response) {
-    // Server responded with error status
     return error.response.data?.message || defaultMessage;
   } else if (error.request) {
-    // Network error
+    
     return 'Network error. Please check your connection.';
   } else {
-    // Other error
+    
     return error.message || defaultMessage;
   }
 };
 
 export const notificationAPI = {
-  // Fetch job post notifications (job vacancy notifications)
+  // fletch job vacancy notifications
   fetchJobPostNotifications: async () => {
     try {
       const response = await axios.get(

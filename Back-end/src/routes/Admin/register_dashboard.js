@@ -26,13 +26,13 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// ✅ Create Admin-images folder if not exists
+//  Create Admin-images folder if not exists
 const uploadDir = 'uploads/Admin-images/';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// ✅ Multer config for employer images
+//  Multer config for employer image
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -46,19 +46,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// ✅ Email validation function
+// Email validation 
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-// ✅ Phone number validation function
+//  Phone number validation 
 function isValidPhoneNumber(number) {
   const phoneRegex = /^\d{10}$/;
   return phoneRegex.test(number);
 }
 
 
-// ✅ Registration route
+//  Registration route
 router.post('/admin_register', upload.fields([
   { name: 'adminImage', maxCount: 1 }
 ]), async (req, res) => {
@@ -86,7 +86,7 @@ router.post('/admin_register', upload.fields([
 
     if (existingUser) {
       return res.status(409).json({ error: 'Email already in use' });
-      // search all collection use one email or not create later S
+     
     }
 
     const imagePath = req.files?.['adminImage']?.[0]?.path || null;
@@ -114,7 +114,7 @@ router.post('/admin_register', upload.fields([
 
 
 
-// ✅ Get user profile route
+//  Get user profile route
 router.get('/profile', authenticateToken,  async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -127,7 +127,7 @@ router.get('/profile', authenticateToken,  async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Return user data without password
+    // Return user data 
     const userData = {
       Adminfullname: user.Adminfullname,
       adminDescription: user.adminDescription,
@@ -141,7 +141,7 @@ router.get('/profile', authenticateToken,  async (req, res) => {
   }
 });
 
-// ✅ Logout route
+//  Logout route
 router.post('/logout',authenticateToken,  (req, res) => {
   res.status(200).json({ message: 'Logout successful' });
 });

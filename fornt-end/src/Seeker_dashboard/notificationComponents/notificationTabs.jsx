@@ -1,4 +1,3 @@
-// src/components/NotificationTabs.js
 import React from 'react';
 import { FileText, Users } from 'lucide-react';
 import { notificationUtils } from '../../utils/jobSeeker/mainNotification';

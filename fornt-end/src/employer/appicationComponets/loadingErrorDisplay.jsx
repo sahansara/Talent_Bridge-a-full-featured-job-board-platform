@@ -18,14 +18,6 @@ const LoadingErrorDisplay = ({ loading, error }) => {
         <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
         <h3 className="text-lg font-medium text-red-900 mb-2">Error Loading Applications</h3>
         <p className="text-red-600 mb-4">{error}</p>
-        <div className="text-sm text-gray-600">
-          <p>Possible solutions:</p>
-          <ul className="mt-2 space-y-1">
-            <li>• Check if the backend server is running</li>
-            <li>• Verify the API endpoint URL</li>
-            <li>• Ensure you're properly authenticated</li>
-          </ul>
-        </div>
       </div>
     );
   }

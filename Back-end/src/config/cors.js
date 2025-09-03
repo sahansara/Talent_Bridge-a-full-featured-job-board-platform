@@ -1,7 +1,3 @@
-/**
- * CORS (Cross-Origin Resource Sharing) configuration
- * Centralized CORS setup for the application
- */
 
 // CORS configuration based on environment
 const CORS_CONFIG = {
@@ -26,10 +22,6 @@ const CORS_CONFIG = {
   ]
 };
 
-/**
- * Get allowed origins based on environment
- * @returns {array} Array of allowed origins
- */
 function getAllowedOrigins() {
   const env = process.env.NODE_ENV || 'development';
   
@@ -43,11 +35,6 @@ function getAllowedOrigins() {
   return [...configOrigins, ...envOrigins];
 }
 
-/**
- * Dynamic origin function for CORS
- * @param {string} origin - The origin of the request
- * @param {function} callback - Callback function
- */
 function corsOriginHandler(origin, callback) {
   const allowedOrigins = getAllowedOrigins();
   
@@ -62,9 +49,6 @@ function corsOriginHandler(origin, callback) {
   }
 }
 
-/**
- * CORS options configuration
- */
 const corsOptions = {
   origin: corsOriginHandler,
   
@@ -99,7 +83,7 @@ const corsOptions = {
     'Authorization'
   ],
   
-  // How long the browser should cache preflight requests (in seconds)
+  // How long the browser should cache preflight requests seconds
   maxAge: 86400, // 24 hours
   
   // Handle preflight requests
@@ -118,10 +102,6 @@ const corsOptionsDev = {
   credentials: true
 };
 
-/**
- * Get CORS options based on environment
- * @returns {object} CORS options object
- */
 function getCorsOptions() {
   const env = process.env.NODE_ENV || 'development';
   
@@ -134,12 +114,6 @@ function getCorsOptions() {
   return corsOptions;
 }
 
-/**
- * Custom CORS middleware with logging
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {function} next - Express next function
- */
 function corsWithLogging(req, res, next) {
   const origin = req.headers.origin || 'No origin';
   const method = req.method;
@@ -165,12 +139,6 @@ function corsWithLogging(req, res, next) {
   });
 }
 
-/**
- * Manual CORS headers setter (alternative to cors package)
- * @param {object} req - Express request object
- * @param {object} res - Express response object
- * @param {function} next - Express next function
- */
 function setManualCorsHeaders(req, res, next) {
   const origin = req.headers.origin;
   const allowedOrigins = getAllowedOrigins();

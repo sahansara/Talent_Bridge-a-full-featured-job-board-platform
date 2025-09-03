@@ -1,9 +1,6 @@
-// loadpost.js - Job Posts API routes
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-
-// Import helper functions
 const {
   getCollections,
   validateObjectId,
@@ -20,8 +17,7 @@ const {
   enrichJobsWithEmployerData
 } = require('./subFunctions/jobPost'); 
 
-
-// Get all approved jobs with search functionality
+// Get all approved jobs with search function
 router.get('/jobs', async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -76,7 +72,7 @@ router.get('/job/:id', async (req, res) => {
   }
 });
 
-// Check if job seeker already applied to a specific job
+// Check if job seeker already applied to a specifical job
 router.get('/applications', async (req, res) => {
   try {
     const { jobId } = req.query;
@@ -171,12 +167,11 @@ router.get('/my-applications', async (req, res) => {
     const db = req.app.locals.db;
     const { applications } = getCollections(db);
 
-    // Fetch user's applications
+ 
     const userApplications = await applications.find({
       jobSeekerId: new ObjectId(jobSeekerId)
     }).sort({ appliedAt: -1 }).toArray();
 
-    // Format applications for frontend
     const formattedApplications = formatApplicationsForDashboard(userApplications);
 
     res.status(200).json(formattedApplications);

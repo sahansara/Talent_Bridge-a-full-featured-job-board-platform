@@ -1,5 +1,4 @@
 
-// src/components/ApplicationModal.js
 import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import StatusIcon from './statusIcon';

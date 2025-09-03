@@ -50,7 +50,7 @@ function createUploadStorage() {
       }
       
       
-      // Create directory if it doesn't exist
+      // Create directory if it doesn't alrady has
       ensureUploadDirectory(uploadPath);
       
       cb(null, uploadPath);
@@ -97,15 +97,14 @@ async function handleFileUploadAndUpdate(collection, userId, file, fieldName, fi
     throw new Error(`No ${fileType} file uploaded`);
   }
   
-  // Get user to check for existing file
+
   const user = await fetchUserById(collection, userId);
   
-  // Delete old file if exists
+
   if (user && user[fieldName]) {
     deleteOldFile(user[fieldName], fileType);
   }
-  
-  // Update user with new file path
+
   const updateData = { [fieldName]: file.path };
   await updateUserProfile(collection, userId, updateData);
   

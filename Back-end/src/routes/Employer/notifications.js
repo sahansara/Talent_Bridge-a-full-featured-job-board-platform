@@ -1,4 +1,3 @@
-// employerNotificationRoutes.js - Employer Notification API routes
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
@@ -92,7 +91,7 @@ router.delete('/notifications/:id', async (req, res) => {
   }
 });
 
-// Get job application notifications with advanced fallback strategies
+// Gjob application notifications with advanced fallback strategies
 router.get('/applications/notifications', async (req, res) => {
   try {
     const employerId = req.user.userId;

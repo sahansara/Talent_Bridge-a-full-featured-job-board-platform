@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
-
+import Alert from "../../notificationAlert/Alert";
 const FeedbackForm = ({ theme, onSubmit, isSubmitting }) => {
+  const [notification ,setNotification]=useState({type:'', message:''});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,16 +23,24 @@ const FeedbackForm = ({ theme, onSubmit, isSubmitting }) => {
     e.preventDefault();
 
     if (formData.message.trim().length < 10) {
-      alert("Feedback must be at least 10 characters long.");
+      setNotification({
+        type:'error',
+        message:'Feedback must be at least 10 characters long'
+      })
+      
       return;
     }
 
     try {
       
       await onSubmit(formData);
+       setNotification({
+        type:'success',
+        message:'Thank you for your feedback! It will appear shortly'
+      })
       
       
-      alert('Thank you for your feedback! It will appear shortly.');
+      
       
     
       setFormData({
@@ -42,13 +51,19 @@ const FeedbackForm = ({ theme, onSubmit, isSubmitting }) => {
         message: ''
       });
     } catch (error) {
-      alert(error.response?.data?.error || 'Failed to submit feedback. Please try again later.');
+       setNotification({
+        type:'error',
+        message:error.response?.data?.error || 'Failed to submit feedback. Please try again later'
+      })
+      
+      
     }
   };
 
   return (
     <div className="flex justify-center">
       <div className="bg-white/5 rounded-xl p-6 border border-white/10 w-full max-w-md">
+        <Alert notification={notification} />
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name Input */}
           <div>

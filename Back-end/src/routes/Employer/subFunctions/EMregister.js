@@ -4,7 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { COLLECTIONS } = require('../../../config/constants');
-const { isValidEmail, isValidPhoneNumber } = require('../../../utils/validation');
+const { isValidEmail, isValidPhoneNumber,isValidPassword } = require('../../../utils/validation');
+const { error } = require('console');
 function getEmployerCollection(db) {
   return db.collection(COLLECTIONS.ROLE.EMPLOYER);
 }
@@ -74,7 +75,13 @@ function validatePhoneNumber(contactNumber, res) {
   }
   return true;
 }
-
+function validatepassword(password,res){
+  if(!isValidPassword(password)){
+    res.status(400).json({error:'make strong password'});
+    return false;
+  }
+  return true;
+}
 async function checkEmailExists(collection, email) {
   const existingUser = await collection.findOne({ email });
   return !!existingUser;
@@ -108,9 +115,6 @@ async function registerEmployer(collection, userData) {
   return await collection.insertOne(userData);
 }
 
-function logRegistrationRequest(body) {
-  console.log('Registration request body:', body);
-}
 
 function validateEmployerRegistration(body, res) {
   // Check required fields
@@ -121,7 +125,9 @@ function validateEmployerRegistration(body, res) {
   
   // Validate phone number format
   if (!validatePhoneNumber(body.contactNumber, res)) return false;
-  
+  //check password 
+  if (!validatepassword(body.password,res)) return false;
+
   return true;
 }
 
@@ -158,12 +164,12 @@ module.exports = {
   validateRequiredFields,
   validateEmail,
   validatePhoneNumber,
+  validatepassword,
   checkEmailExists,
   hashPassword,
   extractImagePath,
   buildEmployerUserData,
   registerEmployer,
-  logRegistrationRequest,
   validateEmployerRegistration,
   processEmployerRegistration
 };

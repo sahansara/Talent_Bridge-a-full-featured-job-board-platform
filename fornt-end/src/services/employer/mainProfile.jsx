@@ -34,7 +34,6 @@ export const profileApiService = {
       }
     }
     
-    console.log("Image URL set to:", imageUrl);
     
     return {
       employerName: response.data.employerName || '',

@@ -27,6 +27,7 @@ export const employerApiService = {
           headers: employerApiService.getAuthHeaders()
         }
       );
+      
       return response.data;
     } catch (error) {
       console.error('Error fetching companies:', error);

@@ -37,7 +37,7 @@ function ensureUploadDirectories() {
   Object.values(UPLOAD_DIRS).forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
-      console.log(`📁 Created directory: ${dir}`);
+      console.log(` Created directory: ${dir}`);
     }
   });
 }
@@ -60,7 +60,7 @@ function generateUniqueFilename(file) {
  * File filter for mixed uploads (CV + Image)
  */
 function fileFilter(req, file, cb) {
-  console.log(`📄 Checking: ${file.originalname} (${file.fieldname})`);
+  console.log(` Checking: ${file.originalname} (${file.fieldname})`);
   
   let fileType, allowedTypes, allowedExtensions;
   
@@ -88,7 +88,7 @@ function fileFilter(req, file, cb) {
     return cb(new Error(`Invalid ${fileType} extension. Allowed: ${allowedExtensions.join(', ')}`), false);
   }
   
-  console.log(`✅ ${fileType} file validated: ${file.originalname}`);
+  console.log(` ${fileType} file validated: ${file.originalname}`);
   cb(null, true);
 }
 
@@ -182,10 +182,10 @@ async function cleanupFiles(files) {
     try {
       if (filePath && fs.existsSync(filePath)) {
         await fs.promises.unlink(filePath);
-        console.log(`🗑️ Cleaned: ${filePath}`);
+        
       }
     } catch (error) {
-      console.error(`❌ Cleanup error: ${filePath}`, error);
+      console.error(` Cleanup error: ${filePath}`, error);
     }
   }
 }

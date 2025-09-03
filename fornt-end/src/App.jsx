@@ -3,7 +3,6 @@ import { AuthProvider } from './contexts/authContexts';
 import ProtectedRoute from './ProtectedRoute';
 import Unauthorized from './unauthorized/Unauthorized';
 
-// Import your existing components
 import LandingPage from './Landing_page/Landing';
 import Em_register from './employer/Em_register';
 import Em_dashboard from './employer/Em_dashboard';

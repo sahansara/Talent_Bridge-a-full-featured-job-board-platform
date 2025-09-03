@@ -1,4 +1,3 @@
-// src/middleware/auth.js
 const jwt = require('jsonwebtoken');
 const { SECURITY, STATUS_CODES, MESSAGES } = require('../config/constants');
 
@@ -36,7 +35,6 @@ function authenticateToken(req, res, next) {
       });
     }
     
-    // Attach decoded user info to request
     req.user = decoded;
     next();
   });

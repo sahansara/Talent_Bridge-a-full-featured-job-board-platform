@@ -1,7 +1,3 @@
-/**
- * Database configuration and connection management
- * Centralized database setup and collection management
- */
 
 const { MongoClient } = require('mongodb');
 
@@ -35,18 +31,14 @@ class DatabaseConnection {
     this.collections = {};
   }
 
-  /**
-   * Initialize database connection
-   * @returns {Promise<object>} Database and collections object
-   */
   async connect() {
     try {
-      console.log('🔌 Connecting to MongoDB...');
+      
       
       this.client = new MongoClient(DATABASE_CONFIG.url, DATABASE_CONFIG.options);
       await this.client.connect();
       
-      console.log('✅ Connected to MongoDB successfully');
+     
       
       this.db = this.client.db(DATABASE_CONFIG.dbName);
       
@@ -60,7 +52,7 @@ class DatabaseConnection {
 
       // Test connection
       await this.db.admin().ping();
-      console.log('📊 Database ping successful');
+     
 
       return {
         db: this.db,
@@ -81,10 +73,10 @@ class DatabaseConnection {
     try {
       if (this.client) {
         await this.client.close();
-        console.log('🔌 MongoDB connection closed');
+        
       }
     } catch (error) {
-      console.error('❌ Error closing MongoDB connection:', error);
+      console.error(' Error closing MongoDB connection:', error);
     }
   }
 
@@ -169,13 +161,13 @@ const databaseConnection = new DatabaseConnection();
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Received SIGINT. Gracefully shutting down...');
+  
   await databaseConnection.disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n🛑 Received SIGTERM. Gracefully shutting down...');
+  
   await databaseConnection.disconnect();
   process.exit(0);
 });

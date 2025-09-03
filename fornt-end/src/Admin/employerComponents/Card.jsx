@@ -14,7 +14,13 @@ const EmployerCard = ({ employer, index, onDeleteClick }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="bg-white bg-opacity-20 p-2 rounded-lg">
-              <User className="h-5 w-5 text-white" />
+            
+           <img 
+            src={employer.image.startsWith('http') ? employer.image : `http://localhost:3000/${employer.image}`} 
+            alt={'employer'}
+            className="h-8 w-8 text-white"
+            />
+        
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white truncate">{employer.employerName}</h3>

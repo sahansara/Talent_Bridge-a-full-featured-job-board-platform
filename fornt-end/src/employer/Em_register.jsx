@@ -3,7 +3,7 @@ import { Briefcase, Building2, Rocket, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import RegisterForm from './registerComponents/registerForn';
 import { colorThemes } from '../colorThemes/colorThemes';
-import ThemeSwitcher from '../colorThemes/themeSwitcher';
+import Alert from '../notificationAlert/Alert'; 
 import logo from '../assets/logo.png';
 import EM1 from '../assets/EM/EM1.jpeg';
 import EM2 from '../assets/EM/EM2.jpeg';
@@ -26,23 +26,36 @@ const EmpRegister = () => {
   const [theme, setTheme] = useState('blue');
   const [currentImage, setCurrentImage] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [notification, setNotification] = useState({type:'', message:''});
+  
   const currentTheme = colorThemes[theme];
+  
+  
+
+
   const handleRegistration = async (formData) => {
     setIsSubmitting(true);
     try {
       const response = await registerApi.submitForm(formData);
-      console.log('Registration successful:', response);
-      alert('Registration successful! Please check your email for verification.');
-      navigate('/user_login'); 
+      
+      setNotification({
+        type:'success',
+        message:'Registration successful! Please check your email for verification.'
+      });
+      
+       setTimeout(() => {
+        navigate('/user_login'); 
+      }, 1500);
     } catch (error) {
-      console.error('Registration failed:', error);
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-      alert(errorMessage);
+      setNotification({
+        type:'error',
+        message: error.response?.data?.message || 'Registration failed. Please try again.'
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
@@ -52,7 +65,15 @@ const EmpRegister = () => {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
-        {/* Hero Image Background - Bottom Layer */}
+      
+    
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <Alert 
+          notification={notification} 
+         
+        />
+      </div>
+        
       <div className="absolute inset-0 overflow-hidden z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>
         <img 
@@ -61,6 +82,7 @@ const EmpRegister = () => {
           className="w-full h-full object-cover opacity-20"
         />
       </div>
+      
       {/* Animated Background Circles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[
@@ -75,21 +97,16 @@ const EmpRegister = () => {
         ))}
       </div>
 
-     
-
-
-    
-
       <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
         
-        {/* Left Visual Side */}
+        {/* Left Side */}
         <div className="flex flex-col items-center justify-center p-4 lg:p-6">
-           {/* Logo Header */}
+          
           <div className="flex items-center mb-4">
             <div className="flex items-center justify-center w-16 h-16 border-2 border-white rounded-full mr-2">
               <img src={logo} alt="Logo" className="w-15 h-15" />
             </div>
-            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2"> {/* Changed from text-4xl lg:text-5xl to text-3xl lg:text-4xl */}
+            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2">
               Talent Bridge
             </h1>
           </div>
@@ -105,7 +122,7 @@ const EmpRegister = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
               
               {/* Dots Indicator */}
-                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                 {images.map((_, i) => (
                   <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     i === currentImage ? `bg-white` : 'bg-white/40'
@@ -115,8 +132,8 @@ const EmpRegister = () => {
             </div>
           </div>
 
-          {/* Welcome Text */}
-         <div className="text-center text-white mb-8">
+          {/* Text */}
+          <div className="text-center text-white mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
                 Join as Employer
@@ -144,16 +161,18 @@ const EmpRegister = () => {
           </div>
         </div>
 
-        {/* Employer Form Section */}
+        {/* Right Side */}
         <div className="flex items-center justify-center p-8 lg:p-12">
-          <RegisterForm currentTheme={currentTheme} 
-          onSubmit={handleRegistration}
-          isSubmitting={isSubmitting}
+          <RegisterForm 
+            currentTheme={currentTheme} 
+            onSubmit={handleRegistration}
+            isSubmitting={isSubmitting}
           />
         </div>
       </div>
-    </div>
+  </div>
   );
+
 };
 
 export default EmpRegister;

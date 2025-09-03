@@ -1,4 +1,4 @@
-// src/components/ApplicationCard.js
+
 import React from 'react';
 import { MapPin, DollarSign, Calendar, Briefcase, ExternalLink } from 'lucide-react';
 import StatusIcon from './statusIcon';

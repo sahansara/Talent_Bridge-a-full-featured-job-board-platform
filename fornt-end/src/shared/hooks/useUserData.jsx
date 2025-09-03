@@ -31,7 +31,7 @@ const useUserData = (config) => {
       
       setError('Failed to load user data');
       
-      // Set default values based on config
+     
       const defaultData = {};
       defaultData[config.userDataMapping.name] = config.userDataMapping.defaultName;
       defaultData[config.userDataMapping.image] = null;

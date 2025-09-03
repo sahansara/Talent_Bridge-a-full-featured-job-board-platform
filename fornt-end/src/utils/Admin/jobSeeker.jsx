@@ -1,5 +1,3 @@
-// src/utils/jobSeekerUtils.js
-
 export const jobSeekerUtils = {
   // Format date function
   formatDate: (dateString) => {

@@ -134,8 +134,7 @@ function buildJobUpdateData(existingJob, updateData, file = null) {
     salary: salary || existingJob.salary,
     updatedAt: new Date()
   };
-  
-  // Handle thumbnail update
+
   if (file) {
     // Delete old thumbnail if exists
     safeDeleteFile(existingJob.thumbnail, 'thumbnail');

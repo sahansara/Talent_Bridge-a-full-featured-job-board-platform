@@ -1,9 +1,6 @@
-// profileRoutes.js - User Profile API routes
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-
-// Import helper functions
 const {
   getUserCollection,
   formatProfileData,
@@ -29,7 +26,7 @@ const {
 // Configure file upload middleware
 const upload = createUploadMiddleware();
 
-// GET /api/users/profile - Get user profile data
+// Get user profile data
 router.get('/profile', async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -56,7 +53,7 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-// PUT /api/users/profile - Update user profile data
+//  Update user profile data
 router.put('/profile', async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -86,7 +83,7 @@ router.put('/profile', async (req, res) => {
   }
 });
 
-// PUT /api/users/profile/change-password - Change user password
+// Change user password
 router.put('/profile/change-password', async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -124,7 +121,7 @@ router.put('/profile/change-password', async (req, res) => {
   }
 });
 
-// POST /api/users/profile/upload-image - Upload profile image
+//  Upload profile image
 router.post('/profile/upload-image', upload.single('profileImage'), async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -152,7 +149,7 @@ router.post('/profile/upload-image', upload.single('profileImage'), async (req, 
   }
 });
 
-// POST /api/users/profile/upload-cv - Upload CV document
+// Upload CV document
 router.post('/profile/upload-cv', upload.single('cv'), async (req, res) => {
   try {
     const userId = req.user.userId;

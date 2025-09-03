@@ -1,5 +1,3 @@
-// Utility functions for application management
-
 export const applicationUtils = {
   // Get status color for application status
   getStatusColor: (status) => {
@@ -72,7 +70,7 @@ export const applicationUtils = {
     }
   },
 
-  // Debug CV URL
+  
   debugCV: (cvUrl) => {
     console.log('CV URL:', cvUrl);
     const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:3000${cvUrl}`;
@@ -87,7 +85,7 @@ export const FILTER_OPTIONS = {
   dateRanges: ['All', 'Last 7 days', 'Last 30 days', 'This month']
 };
 
-// Mock data - can be moved to a separate file if needed
+// Mock data]
 export const MOCK_JOB_POSTS = [
   {
     id: 1,

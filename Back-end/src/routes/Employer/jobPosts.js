@@ -1,4 +1,3 @@
-// employerJobRoutes.js - Employer Job Management API routes
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
@@ -24,11 +23,11 @@ const {
 // Configure multer upload middleware
 const jobThumbnailUpload = createJobThumbnailUpload();
 
-// GET /api/jobs - Fetch all jobs for the logged-in employer
+//Fetch all jobs for the employer
 router.get('/jobs', async (req, res) => {
   try {
     const employerId = req.user.userId;
-    const { status } = req.query; // Get status filter if provided
+    const { status } = req.query; 
     const db = req.app.locals.db;
     const jobsCollection = getJobsCollection(db);
     
@@ -41,7 +40,7 @@ router.get('/jobs', async (req, res) => {
   }
 });
 
-// POST /api/jobs - Create a new job
+//  Create a new job
 router.post('/jobs', jobThumbnailUpload.single('thumbnail'), async (req, res) => {
   try {
     const employerId = req.user.userId;
@@ -82,7 +81,7 @@ router.post('/jobs', jobThumbnailUpload.single('thumbnail'), async (req, res) =>
   }
 });
 
-// PUT /api/jobs/:id - Update an existing job
+//Update an existing job
 router.put('/jobs/:id', jobThumbnailUpload.single('thumbnail'), async (req, res) => {
   try {
     const jobId = req.params.id;
@@ -117,7 +116,7 @@ router.put('/jobs/:id', jobThumbnailUpload.single('thumbnail'), async (req, res)
   }
 });
 
-// DELETE /api/jobs/:id - Delete a job
+//  Delete a job
 router.delete('/jobs/:id', async (req, res) => {
   try {
     const jobId = req.params.id;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Building2, Mail, Lock, Upload, Camera, Globe, Phone, FileText, ArrowRight, CheckCircle } from 'lucide-react';
-
+import Alert from '../../notificationAlert/Alert';
 const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onSubmit, isSubmitting }) => {
   const [formData, setFormData] = useState({
     employerName: '',
@@ -15,6 +15,7 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onS
 
   const [passwordError, setPasswordError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState({ password: false, rePassword: false });
+  const[notification,setNotification]=useState({type:'',message:''});
 
   const togglePassword = (field) => {
     setPasswordVisible(prev => ({ ...prev, [field]: !prev[field] }));
@@ -33,11 +34,19 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onS
     e.preventDefault();
     
     if (!/^\d{10}$/.test(formData.contactNumber)) {
-      alert('Contact number must be exactly 10 digits');
+      setNotification({
+        type:'error',
+        message:'Contact number must be exactly 10 digits'
+      })
+      
       return;
     }
     
     if (formData.password !== formData.rePassword) {
+      setNotification({
+        type:'error',
+        message:'Passwords do not match'
+      })
       setPasswordError('Passwords do not match');
       return;
     }  
@@ -45,11 +54,15 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onS
 
     // Fix validation - use correct field names
     if (!formData.employerName || !formData.email || !formData.password || !formData.comDescription) {
-      alert('Please fill in all required fields');
+      setNotification({
+        type:'error',
+        message:'Please fill in all required fields'
+      })
+      
       return;
     }
     
-    // Fix FormData - use correct field names
+  
     const data = new FormData();
     data.append('employerName', formData.employerName);
     data.append('email', formData.email);
@@ -65,7 +78,11 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onS
         await onSubmit(data);
       }
     } catch (error) {
-      console.error('Registration failed:', error);
+      setNotification({
+        type:'error',
+        message:('Registration failed:', error)
+      })
+      
     }
   };
   const basicFields = [
@@ -91,6 +108,7 @@ const Register = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' }, onS
 
       {/* Main Content Container */}
       <div className="relative w-full max-w-md mx-auto">
+        <Alert notification={notification}/>
         {/* Form Container */}
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl">
           <div className="text-center mb-4">

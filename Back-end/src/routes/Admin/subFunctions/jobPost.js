@@ -7,13 +7,14 @@ function getCollections(db) {
   return {
     jobPosts: db.collection(COLLECTIONS.OTHER.JOB_POST),
     employer: db.collection(COLLECTIONS.ROLE.EMPLOYER),
-    notifications: db.collection(COLLECTIONS.NOTIFICATIONS.ADMIN_NOTIFICATIONS)
+    notifications: db.collection(COLLECTIONS.NOTIFICATIONS.ADMIN_NOTIFICATIONS),
+    Vacancienotification:db.collection(COLLECTIONS.NOTIFICATIONS.VACANCIES_NOTIFICATIONS)
   };
 }
 
 async function attachEmployerDetails(job, employerCollection) {
   if (job.employerId) {
-    // Convert string ID to ObjectId if needed
+    // Convert string ID to ObjectId 
     const employerObjectId = typeof job.employerId === 'string' 
       ? new ObjectId(job.employerId) 
       : job.employerId;
@@ -43,7 +44,17 @@ async function createEmployerNotification(notificationsCollection, employerId, j
     createdAt: new Date()
   });
 }
-
+async function createjobseekerNotification(Vacancienotification, employerId, jobId, message,thumbnail, type) {
+  return await Vacancienotification.insertOne({
+    employerId: employerId.toString(),
+    jobId: jobId,
+    message: message,
+    thumbnail:thumbnail,
+    status: 'unread',
+    type: type,
+    createdAt: new Date()
+  });
+}
 async function updateJobPostStatus(jobPostsCollection, jobId, status, userId) {
   const updateFields = {
     status: status,
@@ -69,6 +80,7 @@ module.exports = {
   getCollections,
     attachEmployerDetails,
     createEmployerNotification,
+    createjobseekerNotification,
     updateJobPostStatus,
     handleError
 };

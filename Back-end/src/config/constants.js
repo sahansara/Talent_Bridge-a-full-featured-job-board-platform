@@ -224,7 +224,7 @@ const APPLICATION_STATUS = {
 
 
 
-// Time constants (in milliseconds)
+// Time constants  milliseconds
 const TIME = {
   SECOND: 1000,
   MINUTE: 60 * 1000,

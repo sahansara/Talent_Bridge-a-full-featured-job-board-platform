@@ -16,13 +16,13 @@ const {
   requireAdmin, 
   adminAuth, 
   adminRateLimit, 
-  logAdminActions 
+   
 } = require('./src/middleware/adminAuth');
 
 // Import route modules
 const authRoutes = require('./src/routes/auth/authRoutes');
 
-// Import existing routes
+
 const register = require('./src/routes/Job_seeker/register');
 const mainProfile = require('./src/routes/Job_seeker/mainProfile');
 const Login_register = require('./src/routes/Employer/register');
@@ -92,21 +92,20 @@ async function main() {
 }
 
 function mountRoutes() {
-  // Public authentication routes (login for all roles)
+  // Public authentication routes
   app.use('/api', authRoutes);
   
-  // PUBLIC ROUTES (No authentication required)
+  // PUBLIC ROUTES 
   
   app.use('/api/job-seeker', register);
   
-  // Company/Employer registration - should be public
+  // Company/Employer registration 
   app.use('/api/company', Login_register);
   
-  // Admin registration - should be public
+  // Admin registration 
   app.use('/api/admin', ensureDbConnected, register_dashboard);
-  // Feedback route - should be public
+  // Feedback route 
   app.use('/api/feedback', ensureDbConnected, feedback);
-  // PROTECTED ROUTES (Authentication required)
   
   // Job Seeker protected routes
   app.use('/api/users', ensureDbConnected, authenticateToken, mainProfile);
@@ -124,13 +123,13 @@ function mountRoutes() {
   app.use('/api/admin', adminRateLimit);
   
   // Admin protected routes with full admin authentication chain
-  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin, logAdminActions, Manage_jobpost);
+  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  Manage_jobpost);
   
-  app.use('/api/admin',ensureDbConnected,authenticateAdminToken,requireAdmin,logAdminActions, Manage_jobSeeker);
+  app.use('/api/admin',ensureDbConnected,authenticateAdminToken,requireAdmin, Manage_jobSeeker);
   
-  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  logAdminActions,  Manage_Employers);
+  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,    Manage_Employers);
 
-    app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin, logAdminActions, ADNOTIFICATION);
+    app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  ADNOTIFICATION);
 
 
   // Catch-all for undefined routes

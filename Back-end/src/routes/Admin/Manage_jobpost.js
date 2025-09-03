@@ -6,11 +6,12 @@ const {
   getCollections,
   attachEmployerDetails,
   createEmployerNotification,
+  createjobseekerNotification,
   updateJobPostStatus,
   handleError
 } = require('./subFunctions/jobPost');
 
-// Get all job posts with optional filtering by status
+// Get all job posts 
 router.get('/job-posts', async (req, res) => {
   try {
     const { status = 'pending' } = req.query;
@@ -19,7 +20,7 @@ router.get('/job-posts', async (req, res) => {
 
     let query = {};
     
-    // Set filter based on status
+    // Set filter use on status
     if (status && status !== 'all') {
       query.status = status;
     }
@@ -38,30 +39,54 @@ router.get('/job-posts', async (req, res) => {
     handleError(res, err, 'Failed to retrieve job posts');
   }
 });
-
 // Approve a job post
 router.put('/job-posts/:id/approve', async (req, res) => {
   try {
     const jobId = req.params.id;
     const db = req.app.locals.db;
-    const { jobPosts: jobPostsCollection, notifications: notificationsCollection } = getCollections(db);
+    const { jobPosts: jobPostsCollection, notifications: notificationsCollection, Vacancienotification: Vacancienotification, employer: employer } = getCollections(db);
     
-    // Verify job post exists
+    // Verify job post alreafdy has
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
     if (!jobPost) {
       return res.status(404).json({ error: 'Job post not found' });
     }
 
-    // Update job post status to approved
+    // Update job post status to approve
     const result = await updateJobPostStatus(jobPostsCollection, jobId, 'approved', req.user.userId);
-
+    
     if (result.modifiedCount === 0) {
       return res.status(400).json({ error: 'Failed to approve job post' });
     }
 
+    // Find employer name using employer id in employer collection
+    let employerName = "Unknown employer";
+    try {
+      const employerData = await employer.findOne(
+        { _id: new ObjectId(jobPost.employerId) },
+        { 
+          projection: { 
+            employerName: 1, 
+            _id: 1
+          }
+        }
+      );
+      
+      if (employerData && employerData.employerName) {
+        employerName = employerData.employerName;
+      }
+    } catch (employerError) {
+      console.error('Error fetching employer data:', employerError);
+    
+    }
+
     // Create notification for employer
-    const notificationMessage = `Your job post "${jobPost.title}" has been approved and is now live.`;
+    const notificationMessage = `Your job post "${jobPost.title}" has been approved and is now live`;
     await createEmployerNotification(notificationsCollection, jobPost.employerId, jobId, notificationMessage, 'job_approved');
+    
+    // Create job vacancy notification for job seekers 
+    const jobvacancyMessage = `New vacancy posted by "${employerName}": ${jobPost.title}`;
+    await createjobseekerNotification(Vacancienotification, jobPost.employerId, jobId, jobvacancyMessage, jobPost.thumbnail, 'job_approved');
 
     res.status(200).json({ 
       message: 'Job post approved successfully',
@@ -79,7 +104,7 @@ router.put('/job-posts/:id/reject', async (req, res) => {
     const db = req.app.locals.db;
     const { jobPosts: jobPostsCollection, notifications: notificationsCollection } = getCollections(db);
     
-    // Verify job post exists
+    // Verify job post alrady has
     const jobPost = await jobPostsCollection.findOne({ _id: new ObjectId(jobId) });
     if (!jobPost) {
       return res.status(404).json({ error: 'Job post not found' });
@@ -105,7 +130,7 @@ router.put('/job-posts/:id/reject', async (req, res) => {
   }
 });
 
-// Get job post details by ID for views in open model frontend 
+// Get job post details for model
 router.get('/job-posts/:id', async (req, res) => {
   try {
     const jobId = req.params.id;
@@ -118,7 +143,7 @@ router.get('/job-posts/:id', async (req, res) => {
       return res.status(404).json({ error: 'Job post not found' });
     }
 
-    // Attach employer details
+    // Attach all employer details
     await attachEmployerDetails(jobPost, employerCollection);
 
     res.status(200).json({ jobPost });
@@ -127,7 +152,7 @@ router.get('/job-posts/:id', async (req, res) => {
   }
 });
 
-// Create a notification endpoint (this might typically be handled in the approval/rejection routes)
+// Create  notification for employer
 router.post('/notifications/employer', async (req, res) => {
   try {
     const { jobId, status, message } = req.body;
@@ -141,7 +166,7 @@ router.post('/notifications/employer', async (req, res) => {
       return res.status(404).json({ error: 'Job post not found' });
     }
     
-    // Create notification
+    // Create notifications
     const notificationMessage = message || `Your job post has been ${status}.`;
     const notificationType = `job_${status}`;
     
