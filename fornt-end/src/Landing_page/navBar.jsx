@@ -1,0 +1,93 @@
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Briefcase } from 'lucide-react';
+import logo from './../assets/logo.png'; 
+
+export const Navbar = ({ theme }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      console.warn(`Element with id "${id}" not found`);
+    }
+  };
+
+  const handleHomeClick = () => {
+    if (location.pathname === '/') {
+      // If already on home page, scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Navigate to home page
+      navigate('/');
+    }
+  };
+
+  const handleNavClick = (item) => {
+    if (location.pathname !== '/') {
+      // If not on home page, navigate to home first, then scroll
+      navigate('/');
+      setTimeout(() => scrollToSection(item), 100);
+    } else {
+      // If on home page, just scroll
+      scrollToSection(item);
+    }
+  };
+
+  return (
+    <nav className={`fixed w-full z-40 transition-all duration-500 ${
+      isScrolled ? 'bg-black/20 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'
+    }`}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-1">
+          <div className="flex items-center">
+            <div className="flex items-center justify-center w-12 h-12 border-2 border-white rounded-full mr-2">
+              <img src={logo} alt="Logo" className="w-12 h-12" />
+            </div>
+            <h1 className="text-xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-3 font-sans">
+                Talent Bridge
+            </h1>
+          </div>
+          
+          <div className="hidden md:flex space-x-9">
+             <button
+              onClick={handleHomeClick}
+              className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group "
+            >
+              Home
+              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r ${theme.secondary} transition-all duration-300 group-hover:w-full`}></span>
+            </button>
+            {['features','jobs', 'feedback','about'].map(item => (
+              <button key={item} onClick={() => handleNavClick(item)}
+                className="text-gray-300 hover:text-white transition-all duration-300 capitalize relative group   "
+              >
+                {item}
+                <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r ${theme.secondary} transition-all duration-300 group-hover:w-full`}></span>
+              </button>
+            ))}
+          </div>
+          
+             <button
+                onClick={() => navigate('/User_login')}
+                className={`bg-gradient-to-r ${theme.primary} hover:scale-105 rounded-xl px-4 md:px-6 py-2.5 font-medium transition-all duration-300 text-sm md:text-base`}
+              >
+                Sign In
+              </button>
+
+        </div>
+      </div>
+    </nav>
+  );
+}
+export default Navbar;

@@ -1,204 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { User, Briefcase, FileText, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import RegisterForm from './RegisterComponents/RegisterForm';
+import { colorThemes } from '../colorThemes/colorThemes';
+import logo from '../assets/logo.png';
+import registerApi from "../services/jobSeeker/register"
+import Alert from '../notificationAlert/Alert';
+import JS1 from '../assets/JS/JB1.jpeg';
+import JS2 from '../assets/JS/JB2.jpeg';
+import JS3 from '../assets/JS/JB3.jpeg';
+import JS4 from '../assets/JS/JB4.jpeg';
+
 
 const images = [
-  'src/assets/9.jpg',
-  'src/assets/10.jpg',
-  'src/assets/11.jpg'
+  JS1, JS2, JS3, JS4
 ];
 
-const Seek_register = () => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    rePassword: '',
-    cv_Upload: null,
-    image: null,
-  });
-  
-  const [passwordError, setPasswordError] = useState('');
+const benefits = [
+  { icon: <User className="w-5 h-5" />, title: 'Build Profile', desc: 'Showcase your skills' },
+  { icon: <FileText className="w-5 h-5" />, title: 'Upload CV', desc: 'Share your experience' },
+  { icon: <Shield className="w-5 h-5" />, title: 'Secure Platform', desc: 'Your data is safe' }
+];
 
+const SeekRegister = () => {
+  const navigate = useNavigate();
+  const [theme, setTheme] = useState('blue');
   const [currentImage, setCurrentImage] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const[notification,setNotification]=useState({type:'',message:''});
 
+  const currentTheme = colorThemes[theme];
+  
+  const handleRegistration = async (formData) => {
+    setIsSubmitting(true);
+    try {
+      const response = await registerApi.submitForm(formData);
+       setNotification({
+        type:'success',
+        message:'Registration successful! Please check your email for verification.'
+      })
+          setTimeout(() => {
+        navigate('/user_login'); 
+      }, 1500);
+    } catch (error) {
+      setNotification({
+        type:'error',
+        message:error.response?.data?.message || 'Registration failed. Please try again.'
+      })
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  // Image slideshow effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    if (type === 'file') {
-      setFormData({ ...formData, [name]: e.target.files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    if (formData.password !== formData.rePassword) {
-      setPasswordError('Passwords do not match');
-      return;
-    } else {
-      setPasswordError('');
-    }
-  
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) data.append(key, value);
-    });
-  
-    try {
-      const response = await axios.post('http://localhost:3000', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-  
-     
-      alert('Registered successfully!');
-    } catch (error) {
-      console.error('Registration failed:', error.response?.data || error.message);
-      alert('Registration failed. Check console for details.');
-    }
-  };
-  
-
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gray-100">
-      {/* Left Section (Image Slider) */}
-      <div className="bg-blue-600 flex flex-col items-center justify-center p-6 transition-all duration-700">
-        <img
-          src={images[currentImage]}
-          alt="Job Seeker"
-          className="w-full max-w-md object-cover rounded-xl shadow-xl"
+    <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} relative overflow-hidden`}>
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <Alert notification={notification} />
+      </div>
+        {/* Hero Image Background - Bottom Layer */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60 z-10"></div>
+        <img 
+          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop" 
+          alt="Modern office" 
+          className="w-full h-full object-cover opacity-20"
         />
-        <div className="text-center text-white mt-6 px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Join as a Job Seeker</h1>
-          <p className="text-base md:text-lg">
-            Create your profile, upload your CV, and connect with top employers on JobBoard.
-          </p>
-        </div>
+      </div>
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[
+          { size: 'w-96 h-96', pos: '-top-48 -right-48', color: 'bg-blue-500', delay: '' },
+          { size: 'w-80 h-80', pos: '-bottom-40 -left-40', color: 'bg-blue-400', delay: 'animation-delay-1000' },
+          { size: 'w-64 h-64', pos: 'top-1/3 left-1/4', color: 'bg-blue-300', delay: 'animation-delay-2000' }
+        ].map((circle, i) => (
+          <div 
+            key={i} 
+            className={`absolute ${circle.pos} ${circle.size} ${circle.color} rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse ${circle.delay}`}
+          />
+        ))}
       </div>
 
-      {/* Right Section */}
-      <div className="relative flex items-center justify-center p-8 bg-white">
-        <a
-          href="/User_login"
-          className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-all duration-300"
-        >
-          Login
-        </a>
 
-        <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-xl space-y-5"
-        >
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Job Seeker Register
-          </h2>
+     
 
-          <div>
-            <label className="block mb-1 font-semibold">Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-xl focus:outline-none focus:ring focus:ring-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-semibold">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-xl focus:outline-none focus:ring focus:ring-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-semibold">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-xl focus:outline-none focus:ring focus:ring-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-semibold">Re-enter Password</label>
-            <input
-              type="password"
-              name="rePassword"
-              value={formData.rePassword}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border rounded-xl focus:outline-none focus:ring focus:ring-blue-300"
-            />
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-            )}
-          </div>
-
-
-          <div>
-            <label className="block mb-1 font-semibold">Upload CV (PDF)</label>
-            <input
-              type="file"
-              name="cv_Upload"
-              accept=".pdf"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-xl"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-semibold">Profile Photo</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-              className="w-full p-2 border rounded-xl"
-            />
-          </div> 
-
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
+        
+        {/* Left Visual Section */}
+        <div className="flex flex-col items-center justify-center p-4 lg:p-6">
+           {/* Logo Header */}
           <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                name="isJobSeeker"
-                id="isJobSeeker"
-                checked={true}
-                readOnly
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label htmlFor="isJobSeeker" className="ml-2 font-semibold text-gray-700">
-                I am a job seeker
-              </label>
-            </div>
+           < div className="flex items-center justify-center w-16 h-16 border-2 border-white rounded-full mr-2">
+                          <img src={logo} alt="Logo" className="w-15 h-15" />
+                        </div>
+            <h1 className="text-5xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent py-2"> {/* Changed from text-4xl lg:text-5xl to text-3xl lg:text-4xl */}
+              Talent Bridge
+            </h1>
+          </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 font-semibold"
-          >
-            Register
-          </button>
-        </form>
+          {/* Main Image with Overlay */}
+            <div className="relative w-full max-w-xl mb-8">
+            <div className="relative aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl">
+              <img src={images[currentImage]} alt="JobBoard Platform" 
+                className="w-full h-full  transition-all duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              
+              {/* Image Dots Indicator */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {images.map((_, i) => (
+                  <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === currentImage ? `bg-white` : 'bg-white/40'
+                  }`}></div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Welcome Text */}
+          <div className="text-center text-white mb-8">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                Join as Job Seeker
+              </span>
+            </h2>
+            <p className="text-lg text-blue-200 max-w-md">
+              Create your profile, upload your CV, and connect with top employers on JobBoard
+            </p>
+          </div>
+
+          {/* Benefits Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
+            {benefits.map((benefit, i) => (
+              <div 
+                key={i} 
+                className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-center hover:bg-white/20 transition-all duration-300"
+              >
+                <div className={`w-10 h-10 bg-gradient-to-r ${currentTheme.secondary} rounded-xl flex items-center justify-center mx-auto mb-2`}>
+                  {benefit.icon}
+                </div>
+                <h3 className="text-white font-semibold text-sm">{benefit.title}</h3>
+                <p className="text-blue-200 text-xs">{benefit.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center p-8 lg:p-12">
+          <RegisterForm currentTheme={currentTheme} 
+           onSubmit={handleRegistration}
+           isSubmitting={isSubmitting}/>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Seek_register;
+export default SeekRegister;
