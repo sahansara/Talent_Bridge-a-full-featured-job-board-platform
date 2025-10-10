@@ -2,12 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+// Example for Express.js backend
+
 
 // Import configurations
 const { databaseConnection } = require('./src/config/database');
 const { getCorsOptions } = require('./src/config/cors');
 const { uploadMiddlewares, ensureUploadDirectories, handleUploadError } = require('./src/config/multer');
 const { ENV } = require('./src/config/constants');
+require("dotenv").config();
 
 // Import middleware
 const { ensureDbConnected, authenticateToken } = require('./src/middleware/auth');
@@ -38,6 +41,7 @@ const notifications = require('./src/routes/Job_seeker/notifications');
 const feedback = require('./src/routes/feedback/feedback');
 const EM_NOTIFICATIONS =require('./src/routes/Employer/notifications')
 const ADNOTIFICATION  = require('./src/routes/Admin/notification.js')
+const chatbotRoutes = require("./src/routes/Chatbot/chatbot");
 
 const app = express();
 const port = ENV.PORT;
@@ -92,6 +96,11 @@ async function main() {
 }
 
 function mountRoutes() {
+  // Health check route
+  app.get('/api/test', (req, res) => {
+    res.json({ success: true, message: "Backend is working!" });
+  });
+
   // Public authentication routes
   app.use('/api', authRoutes);
   
@@ -106,6 +115,8 @@ function mountRoutes() {
   app.use('/api/admin', ensureDbConnected, register_dashboard);
   // Feedback route 
   app.use('/api/feedback', ensureDbConnected, feedback);
+  // Chatbot route
+  app.use("/api/chatbot", chatbotRoutes);
   
   // Job Seeker protected routes
   app.use('/api/users', ensureDbConnected, authenticateToken, mainProfile);
@@ -129,8 +140,9 @@ function mountRoutes() {
   
   app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,    Manage_Employers);
 
-    app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  ADNOTIFICATION);
+  app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  ADNOTIFICATION);
 
+  
 
   // Catch-all for undefined routes
   app.use((req, res) => {
