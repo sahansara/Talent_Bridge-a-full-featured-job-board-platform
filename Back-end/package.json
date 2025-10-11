@@ -9,9 +9,11 @@
   "author": "widane_vihaga",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
     "jsonwebtoken": "^9.0.2",
