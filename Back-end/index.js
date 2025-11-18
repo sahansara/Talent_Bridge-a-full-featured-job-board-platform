@@ -142,7 +142,31 @@ function mountRoutes() {
 
   app.use('/api/admin', ensureDbConnected, authenticateAdminToken, requireAdmin,  ADNOTIFICATION);
 
-  
+  app.get('/health', async (req, res) => {
+  try {
+    const dbHealth = await databaseConnection.healthCheck();
+    
+    if (dbHealth.status === 'connected') {
+      return res.status(200).json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: dbHealth
+      });
+    } else {
+      return res.status(503).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        database: dbHealth
+      });
+    }
+  } catch (error) {
+    return res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: error.message
+    });
+  }
+});
 
   // Catch-all for undefined routes
   app.use((req, res) => {

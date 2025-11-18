@@ -1,9 +1,12 @@
 {
   "name": "back-end-talent",
   "version": "1.0.0",
-  "description": " Talent_Bridge_backend",
+  "description": "Talent_Bridge_backend",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
+    "prod": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "widane_vihaga",
