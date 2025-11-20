@@ -1,3 +1,4 @@
+
 node_modules
 dist
 .git
@@ -5,3 +6,10 @@ dist
 npm-debug.log
 .DS_Store
 coverage
+# Ignore node_modules
+node_modules
+# Ignore logs
+logs    
+*.log
+npm-debug.log*
+

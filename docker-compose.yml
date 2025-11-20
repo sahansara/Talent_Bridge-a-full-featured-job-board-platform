@@ -35,6 +35,20 @@ services:
         condition: service_healthy
     environment:
       - NODE_ENV=production
+
+        - NODE_ENV=development  
+    container_name: backend_service
+    restart: unless-stopped
+    ports:
+      - "3000:3000"  
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./back-end:/app
+      - /app/node_modules  
+    environment:
+      - NODE_ENV=development 
       - MONGODB_URL=mongodb://mongo:27017
       - DB_NAME=talent_Bridge
       - PORT=3000
@@ -66,6 +80,19 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./fornt-end:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true  
+      - VITE_API_BASE_URL=/api   
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network
 
 volumes:
   mongo_data:

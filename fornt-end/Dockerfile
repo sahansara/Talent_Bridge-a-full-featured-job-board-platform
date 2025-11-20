@@ -1,4 +1,5 @@
 
+
 # Stage 1: Build
 FROM node:25 AS builder
 
@@ -34,3 +35,25 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# get node officaial image
+FROM node:25
+
+# set working derectory
+WORKDIR  /app
+
+# copy package.json and package-lock.json
+COPY package*.json ./
+
+# install dependencies
+RUN npm install
+
+# copy project files
+COPY . .
+
+# expose port   
+EXPOSE 5173
+
+# start the app
+CMD ["npm" , "run" , "dev"]
+
