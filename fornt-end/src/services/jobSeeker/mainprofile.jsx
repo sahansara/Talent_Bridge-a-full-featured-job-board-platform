@@ -1,9 +1,8 @@
 import axios from 'axios';
-import {API_BASE_URLS} from  "../../config/api"
 
 // Create an axios instance with base URL and token
 const api = axios.create({
-  baseURL: `${API_BASE_URLS}/api`,
+  baseURL: 'http://localhost:3000/api',
 });
 
 // Add auth token to requests
@@ -29,7 +28,7 @@ export const profileAPI = {
         imageUrl = `${response.data.profileImage}?t=${new Date().getTime()}`;
       } else {
         
-        const baseUrl = `${API_BASE_URLS}`;
+        const baseUrl = 'http://localhost:3000';
         
         const normalizedPath = response.data.profileImage.replace(/\\/g, '/');
         imageUrl = `${baseUrl}/${normalizedPath}?t=${new Date().getTime()}`;

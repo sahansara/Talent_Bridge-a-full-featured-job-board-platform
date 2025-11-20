@@ -1,8 +1,6 @@
 import axios from "axios";
-import {API_BASE_URLS} from  "../../config/api"
 
-
-const API_BASE_URL = `${API_BASE_URLS}/api/feedback`;
+const API_BASE_URL = "http://localhost:3000/api/feedback";
 
 const FeedbackApiService = {
 
