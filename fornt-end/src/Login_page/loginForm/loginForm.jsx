@@ -3,6 +3,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../../notificationAlert/Alert';
+import {API_BASE_URLS } from  "../../config/api"
 
 export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700' } }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -35,7 +36,7 @@ export const LoginForm = ({ currentTheme = { primary: 'from-blue-500 to-blue-700
     e.preventDefault();
     
     try {
-      const res = await axios.post('http://localhost:3000/api/login', {
+      const res = await axios.post(`${API_BASE_URLS}/api/login`, {
         email: formData.email,
         password: formData.password,
         remember: formData.remember

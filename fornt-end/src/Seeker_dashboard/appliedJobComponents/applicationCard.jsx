@@ -3,7 +3,7 @@ import React from 'react';
 import { MapPin, DollarSign, Calendar, Briefcase, ExternalLink } from 'lucide-react';
 import StatusIcon from './statusIcon';
 import { appliedJobsUtils } from '../../utils/jobSeeker/appliedJobs';
-
+import { API_BASE_URLS } from '../../config/api';
 const ApplicationCard = ({ application, onViewDetails }) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -12,7 +12,7 @@ const ApplicationCard = ({ application, onViewDetails }) => {
           <div className="h-12 w-12 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
             {application.logo ? (
               <img 
-                src={application.logo.startsWith('http') ? application.logo : `http://localhost:3000/${application.logo}`} 
+                src={application.logo.startsWith('http') ? application.logo : `${API_BASE_URLS}/${application.logo}`} 
                 alt={`${application.employer} logo`}
                 className="h-full w-full object-cover"
               />

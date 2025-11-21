@@ -1,5 +1,7 @@
 import { ROLES, USER_TYPES } from './roleConstants';
 import {colorThemes} from  '../../colorThemes/colorThemes';
+import { API_BASE_URLS} from '../../config/api';
+
 
 export const jobSeekerConfig = {
   role: ROLES.JOB_SEEKER,
@@ -7,8 +9,8 @@ export const jobSeekerConfig = {
   headerIcon: 'MoneyIcon',
   userLabel: USER_TYPES[ROLES.JOB_SEEKER],
   api: {
-    profile: 'http://localhost:3000/api/users/profile',
-    logout: 'http://localhost:3000/api/logout'
+    profile: `${API_BASE_URLS}/api/users/profile`,
+    logout: `${API_BASE_URLS}/api/logout`
   },
   navigation: [
     { 
@@ -54,8 +56,8 @@ export const employerConfig = {
   headerIcon: 'employerIcon',
   userLabel: USER_TYPES[ROLES.EMPLOYER],
   api: {
-    profile: 'http://localhost:3000/api/Company/profile',
-    logout: 'http://localhost:3000/api/logout'
+    profile: `${API_BASE_URLS}/api/Company/profile`,
+    logout: `${API_BASE_URLS}/api/logout`
   },
   navigation: [
     { 
@@ -101,8 +103,8 @@ export const adminConfig = {
   headerIcon: 'ShieldIcon',
   userLabel: USER_TYPES[ROLES.ADMIN],
   api: {
-    profile: 'http://localhost:3000/api/admin/profile',
-    logout: 'http://localhost:3000/api/logout',
+    profile: `${API_BASE_URLS}/api/admin/profile`,
+    logout: `${API_BASE_URLS}/api/logout`,
   },
 
   navigation: [
