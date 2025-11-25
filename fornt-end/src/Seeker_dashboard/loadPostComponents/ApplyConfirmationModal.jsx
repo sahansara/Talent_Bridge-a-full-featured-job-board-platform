@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-
+import { API_BASE_URLS } from '../../config/api';
 
 
 export const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfile, userCV, onApply, isApplying }) => {
@@ -82,7 +82,7 @@ export const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfi
                       `/api/placeholder/96/96` : 
                       (userProfile.profileImage.startsWith('http') ? 
                         userProfile.profileImage : 
-                        `http://localhost:3000/${userProfile.profileImage}`)} 
+                        `${API_BASE_URLS}/${userProfile.profileImage}`)} 
                   alt="Profile" 
                   className="h-20 w-20 rounded-full object-cover border-4 border-white shadow-md"
                 />
@@ -144,7 +144,7 @@ export const ApplyConfirmationModal = ({ isOpen, onClose, selectedJob, userProfi
                     if (userCV.startsWith('/documents/')) {
                       alert('CV Preview: This is a dummy CV file for UI testing');
                     } else {
-                      window.open(userCV.startsWith('http') ? userCV : `http://localhost:3000/${userCV}`, '_blank');
+                      window.open(userCV.startsWith('http') ? userCV : `${API_BASE_URLS}/${userCV}`, '_blank');
                     }
                   }}
                   className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center"

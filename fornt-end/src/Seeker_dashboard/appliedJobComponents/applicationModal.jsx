@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import StatusIcon from './statusIcon';
 import { appliedJobsUtils } from '../../utils/jobSeeker/appliedJobs';
-
+import { API_BASE_URLS } from '../../config/api';
 const ApplicationModal = ({ isOpen, application, onClose }) => {
   useEffect(() => {
     if (isOpen) {
@@ -43,7 +43,7 @@ const ApplicationModal = ({ isOpen, application, onClose }) => {
               <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                 <img 
                   src={
-                    application.logo.startsWith('http') ? application.logo : `http://localhost:3000/${application.logo}`
+                    application.logo.startsWith('http') ? application.logo : `${API_BASE_URLS}/${application.logo}`
                   } 
                   alt="employer logo" 
                   className="h-full w-full object-cover"

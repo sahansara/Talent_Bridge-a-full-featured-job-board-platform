@@ -22,7 +22,8 @@ services:
 
   backend:
     build: 
-      context: ./Back-end
+
+      context: ./back-end
       dockerfile: Dockerfile
       args:
         - NODE_ENV=production
