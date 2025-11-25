@@ -21,7 +21,7 @@ pipeline {
         stage('Backend CI') {
             steps {
                 echo '🔧 Backend: Install & Test'
-                dir('back-end') {
+                dir('Back-end') {
                     sh '''
                         npm install
                         npm run lint || echo "No lint script"
