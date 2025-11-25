@@ -1,9 +1,9 @@
 // src/shared/components/sidebar/Sidebar.js
 
 import React from 'react';
-import SidebarHeader from './SidebarHeader';
-import NavigationTabs from './NavigationTabs';
-import ProfileSection from './ProfileSection';
+import SidebarHeader from './sidebarHeader';
+import NavigationTabs from './navigationTabs';
+import ProfileSection from './profileSection';
 
 const Sidebar = ({ config, isMobileMenuOpen, closeMobileMenu, userData, handleLogout }) => {
   return (

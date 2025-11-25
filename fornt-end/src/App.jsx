@@ -26,10 +26,13 @@ import Notifications from './Seeker_dashboard/Notifications';
 import LoginRedirect from './contexts/redirect';
 import ADNotificationCenter from './Admin/NotificationCenter';
 import 'boxicons';
+import Chatbot from './chatbot/Chatbot';
+
 
 function App() {
   return (
     <AuthProvider>
+      <Chatbot/>
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}

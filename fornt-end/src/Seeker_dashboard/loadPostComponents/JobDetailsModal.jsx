@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { API_BASE_URLS } from '../../config/api';
 const JobDetailsModal = ({ 
   isModalOpen, 
   selectedJob, 
@@ -33,7 +33,7 @@ const JobDetailsModal = ({
               <div className="h-20 w-20 rounded-lg overflow-hidden mr-4 bg-gray-100">
                 <img 
                   src={
-                    selectedJob.logo.startsWith('http') ? selectedJob.logo : `http://localhost:3000/${selectedJob.logo}`
+                    selectedJob.logo.startsWith('http') ? selectedJob.logo : `${API_BASE_URLS}/${selectedJob.logo}`
                   } 
                   alt="employer logo" 
                   className="h-full w-full object-cover"

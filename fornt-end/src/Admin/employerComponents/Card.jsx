@@ -2,6 +2,7 @@
 import React from 'react';
 import { Trash2, User, Shield, Mail, Phone, Globe, Calendar } from 'lucide-react';
 import { notificationUtils } from '../../utils/Admin/employer';
+import { API_BASE_URLS } from '../../config/api';
 
 const EmployerCard = ({ employer, index, onDeleteClick }) => {
   return (
@@ -16,7 +17,7 @@ const EmployerCard = ({ employer, index, onDeleteClick }) => {
             <div className="bg-white bg-opacity-20 p-2 rounded-lg">
             
            <img 
-            src={employer.image.startsWith('http') ? employer.image : `http://localhost:3000/${employer.image}`} 
+            src={employer.image.startsWith('http') ? employer.image : `${API_BASE_URLS}/${employer.image}`} 
             alt={'employer'}
             className="h-8 w-8 text-white"
             />
