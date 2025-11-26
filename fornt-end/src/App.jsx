@@ -42,7 +42,7 @@ function App() {
           <Route path="/User_login" element={<LoginRedirect> <Login /> </LoginRedirect>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Job Seeker Protected Route */}
+          {/* Job Seeker Protected Routes */}
           <Route 
             path="/jobSeeker" 
             element={
