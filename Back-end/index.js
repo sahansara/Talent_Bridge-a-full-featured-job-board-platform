@@ -53,7 +53,7 @@ ensureUploadDirectories();
 // CORS configuration
 app.use(cors(getCorsOptions()));
 
-// Body parsing middlewares
+// Body parsing middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
