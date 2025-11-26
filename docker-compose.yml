@@ -21,12 +21,10 @@ services:
       - app-network
 
   backend:
-    build: 
-
-      context: ./Back-end
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=production
+    image: sahansara/talent-bridge-backend:latest  
+    # build:  # Comment out  for production
+    #   context: ./Back-end
+    #   dockerfile: Dockerfile
     container_name: backend_service
     restart: unless-stopped
     ports:
@@ -49,9 +47,10 @@ services:
       start_period: 40s
 
   frontend:
-    build: 
-      context: ./fornt-end
-      dockerfile: Dockerfile
+    image: sahansara/talent-bridge-frontend:latest  
+    # build:  # Comment out for production
+    #   context: ./fornt-end
+    #   dockerfile: Dockerfile
     container_name: frontend_service
     restart: unless-stopped
     ports:
