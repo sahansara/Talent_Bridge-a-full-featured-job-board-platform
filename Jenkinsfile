@@ -168,7 +168,7 @@ pipeline {
             steps {
                 echo ' Validating docker-compose.yml...'
                 sh '''
-                    docker-compose config
+                    docker compose config
                     echo " docker-compose.yml is valid"
                 '''
             }
