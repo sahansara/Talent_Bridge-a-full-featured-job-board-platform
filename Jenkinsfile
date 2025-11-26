@@ -1,5 +1,5 @@
 pipeline {
-    agent 
+    agent any
 
     tools {
         nodejs 'Node20'
