@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent 
 
     tools {
         nodejs 'Node20'
@@ -29,7 +29,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo ' Cloning repository'
-                git branch: 'main', 
+                git branch: 'ci-test', 
                     url: 'https://github.com/sahansara/Talent_Bridge-a-full-featured-job-board-platform.git'
             }
         }
@@ -132,19 +132,34 @@ pipeline {
             steps {
                 echo ' Pushing images to Docker Hub'
                 sh '''
-                    echo "Pushing backend image with tag ${IMAGE_TAG}..."
+                    echo "Pushing backend image with tag ${IMAGE_TAG}"
                     docker push ${BACKEND_IMAGE}:${IMAGE_TAG}
                     
                     echo "Pushing backend image with latest tag"
                     docker push ${BACKEND_IMAGE}:${LATEST_TAG}
                     
-                    echo "Pushing frontend image with tag ${IMAGE_TAG}..."
+                    echo "Pushing frontend image with tag ${IMAGE_TAG}"
                     docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}
                     
-                    echo "Pushing frontend image with latest tag..."
+                    echo "Pushing frontend image with latest tag"
                     docker push ${FRONTEND_IMAGE}:${LATEST_TAG}
                     
                     echo " All images pushed successfully to Docker Hub"
+                '''
+            }
+        }
+        stage('Cleanup Local Images') {
+            steps {
+                echo ' Cleaning up local Docker images after successful push'
+                sh '''
+                
+                    
+                    docker rmi ${BACKEND_IMAGE}:${IMAGE_TAG} || true
+                    docker rmi ${BACKEND_IMAGE}:${LATEST_TAG} || true
+                    docker rmi ${FRONTEND_IMAGE}:${IMAGE_TAG} || true
+                    docker rmi ${FRONTEND_IMAGE}:${LATEST_TAG} || true
+                    
+                    
                 '''
             }
         }
