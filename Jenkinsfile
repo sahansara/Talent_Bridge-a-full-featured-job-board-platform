@@ -180,12 +180,17 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sh '''
-                    ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
-                        set -e
+                    ssh -o StrictHostKeyChecking=no -i "${EC2_KEY}" ${EC2_USER}@${EC2_HOST} \
+                       "BACKEND_IMAGE=${BACKEND_IMAGE} \
+                        FRONTEND_IMAGE=${FRONTEND_IMAGE} \
+                        MONGO_IMAGE=${MONGO_IMAGE} \
+                        LATEST_TAG=${LATEST_TAG} \
+                        DEPLOY_DIR=${DEPLOY_DIR} \
+                        bash -s" << 'EOF'
+                            set -e
 
                         echo " Navigate deployment directory"
                         cd ${DEPLOY_DIR}
-                        
                         
                         
                         echo "get Docker image from Docker Hub"
