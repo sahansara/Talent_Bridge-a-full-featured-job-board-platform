@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb');
 const path = require('path');
 const fs = require('fs');
 const { COLLECTIONS } = require('../../../config/constants');
-
+const { API_BASE_URLS } = require('../../../config/api');
 
 function getEmployerCollections(db) {
   return {
@@ -29,12 +29,12 @@ async function fetchEmployerApplications(applicationsCollection, employerId) {
 
 function formatImageUrl(imagePath) {
   if (!imagePath) return null;
-  return `http://localhost:3000/${imagePath.replace(/\\/g, '/')}`;
+  return `${API_BASE_URLS}/${imagePath.replace(/\\/g, '/')}`;
 }
 
 function formatCvUrl(cvPath) {
   if (!cvPath) return null;
-  return `http://localhost:3000/${cvPath.replace(/\\/g, '/')}`;
+  return `${API_BASE_URLS}/${cvPath.replace(/\\/g, '/')}`;
 }
 function formatApplicationData(app) {
   return {

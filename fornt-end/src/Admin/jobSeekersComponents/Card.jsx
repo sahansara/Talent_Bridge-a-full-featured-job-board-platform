@@ -2,7 +2,7 @@
 import React from 'react';
 import { Trash2, User, Shield, Mail, Calendar } from 'lucide-react';
 import { jobSeekerUtils } from '../../utils/Admin/jobSeeker';
-
+import { API_BASE_URLS } from '../../config/api';
 const JobSeekerCard = ({ jobSeeker, index, onDeleteClick }) => {
   return (
     <div 
@@ -15,7 +15,7 @@ const JobSeekerCard = ({ jobSeeker, index, onDeleteClick }) => {
           <div className="flex items-center space-x-3">
             <div className="bg-white bg-opacity-20 p-2 rounded-lg">
               <img 
-            src={jobSeeker.image.startsWith('http') ? jobSeeker.image : `http://localhost:3000/${jobSeeker.image}`} 
+            src={jobSeeker.image.startsWith('http') ? jobSeeker.image : `${API_BASE_URLS}/${jobSeeker.image}`} 
             alt={'jobSeeker'}
             className="h-8 w-8 text-white"
             />

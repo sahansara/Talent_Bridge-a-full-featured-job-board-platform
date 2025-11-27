@@ -2,7 +2,7 @@
 // src/shared/components/sidebar/ProfileSection.js
 import React from 'react';
 import { ICON_MAP } from './Icons';
-
+import { API_BASE_URLS } from '../../../config/api';
 const ProfileSection = ({ config, userData, handleLogout }) => {
   const LogoutIcon = ICON_MAP.LogoutIcon;
   const { name, image } = config.userDataMapping;
@@ -12,7 +12,7 @@ const ProfileSection = ({ config, userData, handleLogout }) => {
     if (!userImage) return null;
     return userImage.startsWith('http') 
       ? userImage 
-      : `http://localhost:3000/${userImage}`;
+      : `${API_BASE_URLS}/${userImage}`;
   };
 
   const userName = userData[name] || config.userDataMapping.defaultName;

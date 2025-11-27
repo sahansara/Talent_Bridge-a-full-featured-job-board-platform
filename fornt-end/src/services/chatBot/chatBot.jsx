@@ -1,6 +1,13 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/api/chatbot";
+import {API_BASE_URLS} from  "../../config/api"
+
+const API_BASE_URL = `${API_BASE_URLS}/api/chatbot`;
+
+
+
+
+
 
 const ChatbotApiService = {
   sendMessage: async (message) => {

@@ -4,7 +4,7 @@ import React from 'react';
 import { Briefcase, Trash2 } from 'lucide-react';
 import NotificationIcon from './notificationIcon';
 import { notificationUtils } from '../../utils/jobSeeker/mainNotification';
-
+import { API_BASE_URLS } from '../../config/api';
 const NotificationCard = ({ 
   notification, 
   activeTab, 
@@ -59,13 +59,13 @@ const NotificationCard = ({
           <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200">
             {activeTab === 'jobpost' && notification.thumbnail ? (
               <img 
-                src={notification.thumbnail.startsWith('http') ? notification.thumbnail : `http://localhost:3000/${notification.thumbnail}`} 
+                src={notification.thumbnail.startsWith('http') ? notification.thumbnail : `${API_BASE_URLS}/${notification.thumbnail}`} 
                 alt="Job thumbnail"
                 className="h-full w-full object-cover"
               />
             ) : activeTab === 'applications' && notification.employerImage ? (
               <img 
-                src={notification.employerImage.startsWith('http') ? notification.employerImage : `http://localhost:3000/${notification.employerImage}`} 
+                src={notification.employerImage.startsWith('http') ? notification.employerImage : `${API_BASE_URLS}/${notification.employerImage}`} 
                 alt={`${notification.employerName || 'employer'} profile`}
                 className="h-full w-full object-cover"
               />
