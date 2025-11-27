@@ -154,22 +154,18 @@ pipeline {
                 '''
             }
         }
+
         stage('Cleanup Local Images') {
             steps {
                 echo ' Cleaning up local Docker images after successful push'
                 sh '''
-                
-                    
                     docker rmi ${BACKEND_IMAGE}:${IMAGE_TAG} || true
                     docker rmi ${BACKEND_IMAGE}:${LATEST_TAG} || true
                     docker rmi ${FRONTEND_IMAGE}:${IMAGE_TAG} || true
                     docker rmi ${FRONTEND_IMAGE}:${LATEST_TAG} || true
-                    
-                    
                 '''
             }
         }
-
 
         stage('Docker Compose Validation') {
             steps {
@@ -215,6 +211,7 @@ EOF
                 '''
             }
         }
+
         stage('Health Check') {
             steps {
                 sh '''
@@ -247,18 +244,15 @@ EOF
 
         stage('Post-Deployment Verification') {
             steps {
-             
                 sh '''
                     ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
                         cd ${DEPLOY_DIR}                                          
                         docker logs --tail 20 backend_service
                         
                         echo ""
-                       
                         docker logs --tail 20 frontend_service
                         
                         echo ""
-                       
                         docker logs --tail 20 mongo_db
                         
                         echo ""
@@ -268,25 +262,20 @@ EOF
             }
         }
 
-        stage('remove old images ') {
+        stage('remove old images') {
             steps {
                 sh '''
                     ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
-                       
                         docker image prune -a -f --filter "until=72h" || true
-                        
-                        
                         docker volume prune -f || true
-                     
                         df -h /
-                        
                         echo " remove complete"
 EOF
                 '''
             }
-        
+        }
 
-    }
+    } 
 
     post {
         success {
@@ -294,15 +283,12 @@ EOF
             echo " Application deployed to EC2 at http://${EC2_HOST}/"
         }
         failure {
-            echo " CI/CD Pipeline Faile"
+            echo " CI/CD Pipeline Failed"
             echo "Please check the logs above for error."
         }
         always {
-            
             sh '''
-                # Logout from Docker Hub
                 docker logout || true
-                
                 echo " Cleanup completed"
             '''
         }
