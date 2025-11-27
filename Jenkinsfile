@@ -199,13 +199,13 @@ pipeline {
                         docker pull ${MONGO_IMAGE}
                         
                         echo " Stop previous container"
-                        docker-compose down
+                        docker compose down
                         
                         echo "Remove old images"
                         docker image prune -f
                         
                         echo " Starting new containers"
-                        docker-compose up -d
+                        docker compose up -d
                         
                         echo "Waiting for containers to be healthy"
                         sleep 10
@@ -223,7 +223,7 @@ EOF
                         cd ${DEPLOY_DIR}
                         
                         echo "Checking container status..."
-                        docker-compose ps
+                        docker compose ps
                         
                         echo ""
                         echo "Checking container health"
