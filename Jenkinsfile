@@ -18,6 +18,12 @@ pipeline {
         // Image tags
         IMAGE_TAG = "${BUILD_NUMBER}"
         LATEST_TAG = "latest"
+
+        // EC2 Deployment Settings
+        EC2_HOST = '3.228.5.147'  
+        EC2_USER = 'ubuntu'
+        EC2_KEY = credentials('ec2-ssh-key')  
+        DEPLOY_DIR = '/home/ubuntu/Talent_Bridge-a-full-featured-job-board-platform'
     }
 
     triggers {
@@ -164,6 +170,7 @@ pipeline {
             }
         }
 
+
         stage('Docker Compose Validation') {
             steps {
                 echo ' Validating docker-compose.yml...'
@@ -174,31 +181,127 @@ pipeline {
             }
         }
 
+        stage('Deploy to EC2') {
+            steps {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
+                        set -e
+                        
+                        echo " Navigate deployment directory"
+                        cd ${DEPLOY_DIR}
+                        
+                        echo " Pulling latest code from GitHub"
+                        git pull origin ci-test
+                        
+                        echo "get Docker image from Docker Hub"
+                        docker pull ${BACKEND_IMAGE}:${LATEST_TAG}
+                        docker pull ${FRONTEND_IMAGE}:${LATEST_TAG}
+                        docker pull ${MONGO_IMAGE}
+                        
+                        echo " Stop previous container"
+                        docker-compose down
+                        
+                        echo "Remove old images"
+                        docker image prune -f
+                        
+                        echo " Starting new containers"
+                        docker-compose up -d
+                        
+                        echo "Waiting for containers to be healthy"
+                        sleep 10
+                        
+                        echo " Deployment completed "
+EOF
+                '''
+            }
+        }
+        stage('Health Check') {
+            steps {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
+                        cd ${DEPLOY_DIR}
+                        
+                        echo "Checking container status..."
+                        docker-compose ps
+                        
+                        echo ""
+                        echo "Checking container health"
+                        docker ps --filter "name=mongo_db" --format "{{.Names}}: {{.Status}}"
+                        docker ps --filter "name=backend_service" --format "{{.Names}}: {{.Status}}"
+                        docker ps --filter "name=frontend_service" --format "{{.Names}}: {{.Status}}"
+                        
+                        echo ""
+                        echo "Testing backend health endpoint"
+                        curl -f http://localhost:3000/health || echo "Backend health check failed"
+                        
+                        echo ""
+                        echo "Testing frontend..."
+                        curl -f http://localhost/ || echo "Frontend health check failed"
+                        
+                        echo ""
+                        echo " All health checks complete"
+EOF
+                '''
+            }
+        }
+
+        stage('Post-Deployment Verification') {
+            steps {
+             
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
+                        cd ${DEPLOY_DIR}                                          
+                        docker logs --tail 20 backend_service
+                        
+                        echo ""
+                       
+                        docker logs --tail 20 frontend_service
+                        
+                        echo ""
+                       
+                        docker logs --tail 20 mongo_db
+                        
+                        echo ""
+                        echo " Deployment verification complete"
+EOF
+                '''
+            }
+        }
+
+        stage('remove old images ') {
+            steps {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
+                       
+                        docker image prune -a -f --filter "until=72h" || true
+                        
+                        
+                        docker volume prune -f || true
+                     
+                        df -h /
+                        
+                        echo " remove complete"
+EOF
+                '''
+            }
+        
+
     }
 
     post {
         success {
             echo " CI/CD Pipeline Passed Successfully"
-            echo " Images pushed to Docker Hub "
-            echo "   🔹 ${BACKEND_IMAGE}:${IMAGE_TAG}"
-            echo "   🔹 ${BACKEND_IMAGE}:${LATEST_TAG}"
-            echo "   🔹 ${FRONTEND_IMAGE}:${IMAGE_TAG}"
-            echo "   🔹 ${FRONTEND_IMAGE}:${LATEST_TAG}"
-            echo "   🔹 MongoDB: ${MONGO_IMAGE} "
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo " Application deployed to EC2 at http://${EC2_HOST}/"
         }
         failure {
-            echo " CI/CD Pipeline Failed!"
-            echo "Please check the logs above for errors."
+            echo " CI/CD Pipeline Faile"
+            echo "Please check the logs above for error."
         }
         always {
-            echo " Cleaning up workspace"
+            
             sh '''
                 # Logout from Docker Hub
                 docker logout || true
-                
-                #  Clean up old images (keep last 5 builds)
-                docker image prune -a --filter "until=168h" -f || true
                 
                 echo " Cleanup completed"
             '''

@@ -22,9 +22,6 @@ services:
 
   backend:
     image: sahansara/talent-bridge-backend:latest  
-    # build:  # Comment out  for production
-    #   context: ./Back-end
-    #   dockerfile: Dockerfile
     container_name: backend_service
     restart: unless-stopped
     ports:
@@ -32,6 +29,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads  
     environment:
       - NODE_ENV=production
       - MONGODB_URL=mongodb://mongo:27017
@@ -48,9 +47,6 @@ services:
 
   frontend:
     image: sahansara/talent-bridge-frontend:latest  
-    # build:  # Comment out for production
-    #   context: ./fornt-end
-    #   dockerfile: Dockerfile
     container_name: frontend_service
     restart: unless-stopped
     ports:
@@ -58,6 +54,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads:ro  
     networks:
       - app-network
     healthcheck:
@@ -69,6 +67,8 @@ services:
 
 volumes:
   mongo_data:
+    driver: local
+  uploads_data:  
     driver: local
 
 networks:
