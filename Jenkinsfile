@@ -182,12 +182,11 @@ pipeline {
                 sh '''
                     ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
                         set -e
-                        
+
                         echo " Navigate deployment directory"
                         cd ${DEPLOY_DIR}
                         
-                        echo " Pulling latest code from GitHub"
-                        git pull origin ci-test
+                        
                         
                         echo "get Docker image from Docker Hub"
                         docker pull ${BACKEND_IMAGE}:${LATEST_TAG}
