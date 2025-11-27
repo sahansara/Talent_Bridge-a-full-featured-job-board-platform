@@ -1,5 +1,3 @@
-import { API_BASE_URLS} from '../../config/api';
-
 class PostValidationUtils {
   // Format date to readable format
   formatDate(dateString) {
@@ -50,7 +48,7 @@ class PostValidationUtils {
 
   // Get employer logo URL
   getemployerLogoUrl(job) {
-    const API_BASE_URL = API_BASE_URLS;
+    const API_BASE_URL = 'http://localhost:3000/';
     
     if (job.employerLogo) {
       return `${API_BASE_URL}${job.employerLogo}`;

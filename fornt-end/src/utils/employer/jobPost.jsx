@@ -1,5 +1,3 @@
-import { API_BASE_URLS } from '../../config/api';
-
 // Location  dropdown
 export const locationOptions = [
   "Western Province",
@@ -137,5 +135,5 @@ export const generateRandomId = () => {
 // Utility function to get thumbnail URL
 export const getThumbnailUrl = (thumbnail) => {
   if (!thumbnail) return null;
-  return thumbnail.startsWith('http') ? thumbnail : `${API_BASE_URLS}/${thumbnail}`;
+  return thumbnail.startsWith('http') ? thumbnail : `http://localhost:3000/${thumbnail}`;
 };

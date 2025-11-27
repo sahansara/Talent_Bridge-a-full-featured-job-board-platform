@@ -14,28 +14,15 @@ export default defineConfig({
       interval: 1000,
     },
 
-    hmr:true,
+    
+    hmr: true,
 
-    // Proxy for local development only
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
+        target: 'http://backend:3000',
         secure: false,
+        changeOrigin: true,
       }
     }
-  },
-
-  // Build configuration
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-        },
-      },
-    },
   },
 })
