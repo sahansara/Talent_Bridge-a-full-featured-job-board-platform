@@ -1,6 +1,5 @@
 import React from 'react';
 import { UserPlus } from 'lucide-react';
-import { API_BASE_URLS } from '../../config/api';
 
 const JobSeekerAvatar = ({ jobSeekerImage, jobSeekerName }) => {
   return (
@@ -8,7 +7,7 @@ const JobSeekerAvatar = ({ jobSeekerImage, jobSeekerName }) => {
       <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm">
         {jobSeekerImage ? (
           <img 
-            src={jobSeekerImage.startsWith('http') ? jobSeekerImage : `${API_BASE_URLS}/${jobSeekerImage}`} 
+            src={jobSeekerImage.startsWith('http') ? jobSeekerImage : `http://localhost:3000/${jobSeekerImage}`} 
             alt={`${jobSeekerName || 'Job Seeker'} profile`}
             className="h-full w-full object-cover"
           />

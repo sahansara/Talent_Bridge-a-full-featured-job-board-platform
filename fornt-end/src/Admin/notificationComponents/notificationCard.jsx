@@ -3,7 +3,7 @@ import NotificationIcon from './notificationIcon';
 import EmployerAvatar from './EmployerAvatar';
 import NotificationActions from './notificationActions';
 import { formatDate, getNotificationStyles } from '../../utils/Admin/notification'; 
-import { API_BASE_URLS } from '../../config/api';
+
 const NotificationCard = ({
   notification,
   markAsRead,
@@ -62,7 +62,7 @@ const NotificationCard = ({
               <img
                 src={notification.jobInfo.thumbnail.startsWith('http')
                   ? notification.jobInfo.thumbnail
-                  : `${API_BASE_URLS}/${notification.jobInfo.thumbnail}`}
+                  : `http://localhost:3000/${notification.jobInfo.thumbnail}`}
                 alt={`${notification.jobInfo?.title || 'Job'} thumbnail`}
                 className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
               />

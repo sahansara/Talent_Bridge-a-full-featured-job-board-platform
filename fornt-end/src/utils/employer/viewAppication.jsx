@@ -1,5 +1,3 @@
-import { API_BASE_URLS } from '../../config/api';
-
 export const applicationUtils = {
   // Get status color for application status
   getStatusColor: (status) => {
@@ -75,7 +73,7 @@ export const applicationUtils = {
   
   debugCV: (cvUrl) => {
     console.log('CV URL:', cvUrl);
-    const fullUrl = cvUrl.startsWith('http') ? cvUrl : `${API_BASE_URLS}/${cvUrl}`;
+    const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:3000${cvUrl}`;
     console.log('Full URL:', fullUrl);
   }
 };

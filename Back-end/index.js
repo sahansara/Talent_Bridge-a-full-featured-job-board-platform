@@ -6,44 +6,43 @@ const path = require('path');
 
 
 // Import configurations
-const { databaseConnection } = require('./src/config/database.js');
-const { getCorsOptions } = require('./src/config/cors.js');
-const { uploadMiddlewares, ensureUploadDirectories, handleUploadError } = require('./src/config/multer.js');
-const { ENV } = require('./src/config/constants.js');
+const { databaseConnection } = require('./src/config/database');
+const { getCorsOptions } = require('./src/config/cors');
+const { uploadMiddlewares, ensureUploadDirectories, handleUploadError } = require('./src/config/multer');
+const { ENV } = require('./src/config/constants');
 require("dotenv").config();
 
 // Import middleware
-const { ensureDbConnected, authenticateToken } = require('./src/middleware/auth.js');
+const { ensureDbConnected, authenticateToken } = require('./src/middleware/auth');
 const { 
   authenticateToken: authenticateAdminToken, 
   requireAdmin, 
   adminAuth, 
   adminRateLimit, 
    
-} = require('./src/middleware/adminAuth.js');
+} = require('./src/middleware/adminAuth');
 
 // Import route modules
-const authRoutes = require('./src/routes/auth/authRoutes.js');
+const authRoutes = require('./src/routes/auth/authRoutes');
 
 
-const register = require('./src/routes/Job_seeker/register.js');
-const mainProfile = require('./src/routes/Job_seeker/mainProfile.js');
-const Login_register = require('./src/routes/Employer/register.js');
-const jobPosts = require('./src/routes/Employer/jobPosts.js');
-const EM_mainProfile = require('./src/routes/Employer/mainProfile.js');
-const register_dashboard = require('./src/routes/Admin/register_dashboard.js');
-const Manage_jobpost = require('./src/routes/Admin/Manage_jobpost.js');
-const Job_Post = require('./src/routes/Job_seeker/Job_post.js');
+const register = require('./src/routes/Job_seeker/register');
+const mainProfile = require('./src/routes/Job_seeker/mainProfile');
+const Login_register = require('./src/routes/Employer/register');
+const jobPosts = require('./src/routes/Employer/jobPosts');
+const EM_mainProfile = require('./src/routes/Employer/mainProfile');
+const register_dashboard = require('./src/routes/Admin/register_dashboard');
+const Manage_jobpost = require('./src/routes/Admin/Manage_jobpost');
+const Job_Post = require('./src/routes/Job_seeker/Job_post');
 const applications = require('./src/routes/Employer/applications.js');
-const Manage_jobSeeker = require('./src/routes/Admin/Manage_jobSeeker.js');
-const Manage_Employers = require('./src/routes/Admin/Manage_Employers.js');
-const notifications = require('./src/routes/Job_seeker/notifications.js');
-const feedback = require('./src/routes/feedback/feedback.js');
-const EM_NOTIFICATIONS =require('./src/routes/Employer/notifications.js')
+const Manage_jobSeeker = require('./src/routes/Admin/Manage_jobSeeker');
+const Manage_Employers = require('./src/routes/Admin/Manage_Employers');
+const notifications = require('./src/routes/Job_seeker/notifications');
+const feedback = require('./src/routes/feedback/feedback');
+const EM_NOTIFICATIONS =require('./src/routes/Employer/notifications')
 const ADNOTIFICATION  = require('./src/routes/Admin/notification.js')
-const chatbotRoutes = require("./src/routes/Chatbot/chatbot.js");
+const chatbotRoutes = require("./src/routes/Chatbot/chatbot");
 
-// Initialize Express app
 const app = express();
 const port = ENV.PORT;
 
@@ -53,7 +52,7 @@ ensureUploadDirectories();
 // CORS configuration
 app.use(cors(getCorsOptions()));
 
-// Body parsing middlewares
+// Body parsing middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

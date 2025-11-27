@@ -1,6 +1,5 @@
 import React from 'react';
 import { Briefcase } from 'lucide-react';
-import { API_BASE_URLS } from '../../config/api';
 
 const EmployerAvatar = ({ employerImage, employerName }) => {
   return (
@@ -8,7 +7,7 @@ const EmployerAvatar = ({ employerImage, employerName }) => {
       <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm">
         {employerImage ? (
           <img 
-            src={employerImage.startsWith('http') ? employerImage : `${API_BASE_URLS}/${employerImage}`} 
+            src={employerImage.startsWith('http') ? employerImage : `http://localhost:3000/${employerImage}`} 
             alt={`${employerName || 'Job Seeker'} profile`}
             className="h-full w-full object-cover"
           />
