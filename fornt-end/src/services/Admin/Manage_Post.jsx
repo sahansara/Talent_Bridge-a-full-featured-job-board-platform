@@ -1,7 +1,6 @@
 import axios from 'axios';
-import {API_BASE_URLS} from  "../../config/api"
 
-const API_BASE_URL = `${API_BASE_URLS}/api/admin`;
+const API_BASE_URL = 'http://localhost:3000/api/admin';
 
 class PostApiService {
   // Get authorization headers
